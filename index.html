@@ -3,460 +3,602 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AeDAN - Mobilités Métropolitaines</title>
+    <title>Horaires & Itinéraires — Transports Métropolitains</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #7A1C1C;
-            --primary-hover: #5F1515;
-            --bg-page: #F4F6F8;
-            --bg-card: #FFFFFF;
-            --text-main: #1A1A1A;
-            --text-muted: #666666;
-            --border: #E0E4E8;
-            --radius: 12px;
-            --l26: #E25D84;
-            --lbam: #0F4C81;
-            --listres: #4CAF50;
+            --brand-color: #7A1C1C;
+            --brand-hover: #5F1515;
+            --canvas-bg: #F3F5F8;
+            --surface-card: #FFFFFF;
+            --font-dark: #0F1115;
+            --font-sub: #64748B;
+            --border-line: #E2E8F0;
+            --smooth-radius: 14px;
+            
+            /* Identifiants Lignes */
+            --color-l26: #E25D84;
+            --color-lbam: #0F4C81;
+            --color-li: #4CAF50;
+            
+            --live-ok: #10B981;
+            --live-warn: #F59E0B;
+            --live-crit: #EF4444;
         }
 
         [data-theme="dark"] {
-            --bg-page: #0D0D10;
-            --bg-card: #16161F;
-            --text-main: #F5F5F7;
-            --text-muted: #9E9EAF;
-            --border: #2C2C35;
+            --canvas-bg: #0A0B0D;
+            --surface-card: #12141C;
+            --font-dark: #F8FAFC;
+            --font-sub: #94A3B8;
+            --border-line: #1E293B;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-        body { background-color: var(--bg-page); color: var(--text-main); padding-bottom: 60px; }
+        body { 
+            background-color: var(--canvas-bg); 
+            color: var(--font-dark); 
+            padding-bottom: 80px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
-        header {
-            background-color: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 10px 5%;
+        /* --- HEADER ULTRA CLEAN SANS TEXTE --- */
+        .app-bar {
+            background-color: var(--surface-card);
+            border-bottom: 1px solid var(--border-line);
+            padding: 14px 6%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky; top: 0; z-index: 100;
+            transition: background 0.2s ease, border 0.2s ease;
         }
 
-        .logo { font-size: 20px; font-weight: 800; }
-        .logo span { color: var(--primary); }
+        .app-bar-logo {
+            height: 46px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+        .app-bar-logo:hover {
+            transform: scale(1.02);
+        }
 
-        .theme-toggle {
-            background: var(--bg-page);
-            border: 1px solid var(--border);
+        .dark-mode-switch {
+            background: var(--canvas-bg);
+            border: 1px solid var(--border-line);
             width: 40px; height: 40px;
             border-radius: 50%;
             cursor: pointer;
-            color: var(--text-main);
+            color: var(--font-dark);
             display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .dark-mode-switch:hover {
+            border-color: var(--brand-color);
+            transform: rotate(-12deg);
         }
 
-        .tabs-container {
-            background: var(--bg-card);
+        /* --- TABS NAVIGATION --- */
+        .navigation-tabs {
+            background: var(--surface-card);
             display: flex;
             justify-content: center;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--border-line);
+            gap: 15px;
         }
 
-        .tab-btn {
-            padding: 15px 25px;
+        .tab-trigger {
+            padding: 18px 24px;
             border: none;
             background: none;
-            color: var(--text-muted);
+            color: var(--font-sub);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             cursor: pointer;
             position: relative;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: color 0.2s ease;
+        }
+        .tab-trigger:hover { color: var(--font-dark); }
+        .tab-trigger.is-active { color: var(--brand-color); }
+        .tab-trigger.is-active::after {
+            content: ''; position: absolute; bottom: 0; left: 10px; right: 10px;
+            height: 3px; background: var(--brand-color); border-radius: 3px 3px 0 0;
         }
 
-        .tab-btn.active { color: var(--primary); }
-        .tab-btn.active::after {
-            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-            height: 3px; background: var(--primary);
+        /* --- HERO BANNER --- */
+        .stage-banner {
+            background: linear-gradient(135deg, #4A1010 0%, #1E0505 100%);
+            padding: 70px 5% 120px 5%;
+            text-align: center; color: #FFFFFF;
+        }
+        .stage-banner h1 { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-size: 2.4rem; 
+            font-weight: 700; 
+            letter-spacing: -0.03em;
+            margin-bottom: 6px; 
+        }
+        .stage-banner p { opacity: 0.75; font-size: 1rem; font-weight: 400; }
+
+        /* --- CONTAINER DE RECHERCHE --- */
+        .workspace {
+            background: var(--surface-card); 
+            max-width: 920px; 
+            margin: -60px auto 30px auto;
+            padding: 35px; 
+            border-radius: var(--smooth-radius); 
+            box-shadow: 0 16px 45px rgba(15,17,21,0.04);
+            border: 1px solid var(--border-line);
+            transition: background 0.2s ease, border 0.2s ease;
         }
 
-        .hero {
-            background: linear-gradient(-45deg, #6B1818, #3A0D0D, #1F0606, #8B2525);
-            background-size: 400% 400%;
-            animation: gradientBg 15s ease infinite;
-            padding: 40px 5% 80px 5%;
-            text-align: center; color: #FFF;
-        }
-        @keyframes gradientBg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        .search-container {
-            background: var(--bg-card);
-            max-width: 950px;
-            margin: -40px auto 30px auto;
-            padding: 25px;
-            border-radius: var(--radius);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            border: 1px solid var(--border);
-        }
-
-        .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: flex-end; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; align-items: flex-end; }
+        .field-group { position: relative; }
+        .field-group label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--font-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
         
-        .input-wrapper { position: relative; }
-        .input-wrapper label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
-        .input-field { width: 100%; padding: 12px; border: 1px solid var(--border); background: var(--bg-page); color: var(--text-main); border-radius: 8px; outline: none; }
-
-        .suggestions-list {
-            position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card);
-            border: 1px solid var(--border); border-radius: 8px; z-index: 10; max-height: 200px; overflow-y: auto; display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        .control-input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 1px solid var(--border-line); 
+            background: var(--canvas-bg); 
+            color: var(--font-dark); 
+            border-radius: 10px; 
+            outline: none; 
+            font-size: 0.95rem; 
+            font-weight: 500;
+            transition: all 0.15s ease;
         }
-        .suggestion-item { padding: 12px; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); align-items: center; }
-        .suggestion-item:hover { background: var(--bg-page); }
-        .suggestion-item small { color: var(--text-muted); margin-left: 8px; }
+        .control-input:focus { border-color: var(--brand-color); box-shadow: 0 0 0 3px rgba(122,28,28,0.1); background: var(--surface-card); }
 
-        .badge { color: #FFF; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
-        .badge.l26 { background-color: var(--l26); }
-        .badge.lbam { background-color: var(--lbam); }
-        .badge.listres { background-color: var(--listres); }
-
-        .btn-search { background: var(--primary); color: #FFF; border: none; padding: 0 30px; height: 47px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        .btn-search:hover { background: var(--primary-hover); }
-
-        .results-box { max-width: 950px; margin: 20px auto; padding: 25px; background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); display: none; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .line-header {
-            display: flex; align-items: center; gap: 15px; margin-bottom: 25px;
-            padding: 15px; background: var(--bg-page); border-radius: 10px;
+        /* SUGGESTIONS LIST */
+        .dropdown-suggestions {
+            position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--surface-card);
+            border: 1px solid var(--border-line); border-radius: 10px; z-index: 10; max-height: 250px; overflow-y: auto; display: none;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
         }
-        
-        .line-badge-lg {
-            width: 50px; height: 50px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            color: #FFF; font-weight: 800; font-size: 1.2rem;
+        .suggest-row { padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-line); align-items: center; font-size: 0.9rem; }
+        .suggest-row:last-child { border-bottom: none; }
+        .suggest-row:hover { background: var(--canvas-bg); }
+        .suggest-row small { color: var(--font-sub); font-weight: 400; margin-left: 5px; }
+
+        .pill-badge { color: #FFFFFF; font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 5px; font-family: 'Space Grotesk', sans-serif; }
+        .pill-badge.l26 { background-color: var(--color-l26); }
+        .pill-badge.lbam { background-color: var(--color-lbam); }
+        .pill-badge.li { background-color: var(--color-li); }
+
+        .submit-trigger { 
+            background: var(--brand-color); 
+            color: #FFFFFF; 
+            border: none; 
+            padding: 0 24px; 
+            height: 50px; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 0.92rem; 
+            width: 100%; 
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.2s ease;
         }
+        .submit-trigger:hover { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(122,28,28,0.15); }
 
-        .direction-box { display: flex; flex-direction: column; }
-        .direction-label { font-size: 0.75rem; font-style: italic; color: var(--text-muted); }
-        .direction-dest { font-size: 1.05rem; font-weight: 700; text-transform: uppercase; }
+        /* --- SQUELETTE DE CHARGEMENT HUMAIN (SHIMMER) --- */
+        .skeleton-loader { display: none; max-width: 920px; margin: 20px auto; padding: 35px; background: var(--surface-card); border-radius: var(--smooth-radius); border: 1px solid var(--border-line); }
+        .wave-block { background: linear-gradient(90deg, var(--canvas-bg) 25%, var(--border-line) 50%, var(--canvas-bg) 75%); background-size: 200% 100%; animation: pulseWave 1.2s infinite linear; border-radius: 8px; }
+        @keyframes pulseWave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        .timeline { position: relative; padding-left: 30px; margin-left: 10px; }
-        .timeline::before { content: ''; position: absolute; left: 4px; top: 10px; bottom: 10px; width: 4px; background: var(--line-color); border-radius: 2px; }
+        /* --- PRÉSENTATION DES RÉSULTATS --- */
+        .output-container { max-width: 920px; margin: 20px auto; padding: 35px; background: var(--surface-card); border-radius: var(--smooth-radius); border: 1px solid var(--border-line); display: none; animation: slideReveal 0.35s cubic-bezier(0.215, 0.610, 0.355, 1) forwards; }
+        @keyframes slideReveal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         
-        .timeline-point { position: relative; margin-bottom: 30px; font-size: 0.95rem; display: flex; align-items: center; }
-        .timeline-point::before {
-            content: ''; position: absolute; left: -31px; top: calc(50% - 7px); width: 14px; height: 14px;
-            border-radius: 50%; background: var(--bg-card); border: 3px solid var(--line-color); z-index: 2;
+        .route-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; padding: 18px 22px; background: var(--canvas-bg); border-radius: 12px; border-left: 4px solid var(--route-theme); }
+        .route-badge { width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: 700; font-size: 1.25rem; font-family: 'Space Grotesk', sans-serif; }
+        .route-meta { display: flex; flex-direction: column; flex-grow: 1; margin-left: 18px; }
+        .route-meta-lbl { font-size: 0.72rem; font-weight: 700; color: var(--font-sub); text-transform: uppercase; letter-spacing: 0.05em; }
+        .route-meta-val { font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+
+        .itinerary-chain { position: relative; padding-left: 35px; margin-left: 12px; }
+        .itinerary-chain::before { content: ''; position: absolute; left: 4px; top: 10px; bottom: 10px; width: 4px; background: var(--route-theme); border-radius: 4px; }
+        .itinerary-chain.is-walkway::before { background: repeating-linear-gradient(to bottom, var(--border-line), var(--border-line) 6px, transparent 6px, transparent 12px); }
+
+        .chain-node { position: relative; margin-bottom: 24px; font-size: 0.95rem; display: flex; align-items: center; min-height: 24px; }
+        .chain-node::before { content: ''; position: absolute; left: -36px; top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--surface-card); border: 3px solid var(--route-theme); z-index: 2; }
+        .chain-node.is-extremity::before { background: var(--route-theme); scale: 1.25; }
+
+        .node-time { font-weight: 700; margin-right: 20px; min-width: 50px; color: var(--font-dark); font-family: 'Space Grotesk', sans-serif; }
+        .node-summary { font-size: 0.82rem; color: var(--font-sub); font-weight: 600; margin-left: 10px; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+
+        /* BLOC MARCHE / CORRESPONDANCE */
+        .transfer-walk-card {
+            display: flex; align-items: center; gap: 18px; background: var(--canvas-bg); 
+            padding: 14px 20px; border-radius: 12px; margin: 15px 0 20px 12px;
+            border: 1px dashed var(--border-line);
         }
-        .timeline-point.endpoint::before { background: var(--line-color); }
+        .transfer-walk-icon { font-size: 1.3rem; color: var(--font-sub); animation: humanStride 0.8s ease-in-out infinite alternate; }
+        @keyframes humanStride { from { transform: translateX(-2px); } to { transform: translateX(2px); } }
+
+        /* --- MODULE TRAFIC --- */
+        .live-traffic-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 5px; }
+        .traffic-row-card { background: var(--canvas-bg); border: 1px solid var(--border-line); border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; }
         
-        .time-stamp { font-weight: 700; margin-right: 15px; min-width: 50px; display: inline-block; }
-
-        .intermediate-toggle { margin: -15px 0 20px 30px; cursor: pointer; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; user-select: none; }
-        .intermediate-list { display: none; padding: 5px 0 10px 0; }
-        .intermediate-list .timeline-point { margin-bottom: 20px; opacity: 0.85; }
-        .intermediate-list .timeline-point::before { width: 10px; height: 10px; left: -29px; top: calc(50% - 5px); border-width: 2px; }
-
-        .error-message { color: var(--primary); font-weight: 600; font-size: 0.95rem; text-align: center; }
+        .signal-light { width: 14px; height: 14px; border-radius: 50%; background-color: #cbd5e1; position: relative; }
+        .signal-light.status-vert { background-color: var(--live-ok); box-shadow: 0 0 10px rgba(16,185,129,0.4); }
+        .signal-light.status-orange { background-color: var(--live-warn); box-shadow: 0 0 10px rgba(245,158,11,0.4); }
+        .signal-light.status-rouge { background-color: var(--live-crit); box-shadow: 0 0 10px rgba(239,68,68,0.4); }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">Æ<span>DAN</span></div>
-        <div class="header-actions">
-            <button class="theme-toggle" id="theme-btn"><i class="fa-solid fa-moon"></i></button>
-        </div>
+    <header class="app-bar">
+        <img src="https://image.noelshack.com/fichiers/2026/28/2/1783387205-2b6a27e168543ce8099dc90780cd86d6-removebg-preview.png" alt="Logo Officiel Network" class="app-bar-logo">
+        <button class="dark-mode-switch" id="theme-toggle-btn"><i class="fa-solid fa-moon"></i></button>
     </header>
 
-    <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab(this)">Itinéraires</button>
-        <button class="tab-btn" onclick="switchTab(this)">Horaires</button>
-        <button class="tab-btn" onclick="switchTab(this)">Infos Trafic</button>
-        <button class="tab-btn" onclick="switchTab(this)">Plans</button>
+    <div class="navigation-tabs">
+        <button class="tab-trigger is-active" onclick="handleTabExchange(this)">Itinéraires</button>
+        <button class="tab-trigger" onclick="handleTabExchange(this)">Horaires</button>
+        <button class="tab-trigger" onclick="handleTabExchange(this)">Infos Trafic</button>
+        <button class="tab-trigger" onclick="handleTabExchange(this)">Plans</button>
     </div>
 
-    <section class="hero">
-        <h1 id="hero-title">Où allons-nous ?</h1>
-        <p id="hero-desc">Calculez votre trajet sur les réseaux Martigues, Miramas et Istres.</p>
+    <section class="stage-banner">
+        <h1>Recherche d'itinéraires</h1>
+        <p>Planifiez vos déplacements en temps réel sur les réseaux de transports métropolitains.</p>
     </section>
 
-    <main class="search-container" id="main-search-panel">
-        <form id="route-form" autocomplete="off">
-            <div class="search-grid">
-                <div class="input-wrapper">
-                    <label>Départ</label>
-                    <input type="text" id="input-dep" class="input-field" placeholder="Arrêt de départ...">
-                    <div id="sug-dep" class="suggestions-list"></div>
+    <main class="workspace" id="panel-search">
+        <form id="route-builder-form" autocomplete="off">
+            <div class="form-row">
+                <div class="field-group">
+                    <label>Arrêt de départ</label>
+                    <input type="text" id="geo-start" class="control-input" placeholder="Saisissez un point de départ...">
+                    <div id="box-sug-start" class="dropdown-suggestions"></div>
                 </div>
-                <div class="input-wrapper">
-                    <label>Arrivée</label>
-                    <input type="text" id="input-arr" class="input-field" placeholder="Destination...">
-                    <div id="sug-arr" class="suggestions-list"></div>
+                <div class="field-group">
+                    <label>Arrêt d'arrivée</label>
+                    <input type="text" id="geo-end" class="control-input" placeholder="Saisissez une destination...">
+                    <div id="box-sug-end" class="dropdown-suggestions"></div>
                 </div>
-                <div class="input-wrapper">
-                    <label>Départ à</label>
-                    <input type="datetime-local" id="input-time" class="input-field">
+                <div class="field-group">
+                    <label>Heure de départ</label>
+                    <input type="datetime-local" id="geo-time" class="control-input">
                 </div>
-                <button type="submit" class="btn-search">RECHERCHER</button>
+                <div class="field-group">
+                    <button type="submit" class="submit-trigger">RECHERCHER</button>
+                </div>
             </div>
         </form>
     </main>
 
-    <section id="results" class="results-box"></section>
+    <div class="skeleton-loader" id="loading-shimmer-mask">
+        <div class="wave-block" style="height: 55px; margin-bottom: 20px;"></div>
+        <div class="wave-block" style="height: 25px; width: 35%; margin-bottom: 12px;"></div>
+        <div class="wave-block" style="height: 20px; width: 80%; margin-bottom: 12px;"></div>
+        <div class="wave-block" style="height: 20px; width: 60%;"></div>
+    </div>
+
+    <main class="workspace" id="panel-traffic" style="display: none;">
+        <h2 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; font-weight:700; margin-bottom:25px; display:flex; align-items:center; gap:10px;">
+            <i class="fa-solid fa-satellite-dish" style="color:var(--brand-color)"></i> État du trafic en temps réel
+        </h2>
+        <div class="live-traffic-dashboard">
+            <div class="traffic-row-card">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="route-badge" style="background: var(--color-l26)">26</div>
+                    <div class="route-meta" style="margin-left:10px;">
+                        <span class="route-meta-val" style="font-size:0.95rem;">Ligne 26</span>
+                        <span class="route-meta-lbl">Martigues</span>
+                    </div>
+                </div>
+                <div id="realtime-light-26" class="signal-light"></div>
+            </div>
+
+            <div class="traffic-row-card">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="route-badge" style="background: var(--color-lbam)">BM</div>
+                    <div class="route-meta" style="margin-left:10px;">
+                        <span class="route-meta-val" style="font-size:0.95rem;">Ligne BAM</span>
+                        <span class="route-meta-lbl">Miramas</span>
+                    </div>
+                </div>
+                <div id="realtime-light-BAM" class="signal-light"></div>
+            </div>
+
+            <div class="traffic-row-card">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="route-badge" style="background: var(--color-li)">I</div>
+                    <div class="route-meta" style="margin-left:10px;">
+                        <span class="route-meta-val" style="font-size:0.95rem;">Ligne I (Istréen)</span>
+                        <span class="route-meta-lbl">Istres</span>
+                    </div>
+                </div>
+                <div id="realtime-light-I" class="signal-light"></div>
+            </div>
+        </div>
+    </main>
+
+    <section id="rendering-output-hub" class="output-container"></section>
 
     <script>
-        // --- BASE DE DONNÉES DES ARRÊTS ORDONNÉS ---
+        // CONFIGURATION DES RÉSEAUX (LIGNE 26 RETENUE)
         const networks = {
             "26": {
-                color: "#E25D84",
-                class: "l26",
-                city: "Martigues",
+                color: "#E25D84", class: "l26", city: "Martigues",
                 stops: ["Reveilla", "Hôpital Vallon", "Lycée Jean Lurcat", "Hameau", "Julien Olive", "Ginoux", "Vigneros", "Hôpital MTG", "Colline", "Di Lorto", "Asphodeles", "Les Lauriers", "Degas", "Renoir", "Seurat", "Matisse", "Pôle d'Échanges Danielle Casanova", "Coopérative", "Kennedy", "Paradis", "Doumer", "Place des Aires", "Mairie MTG", "Théâtre"]
             },
             "BAM": {
-                color: "#0F4C81",
-                class: "lbam",
-                city: "Miramas",
+                color: "#0F4C81", class: "lbam", city: "Miramas",
                 stops: ["Jean Moulin", "Mazet", "Centre Commercial Sud", "Chave", "Miramas - Gare SNCF", "Briand - Centre Ville", "Théâtre Cocteau", "Levant", "Couvent", "Terrasses", "Essors", "Salle des Fêtes", "Village de Marques"]
             },
-            "1": {
-                color: "#4CAF50",
-                class: "listres",
-                city: "Istres",
+            "I": {
+                color: "#4CAF50", class: "li", city: "Istres",
                 stops: ["Gare de Rassuen", "Centre Commercial Cognets", "Prépaou", "Prépaou Piboules", "Prépaou Saladelles", "Prédina", "4 Vents Méditerranée", "CEC", "LaSalle", "Gare Routière", "Aimé Césaire", "Les Carmes - Centre d'art Polaris", "Crignan", "Guynemer", "Boucasson", "Charles Monier"]
             }
         };
 
-        // Liste à plat pour l'autocomplétion
-        const stationsFlat = [];
+        const staticStopsRegistry = [];
         for (const [lineId, net] of Object.entries(networks)) {
             net.stops.forEach(stopName => {
-                stationsFlat.push({ name: stopName, city: net.city, line: lineId, color: net.color, class: net.class });
+                staticStopsRegistry.push({ name: stopName, city: net.city, line: lineId, color: net.color, class: net.class });
             });
         }
 
-        // --- NAVIGATION DES ONGLETS ---
-        function switchTab(btn) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const searchPanel = document.getElementById('main-search-panel');
-            const resultsPanel = document.getElementById('results');
+        function handleTabExchange(tabElement) {
+            document.querySelectorAll('.tab-trigger').forEach(el => el.classList.remove('is-active'));
+            tabElement.classList.add('is-active');
             
-            if (btn.textContent !== "Itinéraires") {
-                searchPanel.style.display = 'none';
-                resultsPanel.style.display = 'block';
-                resultsPanel.innerHTML = `<p style="text-align:center; padding:20px; color:var(--text-muted);">Le module <strong>${btn.textContent}</strong> est momentanément indisponible pour maintenance technique.</p>`;
-            } else {
-                searchPanel.style.display = 'block';
-                resultsPanel.style.display = 'none';
+            const pSearch = document.getElementById('panel-search');
+            const pTraffic = document.getElementById('panel-traffic');
+            const pOutput = document.getElementById('rendering-output-hub');
+            
+            pSearch.style.display = 'none';
+            pTraffic.style.display = 'none';
+            pOutput.style.display = 'none';
+            
+            if (tabElement.textContent === "Itinéraires") { pSearch.style.display = 'block'; } 
+            else if (tabElement.textContent === "Infos Trafic") { pTraffic.style.display = 'block'; } 
+            else {
+                pOutput.style.display = 'block';
+                pOutput.innerHTML = `<p style="text-align:center; padding:30px 10px; color:var(--font-sub); font-size:0.9rem;"><i class="fa-solid fa-bell-slash" style="display:block; margin-bottom:10px; font-size:1.4rem; color:var(--brand-color)"></i>Ce sous-module est en cours de synchronisation de base de données.</p>`;
             }
         }
 
-        // --- TOGGLE MODE SOMBRE ---
-        const themeBtn = document.getElementById('theme-btn');
-        if (localStorage.getItem('theme') === 'dark') {
+        // TACTIQUE THÈME SOMBRE SIMPLE (HUMAIN)
+        const themeTrigger = document.getElementById('theme-toggle-btn');
+        if (localStorage.getItem('user-ui-theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
-            themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>';
         }
-        themeBtn.addEventListener('click', () => {
+        themeTrigger.onclick = () => {
             if (document.documentElement.hasAttribute('data-theme')) {
                 document.documentElement.removeAttribute('data-theme');
-                themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
-                localStorage.setItem('theme', 'light');
+                themeTrigger.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                localStorage.setItem('user-ui-theme', 'light');
             } else {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-                localStorage.setItem('theme', 'dark');
+                themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                localStorage.setItem('user-ui-theme', 'dark');
             }
-        });
+        };
 
-        // --- AUTOCOMPLÉTION ---
-        function initAutocomplete(inputId, sugId) {
-            const input = document.getElementById(inputId);
-            const sug = document.getElementById(sugId);
+        function wireAutocompleteSystem(targetInputId, targetBoxId) {
+            const field = document.getElementById(targetInputId);
+            const container = document.getElementById(targetBoxId);
 
-            input.addEventListener('input', () => {
-                const val = input.value.toLowerCase().trim();
-                sug.innerHTML = '';
-                if (!val) { sug.style.display = 'none'; return; }
+            field.oninput = () => {
+                const searchStr = field.value.toLowerCase().trim();
+                container.innerHTML = '';
+                if (!searchStr) { container.style.display = 'none'; return; }
 
-                const matched = stationsFlat.filter(s => s.name.toLowerCase().includes(val) || s.city.toLowerCase().includes(val));
-                if (matched.length) {
-                    sug.style.display = 'block';
-                    matched.forEach(s => {
-                        const row = document.createElement('div');
-                        row.className = 'suggestion-item';
-                        row.innerHTML = `<div><strong>${s.name}</strong><small>(${s.city})</small></div><span class="badge ${s.class}">${s.line}</span>`;
-                        row.onclick = () => {
-                            input.value = s.name;
-                            sug.style.display = 'none';
-                        };
-                        sug.appendChild(row);
+                const stack = staticStopsRegistry.filter(item => item.name.toLowerCase().includes(searchStr) || item.city.toLowerCase().includes(searchStr));
+                if (stack.length) {
+                    container.style.display = 'block';
+                    stack.forEach(node => {
+                        const div = document.createElement('div');
+                        div.className = 'suggest-row';
+                        div.innerHTML = `<div><strong>${node.name}</strong><small>(${node.city})</small></div><span class="pill-badge ${node.class}">Ligne ${node.line}</span>`;
+                        div.onclick = () => { field.value = node.name; container.style.display = 'none'; };
+                        container.appendChild(div);
                     });
-                } else {
-                    sug.style.display = 'none';
-                }
-            });
-
-            document.addEventListener('click', (e) => { if (e.target !== input) sug.style.display = 'none'; });
+                } else { container.style.display = 'none'; }
+            };
+            document.addEventListener('click', (ev) => { if (ev.target !== field) container.style.display = 'none'; });
         }
-        initAutocomplete('input-dep', 'sug-dep');
-        initAutocomplete('input-arr', 'sug-arr');
+        wireAutocompleteSystem('geo-start', 'box-sug-start');
+        wireAutocompleteSystem('geo-end', 'box-sug-end');
 
-        // Initialisation de l'heure
-        const timeInput = document.getElementById('input-time');
-        const dt = new Date();
-        dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
-        timeInput.value = dt.toISOString().slice(0, 16);
+        // CALAGE DE L'HEURE PAR DÉFAUT
+        const timeBox = document.getElementById('geo-time');
+        const currentClock = new Date();
+        currentClock.setMinutes(currentClock.getMinutes() - currentClock.getTimezoneOffset());
+        timeBox.value = currentClock.toISOString().slice(0, 16);
 
-        function formatTime(date) {
-            return date.toTimeString().slice(0, 5);
-        }
+        function compileTimeStr(d) { return d.toTimeString().slice(0, 5); }
 
-        // --- CALCUL DU TRAJET ---
-        document.getElementById('route-form').onsubmit = (e) => {
-            e.preventDefault();
-            const depVal = document.getElementById('input-dep').value.trim();
-            const arrVal = document.getElementById('input-arr').value.trim();
-            const resultsPanel = document.getElementById('results');
+        document.getElementById('route-builder-form').onsubmit = (event) => {
+            event.preventDefault();
+            const fromQuery = document.getElementById('geo-start').value.trim();
+            const toQuery = document.getElementById('geo-end').value.trim();
+            const outBox = document.getElementById('rendering-output-hub');
+            const skeleton = document.getElementById('loading-shimmer-mask');
 
-            const depStation = stationsFlat.find(s => s.name.toLowerCase() === depVal.toLowerCase());
-            const arrStation = stationsFlat.find(s => s.name.toLowerCase() === arrVal.toLowerCase());
+            const startObj = staticStopsRegistry.find(s => s.name.toLowerCase() === fromQuery.toLowerCase());
+            const endObj = staticStopsRegistry.find(s => s.name.toLowerCase() === toQuery.toLowerCase());
 
-            if (!depStation || !arrStation) {
-                resultsPanel.style.display = 'block';
-                resultsPanel.innerHTML = `<p class="error-message">Veuillez sélectionner des gares valides via les suggestions automatiques.</p>`;
+            outBox.style.display = 'none';
+            if (!startObj || !endObj) {
+                outBox.style.display = 'block';
+                outBox.innerHTML = `<p style="color:var(--live-crit); text-align:center; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> Saisie non concordante. Veuillez cliquer sur une suggestion valide.</p>`;
                 return;
             }
 
-            resultsPanel.style.display = 'block';
-            let baseTime = new Date(timeInput.value);
+            skeleton.style.display = 'block';
+            
+            // SIMULATION DE CALCUL ALGORITHMIQUE DE 800MS (PLUS HUMAIN ET CRÉDIBLE)
+            setTimeout(() => {
+                skeleton.style.display = 'none';
+                outBox.style.display = 'block';
+                let timeCursor = new Date(timeBox.value);
 
-            // Cas 1 : Trajet sur la même ligne
-            if (depStation.line === arrStation.line) {
-                const lineId = depStation.line;
-                const net = networks[lineId];
-                const iDep = net.stops.indexOf(depStation.name);
-                const iArr = net.stops.indexOf(arrStation.name);
+                // CAS 1 : DIRECT (MÊME RESEAU DE LIGNE)
+                if (startObj.line === endObj.line) {
+                    const lId = startObj.line;
+                    const netData = networks[lId];
+                    const idxStart = netData.stops.indexOf(startObj.name);
+                    const idxEnd = netData.stops.indexOf(endObj.name);
 
-                let stopsList = [];
-                let destination = "";
+                    let segmentStops = [];
+                    let dynamicTerminus = "";
 
-                if (iDep < iArr) {
-                    stopsList = net.stops.slice(iDep, iArr + 1);
-                    destination = net.stops[net.stops.length - 1]; 
-                } else {
-                    stopsList = net.stops.slice(iArr, iDep + 1).reverse();
-                    destination = net.stops[0];
-                }
+                    if (idxStart < idxEnd) {
+                        segmentStops = netData.stops.slice(idxStart, idxEnd + 1);
+                        dynamicTerminus = netData.stops[netData.stops.length - 1]; 
+                    } else {
+                        segmentStops = netData.stops.slice(idxEnd, idxStart + 1).reverse();
+                        dynamicTerminus = netData.stops[0];
+                    }
 
-                const startStop = stopsList[0];
-                const endStop = stopsList[stopsList.length - 1];
-                const intermediates = stopsList.slice(1, stopsList.length - 1);
+                    const originNode = segmentStops[0];
+                    const destinationNode = segmentStops[segmentStops.length - 1];
+                    const intermediateNodes = segmentStops.slice(1, segmentStops.length - 1);
 
-                let trackTime = new Date(baseTime.getTime());
-                
-                let intermediateHTML = '';
-                if (intermediates.length > 0) {
-                    intermediateHTML = `
-                        <div class="intermediate-toggle" onclick="const list = this.nextElementSibling; list.style.display = list.style.display === 'block' ? 'none' : 'block';">
-                            ${intermediates.length} arrêts intermédiaires <i class="fa-solid fa-chevron-down"></i>
+                    outBox.innerHTML = `
+                        <div class="route-bar" style="--route-theme: ${startObj.color}">
+                            <div class="route-badge" style="background:${startObj.color}">${lId}</div>
+                            <div class="route-meta">
+                                <span class="route-meta-lbl">Prendre la direction du terminus</span>
+                                <span class="route-meta-val">${dynamicTerminus}</span>
+                            </div>
                         </div>
-                        <div class="intermediate-list">
-                            ${intermediates.map(name => {
-                                trackTime = new Date(trackTime.getTime() + 2 * 60000);
-                                return `<div class="timeline-point"><span class="time-stamp">${formatTime(trackTime)}</span><strong>${name}</strong></div>`;
+                        <div class="itinerary-chain" style="--route-theme:${startObj.color}">
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(timeCursor)}</span>
+                                <span>Montée : <strong>${originNode}</strong></span>
+                            </div>
+                            
+                            <div class="node-summary">
+                                <i class="fa-solid fa-ellipsis-vertical" style="color:${startObj.color}"></i> 
+                                <span>${intermediateNodes.length} arrêt(s) intermédiaire(s) entre les deux points</span>
+                            </div>
+
+                            ${intermediateNodes.map((name, i) => {
+                                timeCursor = new Date(timeCursor.getTime() + 2 * 60000);
+                                return `
+                                <div class="chain-node">
+                                    <span class="node-time" style="color:var(--font-sub); font-weight:500;">${compileTimeStr(timeCursor)}</span>
+                                    <span style="color:var(--font-sub);">${name}</span>
+                                </div>`;
                             }).join('')}
+
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(new Date(timeCursor.getTime() + 2 * 60000))}</span>
+                                <span>Descente : <strong>${destinationNode}</strong></span>
+                            </div>
                         </div>
                     `;
-                } else {
-                    trackTime = new Date(trackTime.getTime());
+                } 
+                // CAS 2 : CORRESPONDANCE INTER-RESEAUX (LIGNE GRISE POINTILLÉS + PIÉTON)
+                else {
+                    const firstLegEnd = new Date(timeCursor.getTime() + 15 * 60000);
+                    const secondLegStart = new Date(firstLegEnd.getTime() + 5 * 60000);
+                    const journeyEnd = new Date(secondLegStart.getTime() + 15 * 60000);
+
+                    outBox.innerHTML = `
+                        <div style="margin-bottom:20px; font-weight:700; font-size:0.95rem; color:var(--brand-color); display:flex; align-items:center; gap:8px; font-family:'Space Grotesk', sans-serif;">
+                            <i class="fa-solid fa-shuffle"></i> Trajet avec changement de quai
+                        </div>
+                        
+                        <div class="route-bar" style="--route-theme: ${startObj.color}">
+                            <div class="route-badge" style="background:${startObj.color}">${startObj.line}</div>
+                            <div class="route-meta">
+                                <span class="route-meta-lbl">Prendre la ligne en direction de</span>
+                                <span class="route-meta-val">Gare de Connexion Centrale</span>
+                            </div>
+                        </div>
+                        <div class="itinerary-chain" style="--route-theme:${startObj.color}">
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(timeCursor)}</span>
+                                <span>Montée à l'arrêt : <strong>${startObj.name}</strong></span>
+                            </div>
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(firstLegEnd)}</span>
+                                <span>Descente au Hub : <strong>Pôle d'Échanges Intercommunal</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="itinerary-chain is-walkway" style="--route-theme: var(--border-line)">
+                            <div class="transfer-walk-card">
+                                <div class="transfer-walk-icon"><i class="fa-solid fa-person-walking"></i></div>
+                                <div style="font-size:0.85rem; color:var(--font-sub); font-weight:500;">
+                                    <strong>Correspondance piétonne</strong><br>
+                                    Rejoindre à pied le quai de transit suivant (Transfert libre — env. 5 min).
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="route-bar" style="--route-theme: ${endObj.color}">
+                            <div class="route-badge" style="background:${endObj.color}">${endObj.line}</div>
+                            <div class="route-meta">
+                                <span class="route-meta-lbl">Changement — Prendre la direction de</span>
+                                <span class="route-meta-val">${networks[endObj.line].stops[networks[endObj.line].stops.length - 1]}</span>
+                            </div>
+                        </div>
+                        <div class="itinerary-chain" style="--route-theme:${endObj.color}">
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(secondLegStart)}</span>
+                                <span>Embarquement au Hub : <strong>Pôle d'Échanges Intercommunal</strong></span>
+                            </div>
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(journeyEnd)}</span>
+                                <span>Arrivée à destination : <strong>${endObj.name}</strong></span>
+                            </div>
+                        </div>
+                    `;
                 }
-
-                const finalArrivalTime = new Date(trackTime.getTime() + 2 * 60000);
-
-                resultsPanel.innerHTML = `
-                    <div class="line-header">
-                        <div class="line-badge-lg" style="background:${depStation.color}">${lineId}</div>
-                        <div class="direction-box">
-                            <span class="direction-label">direction</span>
-                            <span class="direction-dest">${destination}</span>
-                        </div>
-                    </div>
-                    <div class="timeline" style="--line-color:${depStation.color}">
-                        <div class="timeline-point endpoint">
-                            <span class="time-stamp">${formatTime(baseTime)}</span>
-                            <strong>${startStop}</strong>
-                        </div>
-                        ${intermediateHTML}
-                        <div class="timeline-point endpoint">
-                            <span class="time-stamp">${formatTime(finalArrivalTime)}</span>
-                            <strong>${endStop}</strong>
-                        </div>
-                    </div>
-                `;
-            } 
-            // Cas 2 : Correspondance requise
-            else {
-                const t1 = new Date(baseTime.getTime() + 12 * 60000);
-                const t2 = new Date(baseTime.getTime() + 32 * 60000);
-                const t3 = new Date(baseTime.getTime() + 45 * 60000);
-
-                resultsPanel.innerHTML = `
-                    <div style="margin-bottom:20px; font-weight:600; font-size:1.05rem; color:var(--primary);">
-                        <i class="fa-solid fa-circle-exclamation"></i> Correspondance intercommunale nécessaire
-                    </div>
-                    
-                    <div class="line-header">
-                        <div class="line-badge-lg" style="background:${depStation.color}">${depStation.line}</div>
-                        <div class="direction-box">
-                            <span class="direction-label">direction</span>
-                            <span class="direction-dest">Pôle d'Échange Local (${depStation.city})</span>
-                        </div>
-                    </div>
-                    <div class="timeline" style="--line-color:${depStation.color}">
-                        <div class="timeline-point endpoint">
-                            <span class="time-stamp">${formatTime(baseTime)}</span>
-                            <strong>${depStation.name}</strong>
-                        </div>
-                        <div class="timeline-point endpoint">
-                            <span class="time-stamp">${formatTime(t1)}</span>
-                            <strong>Pôle de Connexion de ${depStation.city}</strong>
-                        </div>
-                    </div>
-
-                    <div class="line-header" style="background:transparent; padding:5px 15px; margin: 10px 0;">
-                        <i class="fa-solid fa-bus" style="color:var(--text-muted);"></i> 
-                        <div class="direction-box">
-                            <span class="direction-label">liaison métropolitaine</span>
-                            <span class="direction-dest" style="font-size:0.9rem; color:var(--text-muted);">Car Métropole / TER vers ${arrStation.city}</span>
-                        </div>
-                    </div>
-
-                    <div class="line-header" style="margin-top:15px;">
-                        <div class="line-badge-lg" style="background:${arrStation.color}">${arrStation.line}</div>
-                        <div class="direction-box">
-                            <span class="direction-label">direction</span>
-                            <span class="direction-dest">${arrStation.name}</span>
-                        </div>
-                    </div>
-                    <div class="timeline" style="--line-color:${arrStation.color}">
-                        <div class="timeline-point endpoint">
-                            <span class="time-stamp">${formatTime(t2)}</span>
-                            <strong>Pôle de Connexion de ${arrStation.city}</strong>
-                        </div>
-                        <div class="timeline-point endpoint">
-                            <span class="time-stamp">${formatTime(t3)}</span>
-                            <strong>${arrStation.name}</strong>
-                        </div>
-                    </div>
-                `;
-            }
+            }, 800);
         };
+
+        // INTEGRATION FIREBASE REALTIME DB (ECOUTE RESEAU COHÉRENTE)
+        const FIREBASE_ENDPOINT = "https://aedan-mobilites-default-rtdb.europe-west1.firebasedatabase.app";
+        
+        function launchFirebaseLiveStream() {
+            const listener = new EventSource(`${FIREBASE_ENDPOINT}/status.json`);
+            listener.onmessage = function(msg) {
+                const payload = JSON.parse(msg.data);
+                let currentStatus = payload.data;
+                if (currentStatus) {
+                    updateVisualLight('26', currentStatus['26']);
+                    updateVisualLight('BAM', currentStatus['BAM']);
+                    updateVisualLight('I', currentStatus['I']);
+                }
+            };
+        }
+
+        function updateVisualLight(targetLineKey, stateValue) {
+            const lightElement = document.getElementById(`realtime-light-${targetLineKey}`);
+            if (!lightElement || !stateValue) return;
+            lightElement.className = "signal-light";
+            if (stateValue === "vert") lightElement.classList.add("status-vert");
+            if (stateValue === "orange") lightElement.classList.add("status-orange");
+            if (stateValue === "rouge") lightElement.classList.add("status-rouge");
+        }
+        
+        launchFirebaseLiveStream();
     </script>
 </body>
 </html>
