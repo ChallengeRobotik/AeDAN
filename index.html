@@ -7,23 +7,24 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
             --brand-color: #7A1C1C;
             --brand-hover: #5F1515;
-            --canvas-bg: #F8FAFC;
+            --canvas-bg: #F3F5F8;
             --surface-card: #FFFFFF;
-            --font-dark: #0F172A;
+            --font-dark: #0F1115;
             --font-sub: #64748B;
             --border-line: #E2E8F0;
-            --smooth-radius: 16px;
+            --smooth-radius: 14px;
             
-            --l26-color: #E25D84;
-            --lbam-color: #0F4C81;
-            --li-color: #4CAF50;
+            /* Identifiants Lignes */
+            --color-l26: #E25D84;
+            --color-lbam: #0F4C81;
+            --color-li: #4CAF50;
             
             --live-ok: #10B981;
             --live-warn: #F59E0B;
@@ -31,161 +32,237 @@
         }
 
         [data-theme="dark"] {
-            --canvas-bg: #0B0F19;
-            --surface-card: #111827;
+            --canvas-bg: #0A0B0D;
+            --surface-card: #12141C;
             --font-dark: #F8FAFC;
             --font-sub: #94A3B8;
-            --border-line: #1F2937;
+            --border-line: #1E293B;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; }
-        body { background-color: var(--canvas-bg); color: var(--font-dark); padding-bottom: 60px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-
-        /* ANIMATIONS KEYFRAMES */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulseAlert {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
-        }
-        @keyframes pulseAlertCrit {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-        @keyframes pulseLight {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .animate-fade-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        body { 
+            background-color: var(--canvas-bg); 
+            color: var(--font-dark); 
+            padding-bottom: 80px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
-        /* BANDEAU ALERTE ADMIN */
-        .alert-banner { display: none; align-items: center; justify-content: space-between; padding: 14px 6%; font-size: 0.9rem; font-weight: 600; color: #FFFFFF; position: relative; z-index: 101; animation: fadeInUp 0.4s ease; }
-        .alert-banner.warn { display: flex; background-color: var(--live-warn); animation: pulseAlert 2s infinite; }
-        .alert-banner.crit { display: flex; background-color: var(--live-crit); animation: pulseAlertCrit 2s infinite; }
-        .alert-close-btn { background: none; border: none; color: #FFFFFF; font-size: 1.4rem; cursor: pointer; line-height: 1; }
+        /* BANDEAU D'ALERTE GENERAL GENERATED */
+        #app-live-banner {
+            width: 100%;
+            padding: 14px 6%;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            color: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            z-index: 110;
+        }
+        #app-live-banner .banner-content { display: flex; align-items: center; gap: 10px; margin: 0 auto; }
+        #app-live-banner .close-banner-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #FFFFFF; opacity: 0.8; }
 
+        /* --- HEADER ULTRA CLEAN SANS TEXTE --- */
         .app-bar {
             background-color: var(--surface-card);
             border-bottom: 1px solid var(--border-line);
             padding: 14px 6%;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            transition: background 0.2s ease, border 0.2s ease;
         }
-        .app-bar-logo { height: 40px; width: auto; object-fit: contain; }
+
+        .app-bar-logo {
+            height: 46px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+        .app-bar-logo:hover {
+            transform: scale(1.02);
+        }
 
         .dark-mode-switch {
-            background: var(--canvas-bg); border: 1px solid var(--border-line);
-            width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
-            color: var(--font-dark); display: flex; align-items: center; justify-content: center;
+            background: var(--canvas-bg);
+            border: 1px solid var(--border-line);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--font-dark);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .dark-mode-switch:hover { transform: scale(1.1); background: var(--border-line); }
+        .dark-mode-switch:hover {
+            border-color: var(--brand-color);
+            transform: rotate(-12deg);
+        }
 
-        .navigation-tabs { background: var(--surface-card); display: flex; justify-content: center; border-bottom: 1px solid var(--border-line); gap: 10px; }
+        /* --- TABS NAVIGATION --- */
+        .navigation-tabs {
+            background: var(--surface-card);
+            display: flex;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-line);
+            gap: 15px;
+        }
+
         .tab-trigger {
-            padding: 16px 20px; border: none; background: none; color: var(--font-sub);
-            font-weight: 600; font-size: 0.9rem; cursor: pointer; position: relative; font-family: 'Space Grotesk', sans-serif;
+            padding: 18px 24px;
+            border: none;
+            background: none;
+            color: var(--font-sub);
+            font-weight: 600;
+            font-size: 0.92rem;
+            cursor: pointer;
+            position: relative;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: color 0.2s ease;
         }
         .tab-trigger:hover { color: var(--font-dark); }
         .tab-trigger.is-active { color: var(--brand-color); }
-        .tab-trigger.is-active::after { content: ''; position: absolute; bottom: 0; left: 8px; right: 8px; height: 3px; background: var(--brand-color); border-radius: 3px 3px 0 0; }
-
-        .stage-banner { background: linear-gradient(135deg, #3A0D0D 0%, #140303 100%); padding: 50px 5% 90px 5%; text-align: center; color: #FFFFFF; }
-        .stage-banner h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
-        .stage-banner p { opacity: 0.75; font-size: 0.95rem; }
-
-        .workspace {
-            background: var(--surface-card); max-width: 920px; margin: -40px auto 30px auto;
-            padding: 30px; border-radius: var(--smooth-radius); box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid var(--border-line);
+        .tab-trigger.is-active::after {
+            content: ''; position: absolute; bottom: 0; left: 10px; right: 10px;
+            height: 3px; background: var(--brand-color); border-radius: 3px 3px 0 0;
         }
 
-        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: flex-end; }
+        /* --- HERO BANNER --- */
+        .stage-banner {
+            background: linear-gradient(135deg, #4A1010 0%, #1E0505 100%);
+            padding: 70px 5% 120px 5%;
+            text-align: center; color: #FFFFFF;
+        }
+        .stage-banner h1 { 
+            font-family: 'Space Grotesk', sans-serif; 
+            font-size: 2.4rem; 
+            font-weight: 700; 
+            letter-spacing: -0.03em;
+            margin-bottom: 6px; 
+        }
+        .stage-banner p { opacity: 0.75; font-size: 1rem; font-weight: 400; }
+
+        /* --- CONTAINER DE RECHERCHE --- */
+        .workspace {
+            background: var(--surface-card); 
+            max-width: 920px; 
+            margin: -60px auto 30px auto;
+            padding: 35px; 
+            border-radius: var(--smooth-radius); 
+            box-shadow: 0 16px 45px rgba(15,17,21,0.04);
+            border: 1px solid var(--border-line);
+            transition: background 0.2s ease, border 0.2s ease;
+        }
+
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; align-items: flex-end; }
         .field-group { position: relative; }
-        .field-group label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--font-sub); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .field-group label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--font-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
         
-        .control-input, .control-select { width: 100%; padding: 12px 14px; border: 1px solid var(--border-line); background: var(--canvas-bg); color: var(--font-dark); border-radius: 10px; outline: none; font-size: 0.92rem; font-weight: 500; }
-        .control-input:focus, .control-select:focus { border-color: var(--brand-color); background: var(--surface-card); box-shadow: 0 0 0 3px rgba(122, 28, 28, 0.1); }
+        .control-input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 1px solid var(--border-line); 
+            background: var(--canvas-bg); 
+            color: var(--font-dark); 
+            border-radius: 10px; 
+            outline: none; 
+            font-size: 0.95rem; 
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        .control-input:focus { border-color: var(--brand-color); box-shadow: 0 0 0 3px rgba(122,28,28,0.1); background: var(--surface-card); }
 
-        .dropdown-suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface-card); border: 1px solid var(--border-line); border-radius: 8px; z-index: 10; max-height: 220px; overflow-y: auto; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
-        .suggest-row { padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-line); align-items: center; font-size: 0.88rem; }
-        .suggest-row:hover { background: var(--canvas-bg); padding-left: 18px; }
-        .suggest-row small { color: var(--font-sub); }
+        /* SUGGESTIONS LIST */
+        .dropdown-suggestions {
+            position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--surface-card);
+            border: 1px solid var(--border-line); border-radius: 10px; z-index: 10; max-height: 250px; overflow-y: auto; display: none;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
+        .suggest-row { padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-line); align-items: center; font-size: 0.9rem; }
+        .suggest-row:last-child { border-bottom: none; }
+        .suggest-row:hover { background: var(--canvas-bg); }
+        .suggest-row small { color: var(--font-sub); font-weight: 400; margin-left: 5px; }
 
-        .pill-badge { color: #FFFFFF; font-size: 0.68rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.02em; }
-        .pill-badge.l26 { background-color: var(--l26-color); }
-        .pill-badge.lbam { background-color: var(--lbam-color); }
-        .pill-badge.li { background-color: var(--li-color); }
+        .pill-badge { color: #FFFFFF; font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 5px; font-family: 'Space Grotesk', sans-serif; }
+        .pill-badge.l26 { background-color: var(--color-l26); }
+        .pill-badge.lbam { background-color: var(--color-lbam); }
+        .pill-badge.li { background-color: var(--color-li); }
 
-        .submit-trigger { background: var(--brand-color); color: #FFFFFF; border: none; padding: 0 20px; height: 46px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.9rem; width: 100%; font-family: 'Space Grotesk', sans-serif; box-shadow: 0 4px 12px rgba(122, 28, 28, 0.15); }
-        .submit-trigger:hover { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(122, 28, 28, 0.25); }
+        .submit-trigger { 
+            background: var(--brand-color); 
+            color: #FFFFFF; 
+            border: none; 
+            padding: 0 24px; 
+            height: 50px; 
+            border-radius: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 0.92rem; 
+            width: 100%; 
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.2s ease;
+        }
+        .submit-trigger:hover { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(122,28,28,0.15); }
 
-        /* ACCESSIBILITÉ PMR BADGE */
-        .pmr-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600; color: #0F4C81; background: rgba(15, 76, 129, 0.08); padding: 4px 10px; border-radius: 20px; margin-top: 6px; }
-        [data-theme="dark"] .pmr-badge { color: #38BDF8; background: rgba(56, 189, 248, 0.12); }
-
-        .skeleton-loader { display: none; max-width: 920px; margin: 20px auto; padding: 30px; background: var(--surface-card); border-radius: var(--smooth-radius); border: 1px solid var(--border-line); }
-        .wave-block { background: linear-gradient(90deg, var(--canvas-bg) 25%, var(--border-line) 50%, var(--canvas-bg) 75%); background-size: 200% 100%; animation: pulseWave 1.2s infinite linear; border-radius: 6px; }
+        /* --- SQUELETTE DE CHARGEMENT HUMAIN (SHIMMER) --- */
+        .skeleton-loader { display: none; max-width: 920px; margin: 20px auto; padding: 35px; background: var(--surface-card); border-radius: var(--smooth-radius); border: 1px solid var(--border-line); }
+        .wave-block { background: linear-gradient(90deg, var(--canvas-bg) 25%, var(--border-line) 50%, var(--canvas-bg) 75%); background-size: 200% 100%; animation: pulseWave 1.2s infinite linear; border-radius: 8px; }
         @keyframes pulseWave { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        .output-container { max-width: 920px; margin: 20px auto; padding: 30px; background: var(--surface-card); border-radius: var(--smooth-radius); border: 1px solid var(--border-line); display: none; }
+        /* --- PRÉSENTATION DES RÉSULTATS --- */
+        .output-container { max-width: 920px; margin: 20px auto; padding: 35px; background: var(--surface-card); border-radius: var(--smooth-radius); border: 1px solid var(--border-line); display: none; animation: slideReveal 0.35s cubic-bezier(0.215, 0.610, 0.355, 1) forwards; }
+        @keyframes slideReveal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         
-        .route-bar { display: flex; align-items: center; margin-bottom: 25px; padding: 14px 18px; background: var(--canvas-bg); border-radius: 10px; border-left: 4px solid var(--route-color); animation: fadeInUp 0.4s ease; }
-        .route-rect-badge { padding: 6px 14px; border-radius: 6px; color: #FFFFFF; font-weight: 700; font-size: 1.1rem; font-family: 'Space Grotesk', sans-serif; text-align: center; min-width: 55px; }
-        .route-meta { display: flex; flex-direction: column; margin-left: 15px; }
-        .route-meta-lbl { font-size: 0.68rem; font-weight: 700; color: var(--font-sub); text-transform: uppercase; }
-        .route-meta-val { font-size: 1rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+        .route-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; padding: 18px 22px; background: var(--canvas-bg); border-radius: 12px; border-left: 4px solid var(--route-theme); }
+        .route-badge { width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-weight: 700; font-size: 1.25rem; font-family: 'Space Grotesk', sans-serif; }
+        .route-meta { display: flex; flex-direction: column; flex-grow: 1; margin-left: 18px; }
+        .route-meta-lbl { font-size: 0.72rem; font-weight: 700; color: var(--font-sub); text-transform: uppercase; letter-spacing: 0.05em; }
+        .route-meta-val { font-size: 1.05rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
 
-        .itinerary-chain { position: relative; padding-left: 30px; margin-left: 10px; animation: fadeInUp 0.5s ease; }
-        .itinerary-chain::before { content: ''; position: absolute; left: 4px; top: 10px; bottom: 10px; width: 3px; background: var(--route-color, var(--border-line)); }
-        .itinerary-chain.is-walkway::before { background: repeating-linear-gradient(to bottom, var(--border-line), var(--border-line) 5px, transparent 5px, transparent 10px) !important; }
+        .itinerary-chain { position: relative; padding-left: 35px; margin-left: 12px; }
+        .itinerary-chain::before { content: ''; position: absolute; left: 4px; top: 10px; bottom: 10px; width: 4px; background: var(--route-theme); border-radius: 4px; }
+        .itinerary-chain.is-walkway::before { background: repeating-linear-gradient(to bottom, var(--border-line), var(--border-line) 6px, transparent 6px, transparent 12px); }
 
-        .chain-node { position: relative; margin-bottom: 20px; font-size: 0.92rem; display: flex; align-items: center; min-height: 24px; }
-        .chain-node::before { content: ''; position: absolute; left: -30px; top: calc(50% - 5px); width: 10px; height: 10px; border-radius: 50%; background: var(--surface-card); border: 2px solid var(--route-color, var(--brand-color)); z-index: 2; }
-        .chain-node.is-extremity::before { background: var(--route-color, var(--brand-color)) !important; scale: 1.2; }
+        .chain-node { position: relative; margin-bottom: 24px; font-size: 0.95rem; display: flex; align-items: center; min-height: 24px; }
+        .chain-node::before { content: ''; position: absolute; left: -36px; top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--surface-card); border: 3px solid var(--route-theme); z-index: 2; }
+        .chain-node.is-extremity::before { background: var(--route-theme); scale: 1.25; }
 
-        .node-time { font-weight: 700; margin-right: 15px; min-width: 45px; color: var(--font-dark); font-family: 'Space Grotesk', sans-serif; }
+        .node-time { font-weight: 700; margin-right: 20px; min-width: 50px; color: var(--font-dark); font-family: 'Space Grotesk', sans-serif; }
+        .node-summary { font-size: 0.82rem; color: var(--font-sub); font-weight: 600; margin-left: 10px; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
 
-        .collapsible-trigger { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--brand-color); font-weight: 600; background: var(--canvas-bg); padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; margin: 10px 0 15px -4px; }
-        .collapsible-trigger:hover { background: var(--border-line); transform: translateX(2px); }
-        .collapsible-trigger i { transition: transform 0.2s; }
-        .collapsible-trigger.is-open i { transform: rotate(180deg); }
-        .hidden-nodes-box { display: none; padding-left: 0; margin-top: 5px; animation: fadeInUp 0.3s ease; }
+        /* BLOC MARCHE / CORRESPONDANCE */
+        .transfer-walk-card {
+            display: flex; align-items: center; gap: 18px; background: var(--canvas-bg); 
+            padding: 14px 20px; border-radius: 12px; margin: 15px 0 20px 12px;
+            border: 1px dashed var(--border-line);
+        }
+        .transfer-walk-icon { font-size: 1.3rem; color: var(--font-sub); animation: humanStride 0.8s ease-in-out infinite alternate; }
+        @keyframes humanStride { from { transform: translateX(-2px); } to { transform: translateX(2px); } }
 
-        .transfer-walk-card { display: flex; align-items: center; gap: 15px; background: var(--canvas-bg); padding: 12px 16px; border-radius: 8px; margin: 10px 0 15px 0; border: 1px dashed var(--border-line); }
-
-        .live-traffic-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-top: 5px; }
-        .traffic-row-card { background: var(--surface-card); border: 1px solid var(--border-line); border-radius: 14px; padding: 16px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
-        .traffic-row-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.04); }
+        /* --- MODULE TRAFIC --- */
+        .live-traffic-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 5px; }
+        .traffic-row-card { background: var(--canvas-bg); border: 1px solid var(--border-line); border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; }
         
-        /* SIGNAL LIGHTS (CORRIGÉS POUR FIREBASE/DISCORD) */
         .signal-light { width: 14px; height: 14px; border-radius: 50%; background-color: #cbd5e1; position: relative; }
-        .signal-light.status-vert, .signal-light.status-green { background-color: var(--live-ok); box-shadow: 0 0 12px var(--live-ok); animation: pulseLight 2s infinite alternate; }
-        .signal-light.status-orange, .signal-light.status-warn { background-color: var(--live-warn); box-shadow: 0 0 12px var(--live-warn); animation: pulseLight 1.5s infinite alternate; }
-        .signal-light.status-rouge, .signal-light.status-crit, .signal-light.status-red { background-color: var(--live-crit); box-shadow: 0 0 12px var(--live-crit); animation: pulseLight 1s infinite alternate; }
-
-        .admin-footer { max-width: 920px; margin: 40px auto; text-align: center; }
-        .admin-link-btn { background: none; border: none; color: var(--font-sub); font-size: 0.78rem; text-decoration: underline; cursor: pointer; font-weight: 500; }
-        .admin-panel { display: none; background: var(--surface-card); max-width: 480px; margin: 20px auto; padding: 25px; border-radius: var(--smooth-radius); border: 1px solid var(--border-line); box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: left; animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .signal-light.status-vert { background-color: var(--live-ok); box-shadow: 0 0 10px rgba(16,185,129,0.4); }
+        .signal-light.status-orange { background-color: var(--live-warn); box-shadow: 0 0 10px rgba(245,158,11,0.4); }
+        .signal-light.status-rouge { background-color: var(--live-crit); box-shadow: 0 0 10px rgba(239,68,68,0.4); }
     </style>
 </head>
 <body>
 
-    <div id="global-alert-banner" class="alert-banner">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <i id="alert-banner-icon" class="fa-solid"></i>
-            <span id="alert-banner-text"></span>
-        </div>
-        <button class="alert-close-btn" onclick="closeAlertBanner()">&times;</button>
-    </div>
-
     <header class="app-bar">
-        <img src="https://image.noelshack.com/fichiers/2026/28/2/1783387205-2b6a27e168543ce8099dc90780cd86d6-removebg-preview.png" alt="Logo" class="app-bar-logo">
+        <img src="https://image.noelshack.com/fichiers/2026/28/2/1783387205-2b6a27e168543ce8099dc90780cd86d6-removebg-preview.png" alt="Logo Officiel Network" class="app-bar-logo">
         <button class="dark-mode-switch" id="theme-toggle-btn"><i class="fa-solid fa-moon"></i></button>
     </header>
 
@@ -197,25 +274,25 @@
     </div>
 
     <section class="stage-banner">
-        <h1 class="animate-fade-up">Recherche d'itinéraires</h1>
-        <p class="animate-fade-up" style="animation-delay: 0.1s;">Planifiez vos déplacements sur les lignes métropolitaines.</p>
+        <h1>Recherche d'itinéraires</h1>
+        <p>Planifiez vos déplacements en temps réel sur les réseaux de transports métropolitains.</p>
     </section>
 
-    <main class="workspace animate-fade-up" id="panel-search" style="animation-delay: 0.2s;">
+    <main class="workspace" id="panel-search">
         <form id="route-builder-form" autocomplete="off">
             <div class="form-row">
                 <div class="field-group">
-                    <label>Départ</label>
-                    <input type="text" id="geo-start" class="control-input" placeholder="Point de départ...">
+                    <label>Arrêt de départ</label>
+                    <input type="text" id="geo-start" class="control-input" placeholder="Saisissez un point de départ...">
                     <div id="box-sug-start" class="dropdown-suggestions"></div>
                 </div>
                 <div class="field-group">
-                    <label>Arrivée</label>
-                    <input type="text" id="geo-end" class="control-input" placeholder="Destination...">
+                    <label>Arrêt d'arrivée</label>
+                    <input type="text" id="geo-end" class="control-input" placeholder="Saisissez une destination...">
                     <div id="box-sug-end" class="dropdown-suggestions"></div>
                 </div>
                 <div class="field-group">
-                    <label>Heure</label>
+                    <label>Heure de départ</label>
                     <input type="datetime-local" id="geo-time" class="control-input">
                 </div>
                 <div class="field-group">
@@ -226,89 +303,53 @@
     </main>
 
     <div class="skeleton-loader" id="loading-shimmer-mask">
-        <div class="wave-block" style="height: 50px; margin-bottom: 15px;"></div>
-        <div class="wave-block" style="height: 20px; width: 40%;"></div>
+        <div class="wave-block" style="height: 55px; margin-bottom: 20px;"></div>
+        <div class="wave-block" style="height: 25px; width: 35%; margin-bottom: 12px;"></div>
+        <div class="wave-block" style="height: 20px; width: 80%; margin-bottom: 12px;"></div>
+        <div class="wave-block" style="height: 20px; width: 60%;"></div>
     </div>
 
     <main class="workspace" id="panel-traffic" style="display: none;">
-        <h2 style="font-family:'Space Grotesk', sans-serif; font-size:1rem; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:8px;">
-            <i class="fa-solid fa-satellite-dish" style="color:var(--brand-color)"></i> État du réseau en temps réel
+        <h2 style="font-family:'Space Grotesk', sans-serif; font-size:1.1rem; font-weight:700; margin-bottom:25px; display:flex; align-items:center; gap:10px;">
+            <i class="fa-solid fa-satellite-dish" style="color:var(--brand-color)"></i> État du trafic en temps réel
         </h2>
         <div class="live-traffic-dashboard">
             <div class="traffic-row-card">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="route-rect-badge" style="background: var(--l26-color)">26</div>
-                    <div class="route-meta">
-                        <span class="route-meta-val" style="font-size:0.9rem;">Ligne 26</span>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="route-badge" style="background: var(--color-l26)">26</div>
+                    <div class="route-meta" style="margin-left:10px;">
+                        <span class="route-meta-val" style="font-size:0.95rem;">Ligne 26</span>
                         <span class="route-meta-lbl">Martigues</span>
-                        <div class="pmr-badge"><i class="fa-solid fa-wheelchair"></i> PMR Accessible</div>
                     </div>
                 </div>
-                <div id="realtime-light-26" class="signal-light status-vert"></div>
+                <div id="realtime-light-26" class="signal-light"></div>
             </div>
 
             <div class="traffic-row-card">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="route-rect-badge" style="background: var(--lbam-color)">BM</div>
-                    <div class="route-meta">
-                        <span class="route-meta-val" style="font-size:0.9rem;">Ligne BAM</span>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="route-badge" style="background: var(--color-lbam)">BM</div>
+                    <div class="route-meta" style="margin-left:10px;">
+                        <span class="route-meta-val" style="font-size:0.95rem;">Ligne BAM</span>
                         <span class="route-meta-lbl">Miramas</span>
-                        <div class="pmr-badge"><i class="fa-solid fa-wheelchair"></i> PMR Accessible</div>
                     </div>
                 </div>
-                <div id="realtime-light-BAM" class="signal-light status-vert"></div>
+                <div id="realtime-light-BAM" class="signal-light"></div>
             </div>
 
             <div class="traffic-row-card">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="route-rect-badge" style="background: var(--li-color)">I</div>
-                    <div class="route-meta">
-                        <span class="route-meta-val" style="font-size:0.9rem;">Ligne I (Istréen)</span>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="route-badge" style="background: var(--color-li)">I</div>
+                    <div class="route-meta" style="margin-left:10px;">
+                        <span class="route-meta-val" style="font-size:0.95rem;">Ligne I (Istréen)</span>
                         <span class="route-meta-lbl">Istres</span>
-                        <div class="pmr-badge"><i class="fa-solid fa-wheelchair"></i> PMR Accessible</div>
                     </div>
                 </div>
-                <div id="realtime-light-I" class="signal-light status-vert"></div>
+                <div id="realtime-light-I" class="signal-light"></div>
             </div>
         </div>
     </main>
 
-    <section id="rendering-output-hub" class="output-container animate-fade-up"></section>
-
-    <footer class="admin-footer">
-        <button class="admin-link-btn" onclick="toggleAdminPanel()">Accès Portail Administration</button>
-        <div id="panel-admin-box" class="admin-panel">
-            <h3 style="font-family:'Space Grotesk', sans-serif; font-size:0.95rem; margin-bottom:15px;" id="admin-title">Identification Superviseur</h3>
-            
-            <div id="admin-step-auth">
-                <div class="field-group" style="margin-bottom:12px;">
-                    <label>Identifiant de connexion</label>
-                    <input type="text" id="admin-id-field" class="control-input" placeholder="Entrez votre ID...">
-                </div>
-                <button type="button" class="submit-trigger" style="height:38px; font-size:0.85rem;" onclick="checkAdminCredentials()">VÉRIFIER</button>
-            </div>
-
-            <div id="admin-step-password" style="display:none;">
-                <p style="font-size:0.82rem; color:var(--live-ok); font-weight:600; margin-bottom:12px;"><i class="fa-solid fa-user-shield"></i> Session Superviseur Active.</p>
-                
-                <div class="field-group" style="margin-bottom:12px;">
-                    <label>Type d'Alerte Réseau</label>
-                    <select id="admin-alert-type" class="control-select">
-                        <option value="orange">Importante (Orange + Point d'exclamation)</option>
-                        <option value="rouge">Critique (Rouge + Alerte)</option>
-                    </select>
-                </div>
-
-                <div class="field-group" style="margin-bottom:15px;">
-                    <label>Message de perturbation</label>
-                    <input type="text" id="admin-alert-msg" class="control-input" placeholder="Ex: Retards de 20 min sur la ligne 26...">
-                </div>
-
-                <button type="button" class="submit-trigger" style="height:38px; font-size:0.85rem; background:var(--brand-color);" onclick="dispatchNetworkAlert()">PUBLIER L'ALERTE</button>
-            </div>
-            <p id="admin-error-msg" style="color:var(--live-crit); font-size:0.78rem; font-weight:600; margin-top:10px; display:none;"></p>
-        </div>
-    </footer>
+    <section id="rendering-output-hub" class="output-container"></section>
 
     <script>
         const networks = {
@@ -341,15 +382,34 @@
             const pTraffic = document.getElementById('panel-traffic');
             const pOutput = document.getElementById('rendering-output-hub');
             
-            pSearch.style.display = 'none'; pTraffic.style.display = 'none'; pOutput.style.display = 'none';
+            pSearch.style.display = 'none';
+            pTraffic.style.display = 'none';
+            pOutput.style.display = 'none';
             
             if (tabElement.textContent === "Itinéraires") { pSearch.style.display = 'block'; } 
             else if (tabElement.textContent === "Infos Trafic") { pTraffic.style.display = 'block'; } 
             else {
                 pOutput.style.display = 'block';
-                pOutput.innerHTML = `<p style="text-align:center; padding:20px; color:var(--font-sub); font-size:0.88rem;">Module en cours de synchronisation.</p>`;
+                pOutput.innerHTML = `<p style="text-align:center; padding:30px 10px; color:var(--font-sub); font-size:0.9rem;"><i class="fa-solid fa-bell-slash" style="display:block; margin-bottom:10px; font-size:1.4rem; color:var(--brand-color)"></i>Ce sous-module est en cours de synchronisation de base de données.</p>`;
             }
         }
+
+        const themeTrigger = document.getElementById('theme-toggle-btn');
+        if (localStorage.getItem('user-ui-theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        }
+        themeTrigger.onclick = () => {
+            if (document.documentElement.hasAttribute('data-theme')) {
+                document.documentElement.removeAttribute('data-theme');
+                themeTrigger.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                localStorage.setItem('user-ui-theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                localStorage.setItem('user-ui-theme', 'dark');
+            }
+        };
 
         function wireAutocompleteSystem(targetInputId, targetBoxId) {
             const field = document.getElementById(targetInputId);
@@ -360,18 +420,19 @@
                 container.innerHTML = '';
                 if (!searchStr) { container.style.display = 'none'; return; }
 
-                const stack = staticStopsRegistry.filter(item => item.name.toLowerCase().includes(searchStr));
+                const stack = staticStopsRegistry.filter(item => item.name.toLowerCase().includes(searchStr) || item.city.toLowerCase().includes(searchStr));
                 if (stack.length) {
                     container.style.display = 'block';
                     stack.forEach(node => {
                         const div = document.createElement('div');
                         div.className = 'suggest-row';
-                        div.innerHTML = `<div><strong>${node.name}</strong> <small>(${node.city})</small></div><span class="pill-badge ${node.class}">Ligne ${node.line}</span>`;
+                        div.innerHTML = `<div><strong>${node.name}</strong><small>(${node.city})</small></div><span class="pill-badge ${node.class}">Ligne ${node.line}</span>`;
                         div.onclick = () => { field.value = node.name; container.style.display = 'none'; };
                         container.appendChild(div);
                     });
                 } else { container.style.display = 'none'; }
             };
+            document.addEventListener('click', (ev) => { if (ev.target !== field) container.style.display = 'none'; });
         }
         wireAutocompleteSystem('geo-start', 'box-sug-start');
         wireAutocompleteSystem('geo-end', 'box-sug-end');
@@ -383,27 +444,22 @@
 
         function compileTimeStr(d) { return d.toTimeString().slice(0, 5); }
 
-        function toggleIntermediates(btn) {
-            const container = btn.nextElementSibling;
-            if (container.style.display === "block") {
-                container.style.display = "none";
-                btn.classList.remove('is-open');
-            } else {
-                container.style.display = "block";
-                btn.classList.add('is-open');
-            }
-        }
-
         document.getElementById('route-builder-form').onsubmit = (event) => {
             event.preventDefault();
+            const fromQuery = document.getElementById('geo-start').value.trim();
+            const toQuery = document.getElementById('geo-end').value.trim();
             const outBox = document.getElementById('rendering-output-hub');
             const skeleton = document.getElementById('loading-shimmer-mask');
 
-            const startObj = staticStopsRegistry.find(s => s.name.toLowerCase() === document.getElementById('geo-start').value.trim().toLowerCase());
-            const endObj = staticStopsRegistry.find(s => s.name.toLowerCase() === document.getElementById('geo-end').value.trim().toLowerCase());
+            const startObj = staticStopsRegistry.find(s => s.name.toLowerCase() === fromQuery.toLowerCase());
+            const endObj = staticStopsRegistry.find(s => s.name.toLowerCase() === toQuery.toLowerCase());
 
             outBox.style.display = 'none';
-            if (!startObj || !endObj) { return; }
+            if (!startObj || !endObj) {
+                outBox.style.display = 'block';
+                outBox.innerHTML = `<p style="color:var(--live-crit); text-align:center; font-weight:600;"><i class="fa-solid fa-circle-exclamation"></i> Saisie non concordante. Veuillez cliquer sur une suggestion valide.</p>`;
+                return;
+            }
 
             skeleton.style.display = 'block';
             
@@ -434,35 +490,32 @@
                     const intermediateNodes = segmentStops.slice(1, segmentStops.length - 1);
 
                     outBox.innerHTML = `
-                        <div class="route-bar" style="--route-color: ${startObj.color};">
-                            <div class="route-rect-badge" style="background:${startObj.color}">${lId}</div>
+                        <div class="route-bar" style="--route-theme: ${startObj.color}">
+                            <div class="route-badge" style="background:${startObj.color}">${lId}</div>
                             <div class="route-meta">
-                                <span class="route-meta-lbl">Direction</span>
+                                <span class="route-meta-lbl">Prendre la direction du terminus</span>
                                 <span class="route-meta-val">${dynamicTerminus}</span>
-                                <div class="pmr-badge"><i class="fa-solid fa-wheelchair"></i> Voyage PMR Accessible</div>
                             </div>
                         </div>
-                        <div class="itinerary-chain" style="--route-color:${startObj.color}">
+                        <div class="itinerary-chain" style="--route-theme:${startObj.color}">
                             <div class="chain-node is-extremity">
                                 <span class="node-time">${compileTimeStr(timeCursor)}</span>
                                 <span>Montée : <strong>${originNode}</strong></span>
                             </div>
                             
-                            ${intermediateNodes.length > 0 ? `
-                                <button class="collapsible-trigger" onclick="toggleIntermediates(this)">
-                                    <i class="fa-solid fa-chevron-down"></i> <span>${intermediateNodes.length} arrêt(s) intermédiaire(s)</span>
-                                </button>
-                                <div class="hidden-nodes-box">
-                                    ${intermediateNodes.map(name => {
-                                        timeCursor = new Date(timeCursor.getTime() + 2 * 60000);
-                                        return `
-                                        <div class="chain-node">
-                                            <span class="node-time" style="color:var(--font-sub); font-weight:500;">${compileTimeStr(timeCursor)}</span>
-                                            <span style="color:var(--font-sub);">${name}</span>
-                                        </div>`;
-                                    }).join('')}
-                                </div>
-                            ` : ''}
+                            <div class="node-summary">
+                                <i class="fa-solid fa-ellipsis-vertical" style="color:${startObj.color}"></i> 
+                                <span>${intermediateNodes.length} arrêt(s) intermédiaire(s) entre les deux points</span>
+                            </div>
+
+                            ${intermediateNodes.map((name, i) => {
+                                timeCursor = new Date(timeCursor.getTime() + 2 * 60000);
+                                return `
+                                <div class="chain-node">
+                                    <span class="node-time" style="color:var(--font-sub); font-weight:500;">${compileTimeStr(timeCursor)}</span>
+                                    <span style="color:var(--font-sub);">${name}</span>
+                                </div>`;
+                            }).join('')}
 
                             <div class="chain-node is-extremity">
                                 <span class="node-time">${compileTimeStr(new Date(timeCursor.getTime() + 2 * 60000))}</span>
@@ -470,120 +523,151 @@
                             </div>
                         </div>
                     `;
-                } else {
-                    const firstLegEnd = new Date(timeCursor.getTime() + 12 * 60000);
+                } 
+                else {
+                    const firstLegEnd = new Date(timeCursor.getTime() + 15 * 60000);
                     const secondLegStart = new Date(firstLegEnd.getTime() + 5 * 60000);
-                    const journeyEnd = new Date(secondLegStart.getTime() + 12 * 60000);
+                    const journeyEnd = new Date(secondLegStart.getTime() + 15 * 60000);
 
                     outBox.innerHTML = `
-                        <div class="route-bar" style="--route-color: ${startObj.color};">
-                            <div class="route-rect-badge" style="background:${startObj.color}">${startObj.line}</div>
+                        <div style="margin-bottom:20px; font-weight:700; font-size:0.95rem; color:var(--brand-color); display:flex; align-items:center; gap:8px; font-family:'Space Grotesk', sans-serif;">
+                            <i class="fa-solid fa-shuffle"></i> Trajet avec changement de quai
+                        </div>
+                        
+                        <div class="route-bar" style="--route-theme: ${startObj.color}">
+                            <div class="route-badge" style="background:${startObj.color}">${startObj.line}</div>
                             <div class="route-meta">
-                                <span class="route-meta-lbl">Prendre la ligne vers</span>
-                                <span class="route-meta-val">Pôle d'Échanges Intercommunal</span>
+                                <span class="route-meta-lbl">Prendre la ligne en direction de</span>
+                                <span class="route-meta-val">Gare de Connexion Centrale</span>
                             </div>
                         </div>
-                        <div class="itinerary-chain" style="--route-color:${startObj.color}">
-                            <div class="chain-node is-extremity"><span class="node-time">${compileTimeStr(timeCursor)}</span><span>${startObj.name}</span></div>
-                            <div class="chain-node is-extremity"><span class="node-time">${compileTimeStr(firstLegEnd)}</span><span>Descente Hub</span></div>
+                        <div class="itinerary-chain" style="--route-theme:${startObj.color}">
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(timeCursor)}</span>
+                                <span>Montée à l'arrêt : <strong>${startObj.name}</strong></span>
+                            </div>
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(firstLegEnd)}</span>
+                                <span>Descente au Hub : <strong>Pôle d'Échanges Intercommunal</strong></span>
+                            </div>
                         </div>
 
-                        <div class="itinerary-chain is-walkway">
+                        <div class="itinerary-chain is-walkway" style="--route-theme: var(--border-line)">
                             <div class="transfer-walk-card">
                                 <div class="transfer-walk-icon"><i class="fa-solid fa-person-walking"></i></div>
-                                <div style="font-size:0.82rem; color:var(--font-sub);">Correspondance PMR aménagée vers quai suivant (env. 5 min).</div>
+                                <div style="font-size:0.85rem; color:var(--font-sub); font-weight:500;">
+                                    <strong>Correspondance piétonne</strong><br>
+                                    Rejoindre à pied le quai de transit suivant (Transfert libre — env. 5 min).
+                                </div>
                             </div>
                         </div>
 
-                        <div class="route-bar" style="--route-color: ${endObj.color};">
-                            <div class="route-rect-badge" style="background:${endObj.color}">${endObj.line}</div>
+                        <div class="route-bar" style="--route-theme: ${endObj.color}">
+                            <div class="route-badge" style="background:${endObj.color}">${endObj.line}</div>
                             <div class="route-meta">
-                                <span class="route-meta-lbl">Direction</span>
+                                <span class="route-meta-lbl">Changement — Prendre la direction de</span>
                                 <span class="route-meta-val">${networks[endObj.line].stops[networks[endObj.line].stops.length - 1]}</span>
                             </div>
                         </div>
-                        <div class="itinerary-chain" style="--route-color:${endObj.color}">
-                            <div class="chain-node is-extremity"><span class="node-time">${compileTimeStr(secondLegStart)}</span><span>Montée Hub</span></div>
-                            <div class="chain-node is-extremity"><span class="node-time">${compileTimeStr(journeyEnd)}</span><span>${endObj.name}</span></div>
+                        <div class="itinerary-chain" style="--route-theme:${endObj.color}">
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(secondLegStart)}</span>
+                                <span>Embarquement au Hub : <strong>Pôle d'Échanges Intercommunal</strong></span>
+                            </div>
+                            <div class="chain-node is-extremity">
+                                <span class="node-time">${compileTimeStr(journeyEnd)}</span>
+                                <span>Arrivée à destination : <strong>${endObj.name}</strong></span>
+                            </div>
                         </div>
                     `;
                 }
-            }, 600);
+            }, 800);
         };
 
-        function toggleAdminPanel() {
-            const box = document.getElementById('panel-admin-box');
-            box.style.display = (box.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function checkAdminCredentials() {
-            const inputId = document.getElementById('admin-id-field').value.trim();
-            const err = document.getElementById('admin-error-msg');
-            
-            if (inputId === "milandris" || inputId === "Alessia") {
-                err.style.display = 'none';
-                document.getElementById('admin-step-auth').style.display = 'none';
-                document.getElementById('admin-step-password').style.display = 'block';
-                document.getElementById('admin-title').textContent = `Superviseur : ${inputId}`;
-            } else {
-                err.textContent = "Identifiant inconnu.";
-                err.style.display = 'block';
-            }
-        }
-
-        function dispatchNetworkAlert() {
-            const type = document.getElementById('admin-alert-type').value;
-            const text = document.getElementById('admin-alert-msg').value.trim();
-            const banner = document.getElementById('global-alert-banner');
-            const icon = document.getElementById('alert-banner-icon');
-            const txtNode = document.getElementById('alert-banner-text');
-
-            if (!text) { alert("Veuillez saisir un descriptif."); return; }
-
-            banner.className = `alert-banner ${type === 'orange' ? 'warn' : 'crit'}`;
-            icon.className = type === 'orange' ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-triangle-exclamation';
-            txtNode.textContent = text;
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function closeAlertBanner() {
-            document.getElementById('global-alert-banner').className = 'alert-banner';
-        }
-
-        const themeTrigger = document.getElementById('theme-toggle-btn');
-        if (localStorage.getItem('user-ui-theme') === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); }
-        themeTrigger.onclick = () => {
-            if (document.documentElement.hasAttribute('data-theme')) {
-                document.documentElement.removeAttribute('data-theme'); localStorage.setItem('user-ui-theme', 'light');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('user-ui-theme', 'dark');
-            }
-        };
-
-        // FIREBASE DOCK (Gère vert, orange, rouge envoyés par votre Bot Discord)
+        // --- ALTERNATIVE FIABLE : POLLING VIA FETCH (RÉCUPÉRATION TOUTES LES 5 SECONDES) ---
         const FIREBASE_ENDPOINT = "https://aedan-mobilites-default-rtdb.europe-west1.firebasedatabase.app";
-        function launchFirebaseLiveStream() {
-            const listener = new EventSource(`${FIREBASE_ENDPOINT}/status.json`);
-            listener.onmessage = function(msg) {
-                const payload = JSON.parse(msg.data);
-                if (payload) {
-                    const targetData = payload.data ? payload.data : payload;
-                    ['26', 'BAM', 'I'].forEach(k => {
-                        const light = document.getElementById(`realtime-light-${k}`);
-                        if(light && targetData[k]) {
-                            const rawStatus = targetData[k].toLowerCase();
-                            let sanitizedClass = "status-vert";
-                            if (rawStatus === "orange" || rawStatus === "warn") sanitizedClass = "status-orange";
-                            if (rawStatus === "rouge" || rawStatus === "red" || rawStatus === "crit") sanitizedClass = "status-rouge";
-                            
-                            light.className = `signal-light ${sanitizedClass}`;
-                        }
-                    });
-                }
-            };
+        
+        function fetchFirebaseData() {
+            // Un fetch standard sur la racine en ajoutant un cache-buster (?nocache=...) pour éviter la mise en cache navigateur
+            fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Erreur de connexion Firebase");
+                    return response.json();
+                })
+                .then(serverData => {
+                    if (!serverData) return;
+
+                    // 1. Analyse et extraction adaptative de l'état des lignes (gère 'status' et 'status/data')
+                    if (serverData.status) {
+                        const mainStatus = serverData.status;
+                        const nestedData = serverData.status.data || {};
+
+                        // Application immédiate des ronds de couleur
+                        updateVisualLight('26', mainStatus['26'] || nestedData['26']);
+                        updateVisualLight('BAM', mainStatus['BAM'] || nestedData['BAM']);
+                        updateVisualLight('I', mainStatus['I'] || nestedData['I']);
+                    }
+
+                    // 2. Traitement dynamique du bandeau général d'alerte
+                    if (serverData.globalAlert) {
+                        handleBandeauAlerte(serverData.globalAlert);
+                    } else {
+                        // S'il n'y a plus de globalAlert dans la base de données, on supprime le bandeau de l'écran
+                        let existBox = document.getElementById('app-live-banner');
+                        if (existBox) existBox.remove();
+                    }
+                })
+                .catch(err => console.error("Synchro Firebase en pause :", err));
         }
-        launchFirebaseLiveStream();
+
+        function updateVisualLight(targetLineKey, stateValue) {
+            const lightElement = document.getElementById(`realtime-light-${targetLineKey}`);
+            if (!lightElement || !stateValue) return;
+            
+            lightElement.className = "signal-light";
+            if (stateValue === "vert") lightElement.classList.add("status-vert");
+            if (stateValue === "orange") lightElement.classList.add("status-orange");
+            if (stateValue === "rouge") lightElement.classList.add("status-rouge");
+        }
+
+        function handleBandeauAlerte(alertObj) {
+            let existBox = document.getElementById('app-live-banner');
+            
+            // Si l'alerte a été coupée par le bot (/fin-alerte) ou est vide
+            if (!alertObj || !alertObj.text) {
+                if (existBox) existBox.remove();
+                return;
+            }
+
+            // Si le bandeau existe déjà et que le texte n'a pas bougé, inutile de le recréer pour éviter les clignotements
+            if (existBox && existBox.getAttribute('data-text') === alertObj.text) {
+                return;
+            }
+            
+            if (existBox) existBox.remove();
+
+            const bgBanner = alertObj.type === 'rouge' ? 'var(--live-crit)' : 'var(--live-warn)';
+            const iconHTML = alertObj.type === 'rouge' ? '<i class="fa-solid fa-triangle-exclamation"></i>' : '<i class="fa-solid fa-circle-exclamation"></i>';
+
+            const banner = document.createElement('div');
+            banner.id = 'app-live-banner';
+            banner.setAttribute('data-text', alertObj.text); // Sécurité anti-clignotement
+            banner.style.background = bgBanner;
+            banner.innerHTML = `
+                <div class="banner-content">
+                    ${iconHTML}
+                    <span>${alertObj.text}</span>
+                </div>
+                <button class="close-banner-btn" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            document.body.prepend(banner);
+        }
+        
+        // Premier chargement immédiat au démarrage de la page
+        fetchFirebaseData();
+        
+        // Puis rafraîchissement automatique et invisible en arrière-plan toutes les 5 secondes
+        setInterval(fetchFirebaseData, 5000);
     </script>
 </body>
 </html>
