@@ -226,7 +226,7 @@
         .pill-badge { color: #FFFFFF; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; }
         .pill-badge.l26 { background-color: var(--color-l26); }
         .pill-badge.lbam { background-color: var(--color-lbam); }
-        .pill-badge.li { background-color: var(--color-li); }
+        .pill-badge.li { background-color: var(--color-li); color: #000000; }
 
         .submit-trigger { 
             background: var(--brand-color); 
@@ -256,7 +256,7 @@
         .pmr-indicator { position: absolute; bottom: -2px; right: -2px; width: 18px; height: 18px; background: #0F4C81; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; border: 2px solid var(--surface-card); }
         
         .route-meta { display: flex; flex-direction: column; flex-grow: 1; margin-left: 18px; }
-        .route-meta-lbl { font-size: 0.72rem; font-weight: 500; color: var(--font-sub); text-transform: lowercase; font-style: italic; }
+        .route-meta-lbl { font-size: 0.72rem; font-weight: 500; color: var(--font-sub); font-style: italic; }
         .route-meta-val { font-size: 1.1rem; }
 
         .itinerary-chain { position: relative; padding-left: 35px; margin-left: 12px; }
@@ -286,9 +286,9 @@
         .traffic-row-card:hover { transform: translateY(-2px); }
         
         .signal-light { width: 14px; height: 14px; border-radius: 50%; background-color: #cbd5e1; position: relative; transition: all 0.4s ease; }
-        .signal-light.status-vert { background-color: var(--live-ok); box-shadow: 0 0 12px var(--live-ok); }
-        .signal-light.status-orange { background-color: var(--live-warn); box-shadow: 0 0 12px var(--live-warn); }
-        .signal-light.status-rouge { background-color: var(--live-crit); box-shadow: 0 0 12px var(--live-crit); }
+        .signal-light.status-vert { background-color: var(--live-ok) !important; box-shadow: 0 0 12px var(--live-ok); }
+        .signal-light.status-orange { background-color: var(--live-warn) !important; box-shadow: 0 0 12px var(--live-warn); }
+        .signal-light.status-rouge { background-color: var(--live-crit) !important; box-shadow: 0 0 12px var(--live-crit); }
     </style>
 </head>
 <body>
@@ -367,9 +367,9 @@
 
             <div class="traffic-row-card">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <div class="route-badge line-font" style="background: var(--color-li)">I <div class="pmr-indicator"><i class="fa-solid fa-wheelchair"></i></div></div>
+                    <div class="route-badge line-font" style="background: var(--color-li); color: #000000;">I <div class="pmr-indicator"><i class="fa-solid fa-wheelchair"></i></div></div>
                     <div class="route-meta" style="margin-left:10px;">
-                        <span class="route-meta-val line-font" style="font-size:0.95rem;">Ligne I (Istréen)</span>
+                        <span class="route-meta-val line-font" style="font-size:0.95rem;">Ligne I (iSTRÉEN)</span>
                         <span class="route-meta-lbl">Istres</span>
                     </div>
                 </div>
@@ -381,6 +381,12 @@
     <section id="rendering-output-hub" class="output-container"></section>
 
     <script>
+        // Fonction d'aide pour capitaliser le premier caractère des chaînes (villes)
+        function capitalizeFirstLetter(string) {
+            if (!string) return '';
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
         const networks = {
             "26": {
                 color: "#e182b4", class: "l26", city: "Martigues",
@@ -403,7 +409,9 @@
         const staticStopsRegistry = [];
         for (const [lineId, net] of Object.entries(networks)) {
             net.stops.forEach(stopName => {
-                staticStopsRegistry.push({ name: stopName, city: net.city, line: lineId, color: net.color, class: net.class });
+                // Application de la première lettre majuscule au nom de la ville
+                const formatCity = capitalizeFirstLetter(net.city);
+                staticStopsRegistry.push({ name: stopName, city: formatCity, line: lineId, color: net.color, class: net.class });
             });
         }
 
@@ -539,7 +547,7 @@
 
                     outBox.innerHTML = `
                         <div class="route-bar" style="--route-theme: ${startObj.color}">
-                            <div class="route-badge line-font" style="background:${startObj.color}">
+                            <div class="route-badge line-font" style="background:${startObj.color}; ${lId === 'I' ? 'color:#000000;' : ''}">
                                 ${lId}
                                 <div class="pmr-indicator"><i class="fa-solid fa-wheelchair"></i></div>
                             </div>
@@ -590,7 +598,7 @@
                         </div>
                         
                         <div class="route-bar" style="--route-theme: ${startObj.color}">
-                            <div class="route-badge line-font" style="background:${startObj.color}">
+                            <div class="route-badge line-font" style="background:${startObj.color}; ${startObj.line === 'I' ? 'color:#000000;' : ''}">
                                 ${startObj.line}
                                 <div class="pmr-indicator"><i class="fa-solid fa-wheelchair"></i></div>
                             </div>
@@ -621,7 +629,7 @@
                         </div>
 
                         <div class="route-bar" style="--route-theme: ${endObj.color}">
-                            <div class="route-badge line-font" style="background:${endObj.color}">
+                            <div class="route-badge line-font" style="background:${endObj.color}; ${endObj.line === 'I' ? 'color:#000000;' : ''}">
                                 ${endObj.line}
                                 <div class="pmr-indicator"><i class="fa-solid fa-wheelchair"></i></div>
                             </div>
@@ -663,7 +671,7 @@
 
                         updateVisualLight('26', mainStatus['26']);
                         updateVisualLight('BAM', mainStatus['BAM']);
-                        updateVisualLight('I', nestedData['I']);
+                        updateVisualLight('I', mainStatus['I'] || nestedData['I']);
                     }
 
                     // Traitement dynamique complet du bandeau d'alerte général
@@ -681,10 +689,13 @@
             const lightElement = document.getElementById(`realtime-light-${targetLineKey}`);
             if (!lightElement || !stateValue) return;
             
+            // Réinitialisation globale propre avant application de la nouvelle classe
             lightElement.className = "signal-light";
-            if (stateValue === "vert") lightElement.classList.add("status-vert");
-            if (stateValue === "orange") lightElement.classList.add("status-orange");
-            if (stateValue === "rouge") lightElement.classList.add("status-rouge");
+            
+            const stateClean = stateValue.toLowerCase().trim();
+            if (stateClean === "vert") lightElement.classList.add("status-vert");
+            if (stateClean === "orange") lightElement.classList.add("status-orange");
+            if (stateClean === "rouge") lightElement.classList.add("status-rouge");
         }
 
         // GESTION DU BANDEAU : COULEURS ET PICTOS FLUIDES
