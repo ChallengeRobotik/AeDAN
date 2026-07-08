@@ -21,7 +21,7 @@
             --border-line: #E2E8F0;
             --smooth-radius: 14px;
             
-            /* Nouvelles Couleurs Hexadécimales Demandées */
+            /* Couleurs des lignes */
             --color-l26: #e182b4;
             --color-lbam: #1b35b0;
             --color-li: #6dc16d;
@@ -29,6 +29,17 @@
             --live-ok: #10B981;
             --live-warn: #F59E0B;
             --live-crit: #EF4444;
+
+            /* --- CONFIGURATION DES 9 PALETTES DE COULEURS POUR LE BANDEAU --- */
+            --bg-violet: #7A1C1C; --txt-violet: #FFFFFF;
+            --bg-noir: #111827;   --txt-noir: #FFFFFF;
+            --bg-rouge: #EF4444;  --txt-rouge: #FFFFFF;
+            --bg-orange: #F97316; --txt-orange: #FFFFFF;
+            --bg-jaune: #FBBF24;  --txt-jaune: #1E293B; /* Texte foncé pour lisibilité */
+            --bg-bleu: #3B82F6;   --txt-bleu: #FFFFFF;
+            --bg-vert: #10B981;   --txt-vert: #FFFFFF;
+            --bg-rose: #EC4899;   --txt-rose: #FFFFFF;
+            --bg-gris: #6B7280;   --txt-gris: #FFFFFF;
         }
 
         [data-theme="dark"] {
@@ -54,7 +65,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- NOUVELLE POLICE SPÉCIFIQUE (MONTSERRAT ARABIC) --- */
         .line-font {
             font-family: 'Montserrat Arabic', sans-serif;
             font-weight: 600;
@@ -76,7 +86,7 @@
             to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        /* --- BANDEAU D'ALERTE ANIMÉ --- */
+        /* --- BANDEAU D'ALERTE DYNAMIQUE --- */
         #app-live-banner {
             width: 100%;
             padding: 14px 6%;
@@ -85,14 +95,15 @@
             justify-content: space-between;
             align-items: center;
             gap: 15px;
-            color: #FFFFFF;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             z-index: 110;
             animation: alertSpawn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transition: background 0.3s, color 0.3s;
         }
-        #app-live-banner .banner-content { display: flex; align-items: center; gap: 10px; margin: 0 auto; }
-        #app-live-banner .close-banner-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #FFFFFF; opacity: 0.8; transition: transform 0.2s; }
-        #app-live-banner .close-banner-btn:hover { transform: scale(1.2); }
+        #app-live-banner .banner-content { display: flex; align-items: center; gap: 12px; margin: 0 auto; font-weight: 600; }
+        #app-live-banner .banner-content i { font-size: 1.15rem; }
+        #app-live-banner .close-banner-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: inherit; opacity: 0.7; transition: transform 0.2s; }
+        #app-live-banner .close-banner-btn:hover { transform: scale(1.2); opacity: 1; }
 
         /* --- HEADER --- */
         .app-bar {
@@ -242,7 +253,6 @@
         .route-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; padding: 18px 22px; background: var(--canvas-bg); border-radius: 12px; border-left: 5px solid var(--route-theme); }
         .route-badge { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 1.15rem; position: relative; }
         
-        /* CERCLE PMR ACCESSIBILITÉ PROPRE SANS TEXTE */
         .pmr-indicator { position: absolute; bottom: -2px; right: -2px; width: 18px; height: 18px; background: #0F4C81; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; border: 2px solid var(--surface-card); }
         
         .route-meta { display: flex; flex-direction: column; flex-grow: 1; margin-left: 18px; }
@@ -259,7 +269,6 @@
 
         .node-time { margin-right: 20px; min-width: 50px; color: var(--font-dark); }
 
-        /* COMPOSANT ACCORDÉON ARRÊTS INTERMÉDIAIRES ANIMÉ */
         .node-summary { font-size: 0.85rem; color: var(--font-sub); font-weight: 600; margin-left: 10px; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; transition: color 0.2s; }
         .node-summary:hover { color: var(--font-dark); }
         .node-summary i.fa-chevron-down { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -418,6 +427,7 @@
             }
         }
 
+        // THÈME SOMBRE
         const themeTrigger = document.getElementById('theme-toggle-btn');
         if (localStorage.getItem('user-ui-theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -635,6 +645,7 @@
             }, 800);
         };
 
+        // --- LECTURE SECURISEE ET POLLING FIREBASE ---
         const FIREBASE_ENDPOINT = "https://aedan-mobilites-default-rtdb.europe-west1.firebasedatabase.app";
         
         function fetchFirebaseData() {
@@ -655,6 +666,7 @@
                         updateVisualLight('I', nestedData['I']);
                     }
 
+                    // Traitement dynamique complet du bandeau d'alerte général
                     if (serverData.globalAlert) {
                         handleBandeauAlerte(serverData.globalAlert);
                     } else {
@@ -675,68 +687,60 @@
             if (stateValue === "rouge") lightElement.classList.add("status-rouge");
         }
 
-        /* --- CORRECTION MAJEURE DU BANDEAU ET SUPPORT DES 9 COULEURS --- */
+        // GESTION DU BANDEAU : COULEURS ET PICTOS FLUIDES
         function handleBandeauAlerte(alertObj) {
             let existBox = document.getElementById('app-live-banner');
             
-            if (!alertObj || !alertObj.text || alertObj.text.trim() === "") {
+            if (!alertObj || !alertObj.text || alertObj.text === "") {
                 if (existBox) existBox.remove();
                 return;
             }
 
-            if (existBox && existBox.getAttribute('data-text') === alertObj.text && existBox.getAttribute('data-type') === alertObj.type && existBox.getAttribute('data-icon') === (alertObj.icon || "")) {
-                return;
+            // Si le texte, la couleur ou l'icône a changé, on reconstruit le bandeau
+            const currentText = existBox ? existBox.getAttribute('data-text') : '';
+            const currentType = existBox ? existBox.getAttribute('data-type') : '';
+            const currentIcon = existBox ? existBox.getAttribute('data-icon') : '';
+
+            if (existBox && currentText === alertObj.text && currentType === alertObj.type && currentIcon === alertObj.icon) {
+                return; // Rien n'a changé
             }
             
             if (existBox) existBox.remove();
 
-            // Palette des 9 types de couleurs demandés
-            const colorPalette = {
-                'violet': '#8B5CF6',
-                'noir': '#1E293B',
-                'rouge': '#EF4444',
-                'orange': '#F59E0B',
-                'jaune': '#EAB308',
-                'bleu': '#3B82F6',
-                'vert': '#10B981',
-                'rose': '#EC4899',
-                'gris': '#64748B'
-            };
+            // Sélection dynamique de la couleur de fond et du texte
+            const chosenType = alertObj.type || 'violet';
+            const bgStyle = `var(--bg-${chosenType})`;
+            const textStyle = `var(--txt-${chosenType})`;
 
-            const bgBanner = colorPalette[alertObj.type] || colorPalette['orange'];
-            
-            // Formatage intelligent de l'icône FontAwesome transmise par Discord
-            let iconHTML = '';
-            if (alertObj.icon && alertObj.icon.trim() !== "") {
-                let parsedIcon = alertObj.icon.trim();
-                if (!parsedIcon.startsWith('fa-')) {
-                    parsedIcon = 'fa-solid fa-' + parsedIcon;
-                } else if (!parsedIcon.includes(' ')) {
-                    parsedIcon = 'fa-solid ' + parsedIcon;
-                }
-                iconHTML = `<i class="${parsedIcon}"></i>`;
+            // Nettoyage du préfixe "fa-" si le formateur l'a écrit par réflexe
+            let iconName = alertObj.icon || 'triangle-exclamation';
+            if (iconName.startsWith('fa-')) {
+                iconName = iconName.replace('fa-', '');
             }
+
+            // Génération du code HTML de l'icône FontAwesome
+            const iconHTML = `<i class="fa-solid fa-${iconName}"></i>`;
 
             const banner = document.createElement('div');
             banner.id = 'app-live-banner';
             banner.setAttribute('data-text', alertObj.text); 
-            banner.setAttribute('data-type', alertObj.type); 
-            banner.setAttribute('data-icon', alertObj.icon || ""); 
-            banner.style.background = bgBanner;
+            banner.setAttribute('data-type', chosenType);
+            banner.setAttribute('data-icon', iconName);
             
-            // Évite le texte blanc invisible sur fond jaune
-            banner.style.color = alertObj.type === 'jaune' ? '#0F1115' : '#FFFFFF';
-
+            banner.style.background = bgStyle;
+            banner.style.color = textStyle;
+            
             banner.innerHTML = `
                 <div class="banner-content">
                     ${iconHTML}
                     <span class="line-font">${alertObj.text}</span>
                 </div>
-                <button class="close-banner-btn" style="color: inherit;" onclick="this.parentElement.remove()">&times;</button>
+                <button class="close-banner-btn" onclick="this.parentElement.remove()">&times;</button>
             `;
             document.body.prepend(banner);
         }
         
+        // Polling continu toutes les 5 secondes
         fetchFirebaseData();
         setInterval(fetchFirebaseData, 5000);
     </script>
