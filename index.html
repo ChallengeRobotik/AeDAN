@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AeDAN Mobilités</title>
+    <title>Horaires & Itinéraires — Transports Métropolitains</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -372,12 +372,10 @@
     <section id="rendering-output-hub" class="output-container"></section>
 
     <script>
-        // CONFIGURATION INTÉGRALE INTÉGRANT LES COMPORTEMENTS DE BRANCHES SUR LA LIGNE 26
         const networks = {
             "26": {
                 color: "#e182b4", class: "l26", city: "Martigues",
                 stops: ["Reveilla", "Hôpital Vallon", "Lycée Jean Lurcat", "Hameau", "Julien Olive", "Ginoux", "Vigneros", "Hôpital MTG", "Colline", "Di Lorto", "Asphodeles", "Les Lauriers", "Degas", "Renoir", "Seurat", "Matisse", "Pôle d'Échanges Danielle Casanova", "Coopérative", "Kennedy", "Paradis", "Doumer", "Place des Aires", "Mairie MTG", "Théâtre"],
-                // Définition technique des branches pour guider vers le vrai terminus final
                 branches: {
                     nord: ["Reveilla", "Hôpital Vallon", "Lycée Jean Lurcat", "Hameau", "Julien Olive", "Ginoux", "Vigneros"],
                     sud: ["Hôpital MTG", "Colline", "Di Lorto", "Asphodeles", "Les Lauriers", "Degas", "Renoir", "Seurat", "Matisse", "Pôle d'Échanges Danielle Casanova", "Coopérative", "Kennedy", "Paradis", "Doumer", "Place des Aires", "Mairie MTG", "Théâtre"]
@@ -420,7 +418,6 @@
             }
         }
 
-        // THÈME SOMBRE
         const themeTrigger = document.getElementById('theme-toggle-btn');
         if (localStorage.getItem('user-ui-theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -471,7 +468,6 @@
 
         function compileTimeStr(d) { return d.toTimeString().slice(0, 5); }
 
-        // SYSTÈME DE DÉPLIAGE FLUIDE DE L'ACCORDÉON DES ARRÊTS INTERMÉDIAIRES
         function toggleIntermediateStops(element) {
             element.classList.toggle('is-open');
             const wrapper = element.nextElementSibling;
@@ -502,7 +498,6 @@
                 outBox.style.display = 'block';
                 let timeCursor = new Date(timeBox.value);
 
-                // CAS UNIQUE DIRECT (MÊME RESEAU DE LIGNE)
                 if (startObj.line === endObj.line) {
                     const lId = startObj.line;
                     const netData = networks[lId];
@@ -514,7 +509,6 @@
 
                     if (idxStart < idxEnd) {
                         segmentStops = netData.stops.slice(idxStart, idxEnd + 1);
-                        // Logique de calcul de branche intelligente (Ligne 26) pour désigner le bon terminus
                         if (lId === "26" && netData.branches.nord.includes(endObj.name)) {
                             dynamicTerminus = "Vigneros";
                         } else {
@@ -575,7 +569,6 @@
                         </div>
                     `;
                 } 
-                // CORRESPONDANCE INTER-RESEAUX
                 else {
                     const firstLegEnd = new Date(timeCursor.getTime() + 15 * 60000);
                     const secondLegStart = new Date(firstLegEnd.getTime() + 5 * 60000);
@@ -642,7 +635,6 @@
             }, 800);
         };
 
-        // --- LECTURE SECURISEE ET POLLING CONTRE LES DECONNEXIONS FIREBASE ---
         const FIREBASE_ENDPOINT = "https://aedan-mobilites-default-rtdb.europe-west1.firebasedatabase.app";
         
         function fetchFirebaseData() {
@@ -654,17 +646,15 @@
                 .then(serverData => {
                     if (!serverData) return;
 
-                    // Extrait l'état global et l'imbrication data (gère à la fois status.26, status.BAM et status.data.I)
                     if (serverData.status) {
                         const mainStatus = serverData.status;
                         const nestedData = serverData.status.data || {};
 
                         updateVisualLight('26', mainStatus['26']);
                         updateVisualLight('BAM', mainStatus['BAM']);
-                        updateVisualLight('I', nestedData['I']); // Cible l'imbrication exacte de ton iSTRÉEN
+                        updateVisualLight('I', nestedData['I']);
                     }
 
-                    // Traitement dynamique du bandeau d'alerte général
                     if (serverData.globalAlert) {
                         handleBandeauAlerte(serverData.globalAlert);
                     } else {
@@ -685,38 +675,68 @@
             if (stateValue === "rouge") lightElement.classList.add("status-rouge");
         }
 
+        /* --- CORRECTION MAJEURE DU BANDEAU ET SUPPORT DES 9 COULEURS --- */
         function handleBandeauAlerte(alertObj) {
             let existBox = document.getElementById('app-live-banner');
             
-            if (!alertObj || !alertObj.text || alertObj.text === "") {
+            if (!alertObj || !alertObj.text || alertObj.text.trim() === "") {
                 if (existBox) existBox.remove();
                 return;
             }
 
-            if (existBox && existBox.getAttribute('data-text') === alertObj.text) {
+            if (existBox && existBox.getAttribute('data-text') === alertObj.text && existBox.getAttribute('data-type') === alertObj.type && existBox.getAttribute('data-icon') === (alertObj.icon || "")) {
                 return;
             }
             
             if (existBox) existBox.remove();
 
-            const bgBanner = alertObj.type === 'rouge' ? 'var(--live-crit)' : 'var(--live-warn)';
-            const iconHTML = alertObj.type === 'rouge' ? '<i class="fa-solid fa-triangle-exclamation"></i>' : '<i class="fa-solid fa-circle-exclamation"></i>';
+            // Palette des 9 types de couleurs demandés
+            const colorPalette = {
+                'violet': '#8B5CF6',
+                'noir': '#1E293B',
+                'rouge': '#EF4444',
+                'orange': '#F59E0B',
+                'jaune': '#EAB308',
+                'bleu': '#3B82F6',
+                'vert': '#10B981',
+                'rose': '#EC4899',
+                'gris': '#64748B'
+            };
+
+            const bgBanner = colorPalette[alertObj.type] || colorPalette['orange'];
+            
+            // Formatage intelligent de l'icône FontAwesome transmise par Discord
+            let iconHTML = '';
+            if (alertObj.icon && alertObj.icon.trim() !== "") {
+                let parsedIcon = alertObj.icon.trim();
+                if (!parsedIcon.startsWith('fa-')) {
+                    parsedIcon = 'fa-solid fa-' + parsedIcon;
+                } else if (!parsedIcon.includes(' ')) {
+                    parsedIcon = 'fa-solid ' + parsedIcon;
+                }
+                iconHTML = `<i class="${parsedIcon}"></i>`;
+            }
 
             const banner = document.createElement('div');
             banner.id = 'app-live-banner';
             banner.setAttribute('data-text', alertObj.text); 
+            banner.setAttribute('data-type', alertObj.type); 
+            banner.setAttribute('data-icon', alertObj.icon || ""); 
             banner.style.background = bgBanner;
+            
+            // Évite le texte blanc invisible sur fond jaune
+            banner.style.color = alertObj.type === 'jaune' ? '#0F1115' : '#FFFFFF';
+
             banner.innerHTML = `
                 <div class="banner-content">
                     ${iconHTML}
                     <span class="line-font">${alertObj.text}</span>
                 </div>
-                <button class="close-banner-btn" onclick="this.parentElement.remove()">&times;</button>
+                <button class="close-banner-btn" style="color: inherit;" onclick="this.parentElement.remove()">&times;</button>
             `;
             document.body.prepend(banner);
         }
         
-        // Polling continu toutes les 5 secondes
         fetchFirebaseData();
         setInterval(fetchFirebaseData, 5000);
     </script>
