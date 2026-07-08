@@ -145,9 +145,9 @@
 
             <div class="card-panel">
                 <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation</h2>
-                <div class="chat-flow-zone" id="chat-stream-output"></div>
-                <form id="form-send-chat" style="display: flex; gap: 10px;">
-                    <input type="text" id="chat-msg-field" class="form-item" placeholder="Écrire un message..." required autocomplete="off">
+                <div class="chat-flow-zone" id="chat-stream-output-driver"></div>
+                <form id="form-send-chat-driver" style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-msg-field-driver" class="form-item" placeholder="Écrire un message..." required autocomplete="off">
                     <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
             </div>
@@ -186,17 +186,25 @@
 
         <div id="admin-core-view" class="grid-dashboard" style="display: none;">
             <div class="card-panel">
-                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel</h2>
+                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel (RH)</h2>
                 <form id="form-add-driver">
                     <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
                     <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
                     <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
+                    <div class="form-row">
+                        <label>Rôle & Habilitation</label>
+                        <select id="add-role" class="form-item">
+                            <option value="Conducteur">Conducteur</option>
+                            <option value="Régulateur">Régulateur</option>
+                            <option value="Administrateur">Administrateur</option>
+                        </select>
+                    </div>
                     <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
                 </form>
 
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Matricule</th><th>Nom</th><th>Code</th><th></th></tr></thead>
+                        <thead><tr><th>Matricule</th><th>Nom (Rôle)</th><th>Code</th><th></th></tr></thead>
                         <tbody id="box-table-drivers"></tbody>
                     </table>
                 </div>
@@ -217,7 +225,7 @@
 
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Ligne</th><th>Amplitude</th><th>Matricule</th><th>Mission</th><th>Statut</th><th></th></tr></thead>
+                        <thead><tr><th>Ligne</th><th>Amplitude</th><th>Matricule (Agent)</th><th>Mission</th><th>Statut</th><th></th></tr></thead>
                         <tbody id="box-table-services"></tbody>
                     </table>
                 </div>
@@ -227,6 +235,25 @@
                     <table>
                         <thead><tr><th>Agent</th><th>Période</th><th>Motif</th><th>Décision direction</th><th></th></tr></thead>
                         <tbody id="box-table-admin-leaves"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-panel">
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation (Admin)</h2>
+                <div class="chat-flow-zone" id="chat-stream-output-admin"></div>
+                <form id="form-send-chat-admin" style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-msg-field-admin" class="form-item" placeholder="Écrire en tant qu'admin..." required autocomplete="off">
+                    <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+
+            <div class="card-panel" style="grid-column: span 2;">
+                <h2 class="line-font" style="color: var(--live-crit);"><i class="fa-solid fa-triangle-exclamation"></i> Événements & Incidents signalés</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Horodatage</th><th>Agent</th><th>Matériel / Rame</th><th>Commentaire</th><th></th></tr></thead>
+                        <tbody id="box-table-admin-incidents"></tbody>
                     </table>
                 </div>
             </div>
@@ -240,9 +267,11 @@
 
         const uid = sessionStorage.getItem('agent_uid');
         const name = sessionStorage.getItem('agent_name');
+        const userRole = sessionStorage.getItem('agent_role') || "Conducteur";
+
         if(!uid) { window.location.href = "connexion.html"; }
 
-        document.getElementById('lbl-agent-name').textContent = `${name} [${uid}]`;
+        document.getElementById('lbl-agent-name').textContent = `${name} [${uid}] (${userRole})`;
 
         // Thème System Switcher
         const themeTrigger = document.getElementById('theme-toggle-btn');
@@ -254,9 +283,12 @@
 
         function killSession() { sessionStorage.clear(); window.location.href = "connexion.html"; }
 
-        // Router d'affichage UI
-        if(uid === "ADMIN") { document.getElementById('admin-core-view').style.display = 'grid'; }
-        else { document.getElementById('driver-core-view').style.display = 'grid'; }
+        // Router d'affichage UI (Supporte l'identifiant "ADMIN" historique ou le rôle Administrateur)
+        if(uid === "ADMIN" || userRole === "Administrateur") { 
+            document.getElementById('admin-core-view').style.display = 'grid'; 
+        } else { 
+            document.getElementById('driver-core-view').style.display = 'grid'; 
+        }
 
         // Actions Conducteur (Prise de Poste)
         function toggleShift(sid, current) {
@@ -269,7 +301,7 @@
             fetch(`${FIREBASE_ENDPOINT}/rapports_incidents.json`, {
                 method: 'POST',
                 body: JSON.stringify({ agent: uid, vehicle: document.getElementById('rep-bus').value, text: document.getElementById('rep-text').value, stamp: new Date().toLocaleString() })
-            }).then(() => { alert("Rapport transmis."); document.getElementById('form-driver-report').reset(); });
+            }).then(() => { alert("Rapport transmis."); document.getElementById('form-driver-report').reset(); pollData(); });
         };
 
         // Soumission demande de congés
@@ -286,16 +318,22 @@
             };
         }
 
-        // Envoi message tchat
-        if(document.getElementById('form-send-chat')) {
-            document.getElementById('form-send-chat').onsubmit = (e) => {
-                e.preventDefault();
-                const txt = document.getElementById('chat-msg-field').value.trim();
-                fetch(`${FIREBASE_ENDPOINT}/messages.json`, {
-                    method: 'POST',
-                    body: JSON.stringify({ uid: uid, name: name, text: txt, stamp: new Date().toLocaleTimeString().slice(0, 5) })
-                }).then(() => { document.getElementById('form-send-chat').reset(); pollData(); });
-            };
+        // Envois Messages Tchat (Conducteur & Admin)
+        function sendChatMessage(textInputId) {
+            const field = document.getElementById(textInputId);
+            const txt = field.value.trim();
+            if(!txt) return;
+            fetch(`${FIREBASE_ENDPOINT}/messages.json`, {
+                method: 'POST',
+                body: JSON.stringify({ uid: uid, name: name, role: userRole, text: txt, stamp: new Date().toLocaleTimeString().slice(0, 5) })
+            }).then(() => { field.value = ''; pollData(); });
+        }
+
+        if(document.getElementById('form-send-chat-driver')) {
+            document.getElementById('form-send-chat-driver').onsubmit = (e) => { e.preventDefault(); sendChatMessage('chat-msg-field-driver'); };
+        }
+        if(document.getElementById('form-send-chat-admin')) {
+            document.getElementById('form-send-chat-admin').onsubmit = (e) => { e.preventDefault(); sendChatMessage('chat-msg-field-admin'); };
         }
 
         // Actions Admin
@@ -304,7 +342,8 @@
             const m = document.getElementById('add-mat').value.trim();
             const n = document.getElementById('add-name').value.trim();
             const p = document.getElementById('add-pass').value.trim();
-            fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p }) })
+            const r = document.getElementById('add-role').value;
+            fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p, role: r }) })
             .then(() => { document.getElementById('form-add-driver').reset(); pollData(); });
         };
 
@@ -337,26 +376,30 @@
             fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`).then(r => r.json()).then(db => {
                 if(!db) return;
 
-                // Flux de messagerie commun 
-                const chatBox = document.getElementById('chat-stream-output');
-                if(chatBox && db.messages) {
+                // Flux de messagerie commun (Mis à jour sur les deux conteneurs cibles)
+                const chatBoxDriver = document.getElementById('chat-stream-output-driver');
+                const chatBoxAdmin = document.getElementById('chat-stream-output-admin');
+                
+                if(db.messages) {
                     const msgList = Object.values(db.messages);
                     if(msgList.length !== trackChatLength) {
-                        chatBox.innerHTML = '';
+                        let htmlContent = '';
                         msgList.forEach(m => {
-                            chatBox.innerHTML += `
+                            htmlContent += `
                                 <div class="chat-bubble">
-                                    <div class="chat-bubble-meta"><span>${m.name} (${m.uid})</span><span>${m.stamp}</span></div>
+                                    <div class="chat-bubble-meta"><span>${m.name} (${m.uid}) — <small>${m.role || 'Conducteur'}</small></span><span>${m.stamp}</span></div>
                                     <div class="chat-bubble-text">${m.text}</div>
                                 </div>`;
                         });
-                        chatBox.scrollTop = chatBox.scrollHeight;
+                        
+                        if(chatBoxDriver) { chatBoxDriver.innerHTML = htmlContent; chatBoxDriver.scrollTop = chatBoxDriver.scrollHeight; }
+                        if(chatBoxAdmin) { chatBoxAdmin.innerHTML = htmlContent; chatBoxAdmin.scrollTop = chatBoxAdmin.scrollHeight; }
                         trackChatLength = msgList.length;
                     }
                 }
 
-                if(uid !== "ADMIN") {
-                    // Séparation des services actifs et passés
+                if(uid !== "ADMIN" && userRole !== "Administrateur") {
+                    // Séparation des services conducteurs actifs et passés
                     const upcomingBucket = document.getElementById('driver-services-bucket');
                     const pastBucket = document.getElementById('driver-past-services-bucket');
                     
@@ -380,4 +423,106 @@
                                             <span class="line-font" style="color:var(--brand-color);"><i class="fa-regular fa-clock"></i> ${s.hours}</span>
                                         </div>
                                         <p style="font-size:0.92rem; ${!isPast ? 'margin-bottom:15px;' : ''}"><strong>Mission :</strong> ${s.mission}</p>
-                                        ${
+                                        ${!isPast ? `
+                                        <button class="btn-action" style="background:${active ? 'transparent' : 'var(--live-ok)'}; border:${active ? '1px solid var(--border-line)' : 'none'}; color:${active ? 'var(--font-dark)' : 'white'}; width:auto; padding:8px 16px; font-size:0.8rem;" onclick="toggleShift('${sid}', '${s.status}')">
+                                            <i class="fa-solid ${active ? 'fa-user-check' : 'fa-play'}"></i> ${active ? 'Prise de poste validée' : 'Valider prise de poste'}
+                                        </button>` : ''}
+                                    </div>`;
+
+                                if(isPast) {
+                                    pastBucket.innerHTML += tileHtml;
+                                    pastCount++;
+                                } else {
+                                    upcomingBucket.innerHTML += tileHtml;
+                                    upcomingCount++;
+                                }
+                            }
+                        });
+                    }
+                    if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucune affectation programmée.</p>`;
+                    if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucun historique de tournée disponible.</p>`;
+
+                    // Rendu des congés conducteur
+                    const leaveTable = document.getElementById('table-body-driver-leaves');
+                    if(leaveTable) {
+                        leaveTable.innerHTML = '';
+                        if(db.conges) {
+                            Object.values(db.conges).forEach(l => {
+                                if(l.agent === uid) {
+                                    let badgeCls = "status-wait";
+                                    if(l.status === "Approuvé") badgeCls = "status-ok";
+                                    if(l.status === "Refusé") badgeCls = "status-no";
+                                    leaveTable.innerHTML += `<tr><td>Du ${l.start} au ${l.end}</td><td>${l.reason}</td><td><span class="status-dot ${badgeCls}">${l.status}</span></td></tr>`;
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    // RENDU INTERFACE DIRECTION / ADMIN
+                    const dTable = document.getElementById('box-table-drivers'); dTable.innerHTML = '';
+                    if(db.conducteurs) {
+                        Object.entries(db.conducteurs).forEach(([m, o]) => {
+                            dTable.innerHTML += `<tr><td><strong>${m}</strong></td><td>${o.name} <small style="color:var(--font-sub);">(${o.role || 'Conducteur'})</small></td><td><code>${o.password}</code></td><td><button class="btn-trash" onclick="dropItem('conducteurs', '${m}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                        });
+                    }
+
+                    const sTable = document.getElementById('box-table-services'); sTable.innerHTML = '';
+                    if(db.services) {
+                        Object.entries(db.services).forEach(([sid, s]) => {
+                            const tgtUser = db.conducteurs && db.conducteurs[s.target] ? db.conducteurs[s.target] : null;
+                            const tgtRoleString = tgtUser ? ` (${tgtUser.role || 'Conducteur'})` : '';
+                            const cls = s.status === "Prise de poste validée" ? "status-ok" : "status-wait";
+                            
+                            sTable.innerHTML += `<tr><td><span class="badge-line" style="background:${colors[s.line] || '#64748B'}">${s.line}</span></td><td>${s.hours}</td><td><strong>${s.target}</strong><small style="color:var(--font-sub);">${tgtRoleString}</small></td><td>${s.mission}</td><td><span class="status-dot ${cls}">${s.status || 'En attente'}</span></td><td><button class="btn-trash" onclick="dropItem('services', '${sid}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                        });
+                    }
+
+                    // Rendu de l'arbitrage des congés
+                    const admLeaveTable = document.getElementById('box-table-admin-leaves');
+                    if(admLeaveTable) {
+                        admLeaveTable.innerHTML = '';
+                        if(db.conges) {
+                            Object.entries(db.conges).forEach(([lk, l]) => {
+                                admLeaveTable.innerHTML += `
+                                    <tr>
+                                        <td><strong>${l.name} (${l.agent})</strong></td>
+                                        <td>Du ${l.start} au ${l.end}</td>
+                                        <td>${l.reason}</td>
+                                        <td>
+                                            <button class="status-dot status-ok" style="border:none; cursor:pointer;" onclick="setLeaveStatus('${lk}', 'Approuvé')">Approuver</button>
+                                            <button class="status-dot status-no" style="border:none; cursor:pointer; margin-left:5px;" onclick="setLeaveStatus('${lk}', 'Refusé')">Refuser</button>
+                                        </td>
+                                        <td><button class="btn-trash" onclick="dropItem('conges', '${lk}')"><i class="fa-solid fa-trash"></i></button></td>
+                                    </tr>`;
+                            });
+                        }
+                    }
+
+                    // Rendu des incidents signalés (Admin)
+                    const admIncidentTable = document.getElementById('box-table-admin-incidents');
+                    if(admIncidentTable) {
+                        admIncidentTable.innerHTML = '';
+                        if(db.rapports_incidents) {
+                            Object.entries(db.rapports_incidents).forEach(([rk, r]) => {
+                                admIncidentTable.innerHTML += `
+                                    <tr>
+                                        <td><small>${r.stamp}</small></td>
+                                        <td><strong>${r.agent}</strong></td>
+                                        <td><span class="status-dot status-wait">${r.vehicle}</span></td>
+                                        <td>${r.text}</td>
+                                        <td><button class="btn-trash" onclick="dropItem('rapports_incidents', '${rk}')"><i class="fa-solid fa-trash"></i></button></td>
+                                    </tr>`;
+                            });
+                        } else {
+                            admIncidentTable.innerHTML = `<tr><td colspan="5" style="color:var(--font-sub); font-style:italic; text-align:center;">Aucun incident signalé en cours.</td></tr>`;
+                        }
+                    }
+                }
+            });
+        }
+
+        pollData();
+        setInterval(pollData, 4000);
+    </script>
+</body>
+</html>
