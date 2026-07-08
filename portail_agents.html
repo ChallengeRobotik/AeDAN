@@ -87,7 +87,7 @@
         .btn-action { background: var(--brand-color); color: white; border: none; padding: 13px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
         .btn-action:hover { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(122,28,28,0.15); }
 
-        /* --- STYLING SERVICES (STYLE THEODORT MODERNISÉ) --- */
+        /* --- STYLING SERVICES --- */
         .service-tile { background: var(--canvas-bg); border-left: 5px solid var(--brand-color); border-radius: 8px; padding: 18px; margin-bottom: 15px; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
         .service-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.03); }
         .tile-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -107,7 +107,7 @@
         .btn-trash { background: none; border: none; color: var(--live-crit); cursor: pointer; font-size: 0.95rem; transition: transform 0.2s; }
         .btn-trash:hover { transform: scale(1.15); }
 
-        /* --- NOUTÉ : MESSAGERIE INTERNE --- */
+        /* --- MESSAGERIE INTERNE --- */
         .chat-flow-zone { border: 1px solid var(--border-line); border-radius: 8px; background: var(--canvas-bg); height: 260px; overflow-y: auto; padding: 14px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 12px; }
         .chat-bubble { background: var(--surface-card); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-line); max-width: 95%; }
         .chat-bubble-meta { font-size: 0.72rem; color: var(--font-sub); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 20px; }
@@ -371,7 +371,7 @@
                             if(s.target === uid) {
                                 const col = colors[s.line] || "#64748B";
                                 const active = s.status === "Prise de poste validée";
-                                const isPast = s.hours.toLowerCase().includes('passé') || active;
+                                const isPast = s.hours.toLowerCase().includes('passé');
 
                                 const tileHtml = `
                                     <div class="service-tile" style="border-left-color:${col}">
@@ -380,80 +380,4 @@
                                             <span class="line-font" style="color:var(--brand-color);"><i class="fa-regular fa-clock"></i> ${s.hours}</span>
                                         </div>
                                         <p style="font-size:0.92rem; ${!isPast ? 'margin-bottom:15px;' : ''}"><strong>Mission :</strong> ${s.mission}</p>
-                                        ${!isPast ? `
-                                        <button class="btn-action" style="background:${active ? 'transparent' : 'var(--live-ok)'}; border:${active ? '1px solid var(--border-line)' : 'none'}; color:${active ? 'var(--font-dark)' : 'white'}; width:auto; padding:8px 16px; font-size:0.8rem;" onclick="toggleShift('${sid}', '${s.status}')">
-                                            <i class="fa-solid ${active ? 'fa-user-check' : 'fa-play'}"></i> ${active ? 'Prise de poste validée' : 'Valider prise de poste'}
-                                        </button>` : ''}
-                                    </div>`;
-
-                                if(s.hours.toLowerCase().includes('passé')) {
-                                    pastBucket.innerHTML += tileHtml;
-                                    pastCount++;
-                                } else {
-                                    upcomingBucket.innerHTML += tileHtml;
-                                    upcomingCount++;
-                                }
-                            }
-                        });
-                    }
-                    if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucune affectation programmée.</p>`;
-                    if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucun historique de tournée disponible.</p>`;
-
-                    // Rendu tableau des congés conducteur
-                    const leaveTable = document.getElementById('table-body-driver-leaves');
-                    if(leaveTable) {
-                        leaveTable.innerHTML = '';
-                        if(db.conges) {
-                            Object.values(db.conges).forEach(l => {
-                                if(l.agent === uid) {
-                                    let badgeCls = "status-wait";
-                                    if(l.status === "Approuvé") badgeCls = "status-ok";
-                                    if(l.status === "Refusé") badgeCls = "status-no";
-                                    leaveTable.innerHTML += `<tr><td>Du ${l.start} au ${l.end}</td><td>${l.reason}</td><td><span class="status-dot ${badgeCls}">${l.status}</span></td></tr>`;
-                                }
-                            });
-                        }
-                    }
-                } else {
-                    const dTable = document.getElementById('box-table-drivers'); dTable.innerHTML = '';
-                    if(db.conducteurs) {
-                        Object.entries(db.conducteurs).forEach(([m, o]) => {
-                            dTable.innerHTML += `<tr><td><strong>${m}</strong></td><td>${o.name}</td><td><code>${o.password}</code></td><td><button class="btn-trash" onclick="dropItem('conducteurs', '${m}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-                        });
-                    }
-                    const sTable = document.getElementById('box-table-services'); sTable.innerHTML = '';
-                    if(db.services) {
-                        Object.entries(db.services).forEach(([sid, s]) => {
-                            const cls = s.status === "Prise de poste validée" ? "status-ok" : "status-wait";
-                            sTable.innerHTML += `<tr><td><span class="badge-line" style="background:${colors[s.line] || '#64748B'}">${s.line}</span></td><td>${s.hours}</td><td><strong>${s.target}</strong></td><td>${s.mission}</td><td><span class="status-dot ${cls}">${s.status || 'En attente'}</span></td><td><button class="btn-trash" onclick="dropItem('services', '${sid}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-                        });
-                    }
-                    // Rendu de l'arbitrage des congés admin
-                    const admLeaveTable = document.getElementById('box-table-admin-leaves');
-                    if(admLeaveTable) {
-                        admLeaveTable.innerHTML = '';
-                        if(db.conges) {
-                            Object.entries(db.conges).forEach(([lk, l]) => {
-                                admLeaveTable.innerHTML += `
-                                    <tr>
-                                        <td><strong>${l.name} (${l.agent})</strong></td>
-                                        <td>Du ${l.start} au ${l.end}</td>
-                                        <td>${l.reason}</td>
-                                        <td>
-                                            <button class="status-dot status-ok" style="border:none; cursor:pointer;" onclick="setLeaveStatus('${lk}', 'Approuvé')">Approuver</button>
-                                            <button class="status-dot status-no" style="border:none; cursor:pointer; margin-left:5px;" onclick="setLeaveStatus('${lk}', 'Refusé')">Refuser</button>
-                                        </td>
-                                        <td><button class="btn-trash" onclick="dropItem('conges', '${lk}')"><i class="fa-solid fa-trash"></i></button></td>
-                                    </tr>`;
-                            });
-                        }
-                    }
-                }
-            });
-        }
-
-        pollData();
-        setInterval(pollData, 4000);
-    </script>
-</body>
-</html>
+                                        ${
