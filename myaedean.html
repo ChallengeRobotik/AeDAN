@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Connecté — AEDAN.MY</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Arabic:wght@600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --brand-color: #7A1C1C;
+            --brand-hover: #5F1515;
+            --canvas-bg: #F3F5F8;
+            --surface-card: #FFFFFF;
+            --font-dark: #0F1115;
+            --font-sub: #64748B;
+            --border-line: #E2E8F0;
+            --smooth-radius: 14px;
+            --color-l26: #e182b4;
+            --color-lbam: #1b35b0;
+            --color-li: #6dc16d;
+            --live-ok: #10B981;
+            --live-warn: #F59E0B;
+            --live-crit: #EF4444;
+        }
+
+        [data-theme="dark"] {
+            --canvas-bg: #0A0B0D;
+            --surface-card: #12141C;
+            --font-dark: #F8FAFC;
+            --font-sub: #94A3B8;
+            --border-line: #1E293B;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.25s, border-color 0.25s; }
+        body { background-color: var(--canvas-bg); color: var(--font-dark); padding-bottom: 80px; overflow-x: hidden; position: relative; min-height: 100vh; }
+        .line-font { font-family: 'Montserrat Arabic', sans-serif; font-weight: 600; }
+
+        /* --- FILIGRANE TRANSPARENT EN BAS À DROITE --- */
+        .bg-watermark-logo {
+            position: fixed; bottom: -80px; right: -80px; height: 50vh; opacity: 0.03;
+            pointer-events: none; user-select: none; z-index: 1; transform: rotate(12deg);
+            animation: floatSlow 10s ease-in-out infinite;
+        }
+        [data-theme="dark"] .bg-watermark-logo { opacity: 0.015; }
+
+        @keyframes floatSlow { 0%, 100% { transform: rotate(12deg) translateY(0); } 50% { transform: rotate(15deg) translateY(-15px); } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(25px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+
+        /* --- HEADER CHIC --- */
+        header {
+            background-color: var(--surface-card); border-bottom: 1px solid var(--border-line);
+            padding: 16px 5%; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.01);
+        }
+        .logo-box-main { display: flex; align-items: center; gap: 12px; }
+        .logo-box-main img { height: 38px; }
+
+        .btn-logout { background: transparent; border: 1px solid var(--border-line); color: var(--live-crit); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .btn-logout:hover { background: rgba(239, 68, 68, 0.08); border-color: var(--live-crit); transform: translateY(-1px); }
+
+        .dark-mode-switch {
+            background: var(--canvas-bg); border: 1px solid var(--border-line); width: 38px; height: 38px;
+            border-radius: 50%; cursor: pointer; color: var(--font-dark); display: flex; align-items: center; justify-content: center;
+        }
+
+        /* --- LAYOUT WORKSPACE --- */
+        .app-container { max-width: 1240px; margin: 35px auto; padding: 0 24px; position: relative; z-index: 5; }
+        
+        .panel-heading { margin-bottom: 30px; animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .panel-heading h1 { font-size: 1.8rem; letter-spacing: -0.02em; }
+
+        .grid-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 25px; }
+        .card-panel { background: var(--surface-card); border-radius: var(--smooth-radius); padding: 28px; border: 1px solid var(--border-line); box-shadow: 0 10px 30px rgba(0,0,0,0.01); animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .card-panel h2 { font-size: 1.05rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-line); padding-bottom: 12px; }
+
+        /* --- STYLING FORM & BUTTONS --- */
+        .form-row { margin-bottom: 16px; }
+        .form-row label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--font-sub); margin-bottom: 6px; text-transform: uppercase; }
+        .form-item { width: 100%; padding: 12px 14px; border: 1px solid var(--border-line); background: var(--canvas-bg); color: var(--font-dark); border-radius: 8px; outline: none; font-size: 0.9rem; }
+        .form-item:focus { border-color: var(--brand-color); }
+        
+        .btn-action { background: var(--brand-color); color: white; border: none; padding: 13px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .btn-action:hover { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(122,28,28,0.15); }
+
+        /* --- STYLING SERVICES (STYLE THEODORT MODERNISÉ) --- */
+        .service-tile { background: var(--canvas-bg); border-left: 5px solid var(--brand-color); border-radius: 8px; padding: 18px; margin-bottom: 15px; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
+        .service-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.03); }
+        .tile-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .badge-line { padding: 3px 10px; border-radius: 6px; color: white; font-weight: 800; font-size: 0.75rem; }
+
+        /* --- TABLES --- */
+        .table-responsive { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-line); margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+        th { background: var(--canvas-bg); padding: 12px; color: var(--font-sub); font-weight: 700; }
+        td { padding: 12px; border-bottom: 1px solid var(--border-line); }
+        
+        .status-dot { padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; }
+        .status-wait { background: #E2E8F0; color: #475569; }
+        .status-ok { background: rgba(16, 185, 129, 0.15); color: var(--live-ok); }
+        .status-no { background: rgba(239, 68, 68, 0.15); color: var(--live-crit); }
+
+        .btn-trash { background: none; border: none; color: var(--live-crit); cursor: pointer; font-size: 0.95rem; transition: transform 0.2s; }
+        .btn-trash:hover { transform: scale(1.15); }
+
+        /* --- NOUTÉ : MESSAGERIE INTERNE --- */
+        .chat-flow-zone { border: 1px solid var(--border-line); border-radius: 8px; background: var(--canvas-bg); height: 260px; overflow-y: auto; padding: 14px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-bubble { background: var(--surface-card); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-line); max-width: 95%; }
+        .chat-bubble-meta { font-size: 0.72rem; color: var(--font-sub); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 20px; }
+        .chat-bubble-text { font-size: 0.88rem; color: var(--font-dark); line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <img src="https://image.noelshack.com/fichiers/2026/28/2/1783387205-2b6a27e168543ce8099dc90780cd86d6-removebg-preview.png" class="bg-watermark-logo" alt="">
+
+    <header>
+        <div class="logo-box-main">
+            <img src="https://image.noelshack.com/fichiers/2026/28/2/1783387205-2b6a27e168543ce8099dc90780cd86d6-removebg-preview.png" alt="Logo">
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <button class="btn-logout" onclick="killSession()"><i class="fa-solid fa-power-off"></i> Déconnexion</button>
+            <button class="dark-mode-switch" id="theme-toggle-btn"><i class="fa-solid fa-moon"></i></button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        
+        <div class="panel-heading">
+            <h1 class="line-font">Bonjour <span id="lbl-agent-name">Agent</span> !</h1>
+        </div>
+
+        <div id="driver-core-view" class="grid-dashboard" style="display: none;">
+            <div class="card-panel" style="grid-column: span 2;">
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-route"></i> Prochains services programmés</h2>
+                <div id="driver-services-bucket"></div>
+
+                <h2 class="line-font" style="color: var(--font-sub); margin-top: 30px; border-top: 1px solid var(--border-line); padding-top: 20px;"><i class="fa-solid fa-clock-rotate-left"></i> Historique des services effectués (Passés)</h2>
+                <div id="driver-past-services-bucket"></div>
+            </div>
+
+            <div class="card-panel">
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation</h2>
+                <div class="chat-flow-zone" id="chat-stream-output"></div>
+                <form id="form-send-chat" style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-msg-field" class="form-item" placeholder="Écrire un message..." required autocomplete="off">
+                    <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+
+            <div class="card-panel" style="grid-column: span 2;">
+                <h2 class="line-font" style="color: var(--live-warn);"><i class="fa-solid fa-umbrella-beach"></i> Demandes de congés & absences</h2>
+                <form id="form-leave-request" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div class="form-row"><label>Date de début</label><input type="date" id="leave-start" class="form-item" required></div>
+                    <div class="form-row"><label>Date de fin</label><input type="date" id="leave-end" class="form-item" required></div>
+                    <div class="form-row"><label>Motif légitime</label><input type="text" id="leave-reason" class="form-item" placeholder="Congé annuel, RTT..." required></div>
+                    <div class="form-row" style="display: flex; align-items: flex-end;"><button type="submit" class="btn-action" style="background: var(--live-warn);">Soumettre la demande</button></div>
+                </form>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Période demandée</th><th>Motif de l'absence</th><th>Statut de la demande</th></tr></thead>
+                        <tbody id="table-body-driver-leaves"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-panel">
+                <h2 class="line-font" style="color: var(--live-warn);"><i class="fa-solid fa-circle-exclamation"></i> Signaler un événement</h2>
+                <form id="form-driver-report">
+                    <div class="form-row">
+                        <label>Matériel roulant / N° de rame</label>
+                        <input type="text" id="rep-bus" class="form-item" placeholder="Ex: Rame 102" required>
+                    </div>
+                    <div class="form-row">
+                        <label>Commentaire de tournée</label>
+                        <textarea id="rep-text" class="form-item" rows="4" style="resize: none;" placeholder="Indiquez toute anomalie ou signalement..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-action" style="background: var(--live-warn);">TRANSMETTRE LE RAPPORT</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="admin-core-view" class="grid-dashboard" style="display: none;">
+            <div class="card-panel">
+                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel</h2>
+                <form id="form-add-driver">
+                    <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
+                    <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
+                    <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
+                    <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
+                </form>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Matricule</th><th>Nom</th><th>Code</th><th></th></tr></thead>
+                        <tbody id="box-table-drivers"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-panel" style="grid-column: span 2;">
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-calendar-check"></i> Ordonnancement Horaires</h2>
+                <form id="form-add-service" class="grid-dashboard" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 0; margin-bottom: 15px;">
+                    <div class="form-row">
+                        <label>Ligne</label>
+                        <select id="add-srv-line" class="form-item"><option value="26">Ligne 26</option><option value="BAM">Ligne BAM</option><option value="I">Ligne I</option></select>
+                    </div>
+                    <div class="form-row"><label>Horaires de Service</label><input type="text" id="add-srv-hours" class="form-item" placeholder="06:00 - 14:00 (ou 'Passé')" required></div>
+                    <div class="form-row"><label>Matricule Cible</label><input type="text" id="add-srv-target" class="form-item" required></div>
+                    <div class="form-row"><label>Mission / Consigne</label><input type="text" id="add-srv-mission" class="form-item" required></div>
+                    <button type="submit" class="btn-action" style="grid-column: span 2;">AFFECTER LE SERVICE</button>
+                </form>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Ligne</th><th>Amplitude</th><th>Matricule</th><th>Mission</th><th>Statut</th><th></th></tr></thead>
+                        <tbody id="box-table-services"></tbody>
+                    </table>
+                </div>
+
+                <h2 class="line-font" style="color: var(--live-warn); margin-top: 35px;"><i class="fa-solid fa-stamp"></i> Arbitrage des demandes de congés</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Agent</th><th>Période</th><th>Motif</th><th>Décision direction</th><th></th></tr></thead>
+                        <tbody id="box-table-admin-leaves"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const FIREBASE_ENDPOINT = "https://aedan-mobilites-default-rtdb.europe-west1.firebasedatabase.app";
+        const colors = { "26": "#e182b4", "BAM": "#1b35b0", "I": "#6dc16d" };
+
+        const uid = sessionStorage.getItem('agent_uid');
+        const name = sessionStorage.getItem('agent_name');
+        if(!uid) { window.location.href = "connexion.html"; }
+
+        document.getElementById('lbl-agent-name').textContent = `${name} [${uid}]`;
+
+        // Thème System Switcher
+        const themeTrigger = document.getElementById('theme-toggle-btn');
+        if (localStorage.getItem('user-ui-theme') === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>'; }
+        themeTrigger.onclick = () => {
+            if (document.documentElement.hasAttribute('data-theme')) { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('user-ui-theme', 'light'); themeTrigger.innerHTML = '<i class="fa-solid fa-moon"></i>'; }
+            else { document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('user-ui-theme', 'dark'); themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>'; }
+        };
+
+        function killSession() { sessionStorage.clear(); window.location.href = "connexion.html"; }
+
+        // Router d'affichage UI
+        if(uid === "ADMIN") { document.getElementById('admin-core-view').style.display = 'grid'; }
+        else { document.getElementById('driver-core-view').style.display = 'grid'; }
+
+        // Actions Conducteur (Prise de Poste)
+        function toggleShift(sid, current) {
+            const updated = current === "Prise de poste validée" ? "En attente" : "Prise de poste validée";
+            fetch(`${FIREBASE_ENDPOINT}/services/${sid}/status.json`, { method: 'PUT', body: JSON.stringify(updated) }).then(() => pollData());
+        }
+
+        document.getElementById('form-driver-report').onsubmit = (e) => {
+            e.preventDefault();
+            fetch(`${FIREBASE_ENDPOINT}/rapports_incidents.json`, {
+                method: 'POST',
+                body: JSON.stringify({ agent: uid, vehicle: document.getElementById('rep-bus').value, text: document.getElementById('rep-text').value, stamp: new Date().toLocaleString() })
+            }).then(() => { alert("Rapport transmis."); document.getElementById('form-driver-report').reset(); });
+        };
+
+        // Soumission demande de congés
+        if(document.getElementById('form-leave-request')) {
+            document.getElementById('form-leave-request').onsubmit = (e) => {
+                e.preventDefault();
+                const start = document.getElementById('leave-start').value;
+                const end = document.getElementById('leave-end').value;
+                const reason = document.getElementById('leave-reason').value.trim();
+                fetch(`${FIREBASE_ENDPOINT}/conges.json`, {
+                    method: 'POST',
+                    body: JSON.stringify({ agent: uid, name: name, start: start, end: end, reason: reason, status: "En attente" })
+                }).then(() => { document.getElementById('form-leave-request').reset(); pollData(); });
+            };
+        }
+
+        // Envoi message tchat
+        if(document.getElementById('form-send-chat')) {
+            document.getElementById('form-send-chat').onsubmit = (e) => {
+                e.preventDefault();
+                const txt = document.getElementById('chat-msg-field').value.trim();
+                fetch(`${FIREBASE_ENDPOINT}/messages.json`, {
+                    method: 'POST',
+                    body: JSON.stringify({ uid: uid, name: name, text: txt, stamp: new Date().toLocaleTimeString().slice(0, 5) })
+                }).then(() => { document.getElementById('form-send-chat').reset(); pollData(); });
+            };
+        }
+
+        // Actions Admin
+        document.getElementById('form-add-driver').onsubmit = (e) => {
+            e.preventDefault();
+            const m = document.getElementById('add-mat').value.trim();
+            const n = document.getElementById('add-name').value.trim();
+            const p = document.getElementById('add-pass').value.trim();
+            fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p }) })
+            .then(() => { document.getElementById('form-add-driver').reset(); pollData(); });
+        };
+
+        document.getElementById('form-add-service').onsubmit = (e) => {
+            e.preventDefault();
+            const payload = {
+                line: document.getElementById('add-srv-line').value,
+                hours: document.getElementById('add-srv-hours').value.trim(),
+                target: document.getElementById('add-srv-target').value.trim(),
+                mission: document.getElementById('add-srv-mission').value.trim(),
+                status: "En attente"
+            };
+            fetch(`${FIREBASE_ENDPOINT}/services.json`, { method: 'POST', body: JSON.stringify(payload) })
+            .then(() => { document.getElementById('form-add-service').reset(); pollData(); });
+        };
+
+        function setLeaveStatus(key, state) {
+            fetch(`${FIREBASE_ENDPOINT}/conges/${key}/status.json`, { method: 'PUT', body: JSON.stringify(state) }).then(() => pollData());
+        }
+
+        function dropItem(path, key) {
+            if(confirm("Confirmer le retrait ?")) {
+                fetch(`${FIREBASE_ENDPOINT}/${path}/${key}.json`, { method: 'DELETE' }).then(() => pollData());
+            }
+        }
+
+        // Flux Synchro Data direct
+        let trackChatLength = 0;
+        function pollData() {
+            fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`).then(r => r.json()).then(db => {
+                if(!db) return;
+
+                // Flux de messagerie commun 
+                const chatBox = document.getElementById('chat-stream-output');
+                if(chatBox && db.messages) {
+                    const msgList = Object.values(db.messages);
+                    if(msgList.length !== trackChatLength) {
+                        chatBox.innerHTML = '';
+                        msgList.forEach(m => {
+                            chatBox.innerHTML += `
+                                <div class="chat-bubble">
+                                    <div class="chat-bubble-meta"><span>${m.name} (${m.uid})</span><span>${m.stamp}</span></div>
+                                    <div class="chat-bubble-text">${m.text}</div>
+                                </div>`;
+                        });
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                        trackChatLength = msgList.length;
+                    }
+                }
+
+                if(uid !== "ADMIN") {
+                    // Séparation des services actifs et passés
+                    const upcomingBucket = document.getElementById('driver-services-bucket');
+                    const pastBucket = document.getElementById('driver-past-services-bucket');
+                    
+                    upcomingBucket.innerHTML = '';
+                    pastBucket.innerHTML = '';
+                    
+                    let upcomingCount = 0;
+                    let pastCount = 0;
+
+                    if(db.services) {
+                        Object.entries(db.services).forEach(([sid, s]) => {
+                            if(s.target === uid) {
+                                const col = colors[s.line] || "#64748B";
+                                const active = s.status === "Prise de poste validée";
+                                const isPast = s.hours.toLowerCase().includes('passé') || active;
+
+                                const tileHtml = `
+                                    <div class="service-tile" style="border-left-color:${col}">
+                                        <div class="tile-top">
+                                            <span class="badge-line" style="background:${col}">Ligne ${s.line}</span>
+                                            <span class="line-font" style="color:var(--brand-color);"><i class="fa-regular fa-clock"></i> ${s.hours}</span>
+                                        </div>
+                                        <p style="font-size:0.92rem; ${!isPast ? 'margin-bottom:15px;' : ''}"><strong>Mission :</strong> ${s.mission}</p>
+                                        ${!isPast ? `
+                                        <button class="btn-action" style="background:${active ? 'transparent' : 'var(--live-ok)'}; border:${active ? '1px solid var(--border-line)' : 'none'}; color:${active ? 'var(--font-dark)' : 'white'}; width:auto; padding:8px 16px; font-size:0.8rem;" onclick="toggleShift('${sid}', '${s.status}')">
+                                            <i class="fa-solid ${active ? 'fa-user-check' : 'fa-play'}"></i> ${active ? 'Prise de poste validée' : 'Valider prise de poste'}
+                                        </button>` : ''}
+                                    </div>`;
+
+                                if(s.hours.toLowerCase().includes('passé')) {
+                                    pastBucket.innerHTML += tileHtml;
+                                    pastCount++;
+                                } else {
+                                    upcomingBucket.innerHTML += tileHtml;
+                                    upcomingCount++;
+                                }
+                            }
+                        });
+                    }
+                    if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucune affectation programmée.</p>`;
+                    if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucun historique de tournée disponible.</p>`;
+
+                    // Rendu tableau des congés conducteur
+                    const leaveTable = document.getElementById('table-body-driver-leaves');
+                    if(leaveTable) {
+                        leaveTable.innerHTML = '';
+                        if(db.conges) {
+                            Object.values(db.conges).forEach(l => {
+                                if(l.agent === uid) {
+                                    let badgeCls = "status-wait";
+                                    if(l.status === "Approuvé") badgeCls = "status-ok";
+                                    if(l.status === "Refusé") badgeCls = "status-no";
+                                    leaveTable.innerHTML += `<tr><td>Du ${l.start} au ${l.end}</td><td>${l.reason}</td><td><span class="status-dot ${badgeCls}">${l.status}</span></td></tr>`;
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    const dTable = document.getElementById('box-table-drivers'); dTable.innerHTML = '';
+                    if(db.conducteurs) {
+                        Object.entries(db.conducteurs).forEach(([m, o]) => {
+                            dTable.innerHTML += `<tr><td><strong>${m}</strong></td><td>${o.name}</td><td><code>${o.password}</code></td><td><button class="btn-trash" onclick="dropItem('conducteurs', '${m}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                        });
+                    }
+                    const sTable = document.getElementById('box-table-services'); sTable.innerHTML = '';
+                    if(db.services) {
+                        Object.entries(db.services).forEach(([sid, s]) => {
+                            const cls = s.status === "Prise de poste validée" ? "status-ok" : "status-wait";
+                            sTable.innerHTML += `<tr><td><span class="badge-line" style="background:${colors[s.line] || '#64748B'}">${s.line}</span></td><td>${s.hours}</td><td><strong>${s.target}</strong></td><td>${s.mission}</td><td><span class="status-dot ${cls}">${s.status || 'En attente'}</span></td><td><button class="btn-trash" onclick="dropItem('services', '${sid}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                        });
+                    }
+                    // Rendu de l'arbitrage des congés admin
+                    const admLeaveTable = document.getElementById('box-table-admin-leaves');
+                    if(admLeaveTable) {
+                        admLeaveTable.innerHTML = '';
+                        if(db.conges) {
+                            Object.entries(db.conges).forEach(([lk, l]) => {
+                                admLeaveTable.innerHTML += `
+                                    <tr>
+                                        <td><strong>${l.name} (${l.agent})</strong></td>
+                                        <td>Du ${l.start} au ${l.end}</td>
+                                        <td>${l.reason}</td>
+                                        <td>
+                                            <button class="status-dot status-ok" style="border:none; cursor:pointer;" onclick="setLeaveStatus('${lk}', 'Approuvé')">Approuver</button>
+                                            <button class="status-dot status-no" style="border:none; cursor:pointer; margin-left:5px;" onclick="setLeaveStatus('${lk}', 'Refusé')">Refuser</button>
+                                        </td>
+                                        <td><button class="btn-trash" onclick="dropItem('conges', '${lk}')"><i class="fa-solid fa-trash"></i></button></td>
+                                    </tr>`;
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        pollData();
+        setInterval(pollData, 4000);
+    </script>
+</body>
+</html>
