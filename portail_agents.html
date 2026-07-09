@@ -169,7 +169,7 @@
                 <div id="driver-past-services-bucket"></div>
             </div>
 
-            <div class="card-panel" id="chat-card-driver">
+            <div class="card-panel">
                 <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation</h2>
                 <div class="chat-flow-zone" id="chat-stream-output-driver"></div>
                 <form id="form-send-chat-driver" style="display: flex; gap: 10px;">
@@ -178,7 +178,7 @@
                 </form>
             </div>
 
-            <div class="card-panel" style="grid-column: span 2;" id="leave-card-driver">
+            <div class="card-panel" style="grid-column: span 2;">
                 <h2 class="line-font" style="color: var(--live-warn);"><i class="fa-solid fa-umbrella-beach"></i> Demandes de congés & absences</h2>
                 <form id="form-leave-request" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                     <div class="form-row"><label>Date de début</label><input type="date" id="leave-start" class="form-item" required></div>
@@ -288,7 +288,6 @@
     </main>
 
     <script>
-        // SECURITE : Désactivation du clic droit et touches F12
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.key === 'F12' || 
@@ -303,9 +302,9 @@
 
         const uid = sessionStorage.getItem('agent_uid');
         const name = sessionStorage.getItem('agent_name');
+        
+        // Prise en charge des deux anciens ou nouveaux formats pour éviter de briser la compatibilité
         let userRole = sessionStorage.getItem('agent_role') || "Conducteur";
-
-        // Tolérance d'anciennes sessions vers le terme Superviseur
         if (userRole === "Administrateur") { userRole = "Superviseur"; }
 
         if(!uid) { window.location.href = "connexion.html"; }
@@ -371,15 +370,17 @@
 
         function killSession() { sessionStorage.clear(); window.location.href = "connexion.html"; }
 
-        // Redirection vers le panel adéquat selon le statut Superviseur ou ID ADMIN
+        // ROUTAGE PRIORITAIRE CORRIGÉ : Accès au panel Admin si UID ADMIN ou si rôle Superviseur
         if(uid === "ADMIN" || userRole === "Superviseur") { 
             document.getElementById('admin-core-view').style.display = 'grid'; 
+            document.getElementById('driver-core-view').style.display = 'none';
         } else { 
             document.getElementById('driver-core-view').style.display = 'grid'; 
+            document.getElementById('admin-core-view').style.display = 'none';
         }
 
         function toggleShift(sid, current) {
-            const updated = current === "Prise de poste validée" ? "En attente" : "Prise de poste validée";
+            const updated = current === "Prise de poste validee" ? "En attente" : "Prise de poste validee";
             fetch(`${FIREBASE_ENDPOINT}/services/${sid}/status.json`, { method: 'PUT', body: JSON.stringify(updated) }).then(() => pollData());
         }
 
@@ -421,26 +422,14 @@
             document.getElementById('form-send-chat-admin').onsubmit = (e) => { e.preventDefault(); sendChatMessage('chat-msg-field-admin'); };
         }
 
-        // Création d'un agent avec permissions implicites adaptées selon le rôle choisi
+        // Action de création d'un Agent
         document.getElementById('form-add-driver').onsubmit = (e) => {
             e.preventDefault();
             const m = document.getElementById('add-mat').value.trim();
             const n = document.getElementById('add-name').value.trim();
             const p = document.getElementById('add-pass').value.trim();
             const r = document.getElementById('add-role').value;
-            
-            // Profilage et affectation automatique des permissions sans modification d'UI
-            let perms = { send_msg: true, view_history: true, ask_leave: true, access_panel: false };
-            if (r === "Superviseur") {
-                perms.access_panel = true;
-            } else if (r === "Régulateur") {
-                perms.ask_leave = false; 
-            }
-
-            fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { 
-                method: 'PUT', 
-                body: JSON.stringify({ name: n, password: p, role: r, permissions: perms }) 
-            })
+            fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p, role: r }) })
             .then(() => { showNotification(`Agent inscrit avec succes [Role: ${r}]`); document.getElementById('form-add-driver').reset(); pollData(); });
         };
 
@@ -475,23 +464,6 @@
             fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`).then(r => r.json()).then(db => {
                 if(!db) return;
 
-                // Vérification dynamique locale des droits de l'agent connecté
-                let currentPerms = { send_msg: true, view_history: true, ask_leave: true };
-                if (db.conducteurs && db.conducteurs[uid] && db.conducteurs[uid].permissions) {
-                    currentPerms = db.conducteurs[uid].permissions;
-                }
-
-                // Application des permissions sur l'UI visible
-                if (document.getElementById('chat-card-driver')) {
-                    document.getElementById('chat-card-driver').style.display = currentPerms.view_history ? 'block' : 'none';
-                }
-                if (document.getElementById('form-send-chat-driver')) {
-                    document.getElementById('form-send-chat-driver').style.display = currentPerms.send_msg ? 'flex' : 'none';
-                }
-                if (document.getElementById('leave-card-driver')) {
-                    document.getElementById('leave-card-driver').style.display = currentPerms.ask_leave ? 'block' : 'none';
-                }
-
                 const chatBoxDriver = document.getElementById('chat-stream-output-driver');
                 const chatBoxAdmin = document.getElementById('chat-stream-output-admin');
                 
@@ -500,9 +472,11 @@
                     if(msgList.length !== trackChatLength) {
                         let htmlContent = '';
                         msgList.forEach(m => {
+                            let rDisp = m.role || 'Conducteur';
+                            if(rDisp === 'Administrateur') rDisp = 'Superviseur';
                             htmlContent += `
                                 <div class="chat-bubble">
-                                    <div class="chat-bubble-meta"><span>${m.name} (${m.uid}) — <small>${m.role || 'Conducteur'}</small></span><span>${m.stamp}</span></div>
+                                    <div class="chat-bubble-meta"><span>${m.name} (${m.uid}) — <small>${rDisp}</small></span><span>${m.stamp}</span></div>
                                     <div class="chat-bubble-text">${m.text}</div>
                                 </div>`;
                         });
@@ -513,6 +487,7 @@
                     }
                 }
 
+                // CORRECTION DYNAMIQUE DU FILTRE DANS LE FLUX DE DOCKING (Vérifie aussi le rôle Superviseur)
                 if(uid !== "ADMIN" && userRole !== "Superviseur") {
                     const upcomingBucket = document.getElementById('driver-services-bucket');
                     const pastBucket = document.getElementById('driver-past-services-bucket');
@@ -527,8 +502,8 @@
                         Object.entries(db.services).forEach(([sid, s]) => {
                             if(s.target === uid) {
                                 const col = colors[s.line] || "#64748B";
-                                const active = s.status === "Prise de poste validée";
-                                const isPast = s.hours.toLowerCase().includes('passé');
+                                const active = s.status === "Prise de poste validee";
+                                const isPast = s.hours.toLowerCase().includes('passe');
 
                                 const tileHtml = `
                                     <div class="service-tile" style="border-left-color:${col}">
@@ -563,20 +538,21 @@
                             Object.values(db.conges).forEach(l => {
                                 if(l.agent === uid) {
                                     let badgeCls = "status-wait";
-                                    if(l.status === "Approuvé") badgeCls = "status-ok";
-                                    if(l.status === "Refusé") badgeCls = "status-no";
+                                    if(l.status === "Approuve") badgeCls = "status-ok";
+                                    if(l.status === "Refuse") badgeCls = "status-no";
                                     leaveTable.innerHTML += `<tr><td>Du ${l.start} au ${l.end}</td><td>${l.reason}</td><td><span class="status-dot ${badgeCls}">${l.status}</span></td></tr>`;
                                 }
                             });
                         }
                     }
                 } else {
+                    // RENDU INTERFACE DIRECTION / SUPERVISEUR
                     const dTable = document.getElementById('box-table-drivers'); dTable.innerHTML = '';
                     if(db.conducteurs) {
                         Object.entries(db.conducteurs).forEach(([m, o]) => {
-                            let displayRole = o.role || 'Conducteur';
-                            if (displayRole === 'Administrateur') displayRole = 'Superviseur';
-                            dTable.innerHTML += `<tr><td><strong>${m}</strong></td><td>${o.name} <small style="color:var(--font-sub);">(${displayRole})</small></td><td><code>${o.password}</code></td><td><button class="btn-trash" onclick="dropItem('conducteurs', '${m}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                            let rDisp = o.role || 'Conducteur';
+                            if(rDisp === 'Administrateur') rDisp = 'Superviseur';
+                            dTable.innerHTML += `<tr><td><strong>${m}</strong></td><td>${o.name} <small style="color:var(--font-sub);">(${rDisp})</small></td><td><code>${o.password}</code></td><td><button class="btn-trash" onclick="dropItem('conducteurs', '${m}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                         });
                     }
 
@@ -584,13 +560,10 @@
                     if(db.services) {
                         Object.entries(db.services).forEach(([sid, s]) => {
                             const tgtUser = db.conducteurs && db.conducteurs[s.target] ? db.conducteurs[s.target] : null;
-                            let tgtRoleString = '';
-                            if (tgtUser) {
-                                let rString = tgtUser.role || 'Conducteur';
-                                if (rString === 'Administrateur') rString = 'Superviseur';
-                                tgtRoleString = ` (${rString})`;
-                            }
-                            const cls = s.status === "Prise de poste validée" ? "status-ok" : "status-wait";
+                            let rDisp = tgtUser ? (tgtUser.role || 'Conducteur') : 'Conducteur';
+                            if(rDisp === 'Administrateur') rDisp = 'Superviseur';
+                            const tgtRoleString = tgtUser ? ` (${rDisp})` : '';
+                            const cls = s.status === "Prise de poste validee" ? "status-ok" : "status-wait";
                             
                             sTable.innerHTML += `<tr><td><span class="badge-line" style="background:${colors[s.line] || '#64748B'}">${s.line}</span></td><td>${s.hours}</td><td><strong>${s.target}</strong><small style="color:var(--font-sub);">${tgtRoleString}</small></td><td>${s.mission}</td><td><span class="status-dot ${cls}">${s.status || 'En attente'}</span></td><td><button class="btn-trash" onclick="dropItem('services', '${sid}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                         });
