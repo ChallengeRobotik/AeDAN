@@ -112,11 +112,37 @@
         .chat-bubble { background: var(--surface-card); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-line); max-width: 95%; }
         .chat-bubble-meta { font-size: 0.72rem; color: var(--font-sub); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 20px; }
         .chat-bubble-text { font-size: 0.88rem; color: var(--font-dark); line-height: 1.4; }
+
+        /* --- POPUP NOTIFICATION HAUT DE PAGE (SANS IMPACT VISUEL SUR LE LAYOUT) --- */
+        #aedan-custom-popup {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--surface-card); border: 1px solid var(--border-line);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 10px; padding: 16px 24px;
+            z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 450px;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #aedan-custom-popup.active { top: 25px; }
+        .popup-header-msg { font-size: 0.9rem; font-weight: 600; color: var(--font-dark); text-align: center; }
+        .popup-action-row { display: flex; justify-content: center; gap: 12px; margin-top: 5px; }
+        .popup-btn { padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: none; transition: transform 0.1s; }
+        .popup-btn:active { transform: scale(0.95); }
+        .popup-btn-confirm { background: var(--brand-color); color: white; }
+        .popup-btn-cancel { background: var(--canvas-bg); color: var(--font-dark); border: 1px solid var(--border-line); }
+        .popup-progress-container { width: 100%; height: 4px; background: var(--canvas-bg); border-radius: 2px; overflow: hidden; }
+        .popup-progress-bar { width: 100%; height: 100%; background: var(--brand-color); transform-origin: left; }
     </style>
 </head>
 <body>
 
     <img src="https://image.noelshack.com/fichiers/2026/28/2/1783387205-2b6a27e168543ce8099dc90780cd86d6-removebg-preview.png" class="bg-watermark-logo" alt="">
+
+    <div id="aedan-custom-popup">
+        <div class="popup-header-msg" id="popup-text-content">Message de confirmation</div>
+        <div class="popup-action-row" id="popup-actions-box"></div>
+        <div class="popup-progress-container">
+            <div class="popup-progress-bar" id="popup-loader-bar"></div>
+        </div>
+    </div>
 
     <header>
         <div class="logo-box-main">
@@ -262,6 +288,16 @@
     </main>
 
     <script>
+        // SECURE : Blocage complet de l'inspection de page
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+                (e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
+        });
+
         const FIREBASE_ENDPOINT = "https://aedan-mobilites-default-rtdb.europe-west1.firebasedatabase.app";
         const colors = { "26": "#e182b4", "BAM": "#1b35b0", "I": "#6dc16d" };
 
@@ -273,6 +309,58 @@
 
         document.getElementById('lbl-agent-name').textContent = `${name} [${uid}] (${userRole})`;
 
+        // Gestion du popup personnalisé haut de page avec réponse par défaut automatique
+        let popupTimer = null;
+        let progressInterval = null;
+
+        function showNotification(text, isConfirm = false, onConfirmCallback = null) {
+            clearTimeout(popupTimer);
+            clearInterval(progressInterval);
+
+            const popup = document.getElementById('aedan-custom-popup');
+            const txtBox = document.getElementById('popup-text-content');
+            const actionsBox = document.getElementById('popup-actions-box');
+            const progressBar = document.getElementById('popup-loader-bar');
+
+            txtBox.textContent = text;
+            actionsBox.innerHTML = '';
+            progressBar.style.transform = 'scaleX(1)';
+
+            const duration = 5000; // 5 secondes
+            let timeLeft = duration;
+
+            if (isConfirm) {
+                actionsBox.innerHTML = `
+                    <button class="popup-btn popup-btn-confirm" id="pop-yes">Confirmer</button>
+                    <button class="popup-btn popup-btn-cancel" id="pop-no">Annuler</button>
+                `;
+                
+                document.getElementById('pop-yes').onclick = () => {
+                    popup.classList.remove('active');
+                    clearInterval(progressInterval);
+                    if (onConfirmCallback) onConfirmCallback();
+                };
+                document.getElementById('pop-no').onclick = () => {
+                    popup.classList.remove('active');
+                    clearInterval(progressInterval);
+                };
+            }
+
+            popup.classList.add('active');
+
+            progressInterval = setInterval(() => {
+                timeLeft -= 50;
+                const scale = Math.max(0, timeLeft / duration);
+                progressBar.style.transform = `scaleX(${scale})`;
+                if (timeLeft <= 0) {
+                    clearInterval(progressInterval);
+                    popup.classList.remove('active');
+                    // Réponse par défaut automatique si confirmée
+                    if (isConfirm && onConfirmCallback) onConfirmCallback();
+                }
+            }, 50);
+        }
+
         // Thème System Switcher
         const themeTrigger = document.getElementById('theme-toggle-btn');
         if (localStorage.getItem('user-ui-theme') === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>'; }
@@ -283,7 +371,7 @@
 
         function killSession() { sessionStorage.clear(); window.location.href = "connexion.html"; }
 
-        // Router d'affichage UI (Supporte l'identifiant "ADMIN" historique ou le rôle Administrateur)
+        // CORRECTION ROUTEUR : Les comptes créés comme Administrateurs accèdent directement au panel admin
         if(uid === "ADMIN" || userRole === "Administrateur") { 
             document.getElementById('admin-core-view').style.display = 'grid'; 
         } else { 
@@ -301,7 +389,7 @@
             fetch(`${FIREBASE_ENDPOINT}/rapports_incidents.json`, {
                 method: 'POST',
                 body: JSON.stringify({ agent: uid, vehicle: document.getElementById('rep-bus').value, text: document.getElementById('rep-text').value, stamp: new Date().toLocaleString() })
-            }).then(() => { alert("Rapport transmis."); document.getElementById('form-driver-report').reset(); pollData(); });
+            }).then(() => { showNotification("Rapport transmis avec succès."); document.getElementById('form-driver-report').reset(); pollData(); });
         };
 
         // Soumission demande de congés
@@ -344,7 +432,7 @@
             const p = document.getElementById('add-pass').value.trim();
             const r = document.getElementById('add-role').value;
             fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p, role: r }) })
-            .then(() => { document.getElementById('form-add-driver').reset(); pollData(); });
+            .then(() => { showNotification(`Agent inscrit avec succès [Rôle: ${r}]`); document.getElementById('form-add-driver').reset(); pollData(); });
         };
 
         document.getElementById('form-add-service').onsubmit = (e) => {
@@ -365,9 +453,12 @@
         }
 
         function dropItem(path, key) {
-            if(confirm("Confirmer le retrait ?")) {
-                fetch(`${FIREBASE_ENDPOINT}/${path}/${key}.json`, { method: 'DELETE' }).then(() => pollData());
-            }
+            showNotification("Confirmer la suppression définitive de cet élément ?", true, () => {
+                fetch(`${FIREBASE_ENDPOINT}/${path}/${key}.json`, { method: 'DELETE' }).then(() => {
+                    showNotification("Élément retiré de la base.");
+                    pollData();
+                });
+            });
         }
 
         // Flux Synchro Data direct
@@ -376,7 +467,7 @@
             fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`).then(r => r.json()).then(db => {
                 if(!db) return;
 
-                // Flux de messagerie commun (Mis à jour sur les deux conteneurs cibles)
+                // Flux de messagerie commun 
                 const chatBoxDriver = document.getElementById('chat-stream-output-driver');
                 const chatBoxAdmin = document.getElementById('chat-stream-output-admin');
                 
@@ -399,7 +490,7 @@
                 }
 
                 if(uid !== "ADMIN" && userRole !== "Administrateur") {
-                    // Séparation des services conducteurs actifs et passés
+                    // Services actifs et passés
                     const upcomingBucket = document.getElementById('driver-services-bucket');
                     const pastBucket = document.getElementById('driver-past-services-bucket');
                     
