@@ -38,8 +38,9 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.25s, border-color 0.25s; }
         body { background-color: var(--canvas-bg); color: var(--font-dark); padding-bottom: 80px; overflow-x: hidden; position: relative; min-height: 100vh; }
-        .line-font font-family: 'Montserrat Arabic', sans-serif; font-weight: 600; }
+        .line-font { font-family: 'Montserrat Arabic', sans-serif; font-weight: 600; }
 
+        /* --- FILIGRANE TRANSPARENT EN BAS À DROITE --- */
         .bg-watermark-logo {
             position: fixed; bottom: -80px; right: -80px; height: 50vh; opacity: 0.03;
             pointer-events: none; user-select: none; z-index: 1; transform: rotate(12deg);
@@ -50,6 +51,7 @@
         @keyframes floatSlow { 0%, 100% { transform: rotate(12deg) translateY(0); } 50% { transform: rotate(15deg) translateY(-15px); } }
         @keyframes slideInUp { from { opacity: 0; transform: translateY(25px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
+        /* --- HEADER CHIC --- */
         header {
             background-color: var(--surface-card); border-bottom: 1px solid var(--border-line);
             padding: 16px 5%; display: flex; justify-content: space-between; align-items: center;
@@ -66,6 +68,7 @@
             border-radius: 50%; cursor: pointer; color: var(--font-dark); display: flex; align-items: center; justify-content: center;
         }
 
+        /* --- LAYOUT WORKSPACE --- */
         .app-container { max-width: 1240px; margin: 35px auto; padding: 0 24px; position: relative; z-index: 5; }
         
         .panel-heading { margin-bottom: 30px; animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -75,6 +78,7 @@
         .card-panel { background: var(--surface-card); border-radius: var(--smooth-radius); padding: 28px; border: 1px solid var(--border-line); box-shadow: 0 10px 30px rgba(0,0,0,0.01); animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .card-panel h2 { font-size: 1.05rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-line); padding-bottom: 12px; }
 
+        /* --- STYLING FORM & BUTTONS --- */
         .form-row { margin-bottom: 16px; }
         .form-row label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--font-sub); margin-bottom: 6px; text-transform: uppercase; }
         .form-item { width: 100%; padding: 12px 14px; border: 1px solid var(--border-line); background: var(--canvas-bg); color: var(--font-dark); border-radius: 8px; outline: none; font-size: 0.9rem; }
@@ -83,11 +87,13 @@
         .btn-action { background: var(--brand-color); color: white; border: none; padding: 13px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
         .btn-action:hover { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(122,28,28,0.15); }
 
+        /* --- STYLING SERVICES --- */
         .service-tile { background: var(--canvas-bg); border-left: 5px solid var(--brand-color); border-radius: 8px; padding: 18px; margin-bottom: 15px; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
         .service-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.03); }
         .tile-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .badge-line { padding: 3px 10px; border-radius: 6px; color: white; font-weight: 800; font-size: 0.75rem; }
 
+        /* --- TABLES --- */
         .table-responsive { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-line); margin-top: 15px; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
         th { background: var(--canvas-bg); padding: 12px; color: var(--font-sub); font-weight: 700; }
@@ -96,16 +102,47 @@
         .status-dot { padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; }
         .status-wait { background: #E2E8F0; color: #475569; }
         .status-ok { background: rgba(16, 185, 129, 0.15); color: var(--live-ok); }
+        .status-no { background: rgba(239, 68, 68, 0.15); color: var(--live-crit); }
 
-        .btn-trash { background: none; border: none; color: var(--live-crit); cursor: pointer; font-size: 0.95rem; transition: transform 0.2s; margin-right: 6px; }
+        .btn-trash { background: none; border: none; color: var(--live-crit); cursor: pointer; font-size: 0.95rem; transition: transform 0.2s; }
         .btn-trash:hover { transform: scale(1.15); }
-        .btn-edit { background: none; border: none; color: var(--live-warn); cursor: pointer; font-size: 0.95rem; transition: transform 0.2s; }
-        .btn-edit:hover { transform: scale(1.15); }
+
+        /* --- MESSAGERIE INTERNE --- */
+        .chat-flow-zone { border: 1px solid var(--border-line); border-radius: 8px; background: var(--canvas-bg); height: 260px; overflow-y: auto; padding: 14px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-bubble { background: var(--surface-card); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-line); max-width: 95%; }
+        .chat-bubble-meta { font-size: 0.72rem; color: var(--font-sub); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 20px; }
+        .chat-bubble-text { font-size: 0.88rem; color: var(--font-dark); line-height: 1.4; }
+
+        /* --- POPUP NOTIFICATION HAUT DE PAGE (SANS IMPACT VISUEL SUR LE LAYOUT) --- */
+        #aedan-custom-popup {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--surface-card); border: 1px solid var(--border-line);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 10px; padding: 16px 24px;
+            z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 450px;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #aedan-custom-popup.active { top: 25px; }
+        .popup-header-msg { font-size: 0.9rem; font-weight: 600; color: var(--font-dark); text-align: center; }
+        .popup-action-row { display: flex; justify-content: center; gap: 12px; margin-top: 5px; }
+        .popup-btn { padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: none; transition: transform 0.1s; }
+        .popup-btn:active { transform: scale(0.95); }
+        .popup-btn-confirm { background: var(--brand-color); color: white; }
+        .popup-btn-cancel { background: var(--canvas-bg); color: var(--font-dark); border: 1px solid var(--border-line); }
+        .popup-progress-container { width: 100%; height: 4px; background: var(--canvas-bg); border-radius: 2px; overflow: hidden; }
+        .popup-progress-bar { width: 100%; height: 100%; background: var(--brand-color); transform-origin: left; }
     </style>
 </head>
 <body>
 
     <img src="https://image.noelshack.com/fichiers/2026/28/2/1783387205-2b6a27e168543ce8099dc90780cd86d6-removebg-preview.png" class="bg-watermark-logo" alt="">
+
+    <div id="aedan-custom-popup">
+        <div class="popup-header-msg" id="popup-text-content">Message de confirmation</div>
+        <div class="popup-action-row" id="popup-actions-box"></div>
+        <div class="popup-progress-container">
+            <div class="popup-progress-bar" id="popup-loader-bar"></div>
+        </div>
+    </div>
 
     <header>
         <div class="logo-box-main">
@@ -113,7 +150,7 @@
         </div>
         <div style="display: flex; align-items: center; gap: 16px;">
             <button class="btn-logout" onclick="killSession()"><i class="fa-solid fa-power-off"></i> Déconnexion</button>
-            <button class="dark-mode-switch" id="theme-toggle-btn"><i class="fa-solid fa-sun"></i></button>
+            <button class="dark-mode-switch" id="theme-toggle-btn"><i class="fa-solid fa-moon"></i></button>
         </div>
     </header>
 
@@ -125,8 +162,36 @@
 
         <div id="driver-core-view" class="grid-dashboard" style="display: none;">
             <div class="card-panel" style="grid-column: span 2;">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-route"></i> Prochain service</h2>
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-route"></i> Prochains services programmés</h2>
                 <div id="driver-services-bucket"></div>
+
+                <h2 class="line-font" style="color: var(--font-sub); margin-top: 30px; border-top: 1px solid var(--border-line); padding-top: 20px;"><i class="fa-solid fa-clock-rotate-left"></i> Historique des services effectués (Passés)</h2>
+                <div id="driver-past-services-bucket"></div>
+            </div>
+
+            <div class="card-panel">
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation</h2>
+                <div class="chat-flow-zone" id="chat-stream-output-driver"></div>
+                <form id="form-send-chat-driver" style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-msg-field-driver" class="form-item" placeholder="Écrire un message..." required autocomplete="off">
+                    <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+
+            <div class="card-panel" style="grid-column: span 2;">
+                <h2 class="line-font" style="color: var(--live-warn);"><i class="fa-solid fa-umbrella-beach"></i> Demandes de congés & absences</h2>
+                <form id="form-leave-request" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div class="form-row"><label>Date de début</label><input type="date" id="leave-start" class="form-item" required></div>
+                    <div class="form-row"><label>Date de fin</label><input type="date" id="leave-end" class="form-item" required></div>
+                    <div class="form-row"><label>Motif légitime</label><input type="text" id="leave-reason" class="form-item" placeholder="Congé annuel, RTT..." required></div>
+                    <div class="form-row" style="display: flex; align-items: flex-end;"><button type="submit" class="btn-action" style="background: var(--live-warn);">Soumettre la demande</button></div>
+                </form>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Période demandée</th><th>Motif de l'absence</th><th>Statut de la demande</th></tr></thead>
+                        <tbody id="table-body-driver-leaves"></tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="card-panel">
@@ -146,47 +211,39 @@
         </div>
 
         <div id="admin-core-view" class="grid-dashboard" style="display: none;">
-            
             <div class="card-panel">
-                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel & Rôles</h2>
-                
+                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel (RH)</h2>
                 <form id="form-add-driver">
-                    <input type="hidden" id="edit-mode-flag" value="false">
                     <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
                     <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
                     <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
                     <div class="form-row">
-                        <label>Rôle assigné</label>
-                        <select id="add-role" class="form-item"></select>
+                        <label>Rôle & Habilitation</label>
+                        <select id="add-role" class="form-item">
+                            <option value="Conducteur">Conducteur</option>
+                            <option value="Régulateur">Régulateur</option>
+                            <option value="Administrateur">Administrateur</option>
+                        </select>
                     </div>
-                    <button type="submit" id="btn-submit-agent" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
+                    <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
                 </form>
 
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Matricule</th><th>Nom</th><th>Rôle</th><th>Code</th><th></th></tr></thead>
+                        <thead><tr><th>Matricule</th><th>Nom (Rôle)</th><th>Code</th><th></th></tr></thead>
                         <tbody id="box-table-drivers"></tbody>
                     </table>
                 </div>
-
-                <h2 class="line-font" style="color: var(--color-lbam); margin-top: 30px; font-size: 0.95rem;"><i class="fa-solid fa-tags"></i> Paramétrage des Rôles</h2>
-                <form id="form-add-role" style="margin-bottom: 15px;">
-                    <div class="form-row">
-                        <input type="text" id="role-name-input" class="form-item" placeholder="Nom du nouveau rôle (ex: Contrôleur)" required>
-                    </div>
-                    <button type="submit" class="btn-action" style="background: var(--color-lbam); padding: 8px;">Créer le rôle</button>
-                </form>
-                <div id="roles-chips-container" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
             </div>
 
             <div class="card-panel" style="grid-column: span 2;">
                 <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-calendar-check"></i> Ordonnancement Horaires</h2>
-                <form id="form-add-service" class="grid-dashboard" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 0;">
+                <form id="form-add-service" class="grid-dashboard" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 0; margin-bottom: 15px;">
                     <div class="form-row">
                         <label>Ligne</label>
                         <select id="add-srv-line" class="form-item"><option value="26">Ligne 26</option><option value="BAM">Ligne BAM</option><option value="I">Ligne I</option></select>
                     </div>
-                    <div class="form-row"><label>Horaires de Service</label><input type="text" id="add-srv-hours" class="form-item" placeholder="06:00 - 14:00" required></div>
+                    <div class="form-row"><label>Horaires de Service</label><input type="text" id="add-srv-hours" class="form-item" placeholder="06:00 - 14:00 (ou 'Passé')" required></div>
                     <div class="form-row"><label>Matricule Cible</label><input type="text" id="add-srv-target" class="form-item" required></div>
                     <div class="form-row"><label>Mission / Consigne</label><input type="text" id="add-srv-mission" class="form-item" required></div>
                     <button type="submit" class="btn-action" style="grid-column: span 2;">AFFECTER LE SERVICE</button>
@@ -194,8 +251,35 @@
 
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Ligne</th><th>Amplitude</th><th>Matricule</th><th>Mission</th><th>Statut</th><th></th></tr></thead>
+                        <thead><tr><th>Ligne</th><th>Amplitude</th><th>Matricule (Agent)</th><th>Mission</th><th>Statut</th><th></th></tr></thead>
                         <tbody id="box-table-services"></tbody>
+                    </table>
+                </div>
+
+                <h2 class="line-font" style="color: var(--live-warn); margin-top: 35px;"><i class="fa-solid fa-stamp"></i> Arbitrage des demandes de congés</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Agent</th><th>Période</th><th>Motif</th><th>Décision direction</th><th></th></tr></thead>
+                        <tbody id="box-table-admin-leaves"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-panel">
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation (Admin)</h2>
+                <div class="chat-flow-zone" id="chat-stream-output-admin"></div>
+                <form id="form-send-chat-admin" style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-msg-field-admin" class="form-item" placeholder="Écrire en tant qu'admin..." required autocomplete="off">
+                    <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+
+            <div class="card-panel" style="grid-column: span 2;">
+                <h2 class="line-font" style="color: var(--live-crit);"><i class="fa-solid fa-triangle-exclamation"></i> Événements & Incidents signalés</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Horodatage</th><th>Agent</th><th>Matériel / Rame</th><th>Commentaire</th><th></th></tr></thead>
+                        <tbody id="box-table-admin-incidents"></tbody>
                     </table>
                 </div>
             </div>
@@ -204,7 +288,18 @@
     </main>
 
     <script>
+        // SECURE : Blocage complet de l'inspection de page
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+                (e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
+        });
+
         const FIREBASE_ENDPOINT = "https://aedan-mobilites-default-rtdb.europe-west1.firebasedatabase.app";
+        const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1524811445999501378/F884Kp_JOYwAfrNLm9pUzRwBv11C9YpR5hTwNGUOvCSa59b9ZcCQEo_Ed4fbPx9BS8Zq";
         const colors = { "26": "#e182b4", "BAM": "#1b35b0", "I": "#6dc16d" };
 
         const uid = sessionStorage.getItem('agent_uid');
@@ -212,9 +307,80 @@
         const userRole = sessionStorage.getItem('agent_role') || "Conducteur";
 
         if(!uid) { window.location.href = "connexion.html"; }
-        document.getElementById('lbl-agent-name').textContent = name;
 
-        // Thème Sombre/Clair
+        document.getElementById('lbl-agent-name').textContent = `${name} [${uid}] (${userRole})`;
+
+        // Envoi automatique des logs sur le Webhook Discord
+        function logToDiscord(title, description, color = 8002332) {
+            const payload = {
+                embeds: [{
+                    title: title,
+                    description: description,
+                    color: color,
+                    timestamp: new Date().toISOString(),
+                    footer: { text: `Agent: ${name} [${uid}] — Rôle: ${userRole}` }
+                }]
+            };
+            fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(err => console.error("Discord Log Error: ", err));
+        }
+
+        // Gestion du popup personnalisé haut de page avec réponse par défaut automatique
+        let popupTimer = null;
+        let progressInterval = null;
+
+        function showNotification(text, isConfirm = false, onConfirmCallback = null) {
+            clearTimeout(popupTimer);
+            clearInterval(progressInterval);
+
+            const popup = document.getElementById('aedan-custom-popup');
+            const txtBox = document.getElementById('popup-text-content');
+            const actionsBox = document.getElementById('popup-actions-box');
+            const progressBar = document.getElementById('popup-loader-bar');
+
+            txtBox.textContent = text;
+            actionsBox.innerHTML = '';
+            progressBar.style.transform = 'scaleX(1)';
+
+            const duration = 5000; // 5 secondes
+            let timeLeft = duration;
+
+            if (isConfirm) {
+                actionsBox.innerHTML = `
+                    <button class="popup-btn popup-btn-confirm" id="pop-yes">Confirmer</button>
+                    <button class="popup-btn popup-btn-cancel" id="pop-no">Annuler</button>
+                `;
+                
+                document.getElementById('pop-yes').onclick = () => {
+                    popup.classList.remove('active');
+                    clearInterval(progressInterval);
+                    if (onConfirmCallback) onConfirmCallback();
+                };
+                document.getElementById('pop-no').onclick = () => {
+                    popup.classList.remove('active');
+                    clearInterval(progressInterval);
+                };
+            }
+
+            popup.classList.add('active');
+
+            progressInterval = setInterval(() => {
+                timeLeft -= 50;
+                const scale = Math.max(0, timeLeft / duration);
+                progressBar.style.transform = `scaleX(${scale})`;
+                if (timeLeft <= 0) {
+                    clearInterval(progressInterval);
+                    popup.classList.remove('active');
+                    // Réponse par défaut automatique si confirmée
+                    if (isConfirm && onConfirmCallback) onConfirmCallback();
+                }
+            }, 50);
+        }
+
+        // Thème System Switcher
         const themeTrigger = document.getElementById('theme-toggle-btn');
         if (localStorage.getItem('user-ui-theme') === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>'; }
         themeTrigger.onclick = () => {
@@ -222,115 +388,107 @@
             else { document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('user-ui-theme', 'dark'); themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>'; }
         };
 
-        function killSession() { sessionStorage.clear(); window.location.href = "connexion.html"; }
+        function killSession() { 
+            logToDiscord("Déconnexion Espace Agent", `L'agent **${name}** s'est déconnecté du portail.`, 15610390);
+            sessionStorage.clear(); 
+            window.location.href = "connexion.html"; 
+        }
 
-        // Redirection Panel Admin si l'UID est ADMIN ou si le rôle contient 'admin'
-        if(uid === "ADMIN" || userRole.toLowerCase().includes("admin") || userRole.toLowerCase().includes("administrateur")) { 
+        // CORRECTION ROUTEUR : Les comptes créés comme Administrateurs accèdent directement au panel admin
+        if(uid === "ADMIN" || userRole === "Administrateur") { 
             document.getElementById('admin-core-view').style.display = 'grid'; 
         } else { 
             document.getElementById('driver-core-view').style.display = 'grid'; 
         }
 
-        // Actions Conducteur (Prise de poste)
+        // Actions Conducteur (Prise de Poste)
         function toggleShift(sid, current) {
             const updated = current === "Prise de poste validée" ? "En attente" : "Prise de poste validée";
-            fetch(`${FIREBASE_ENDPOINT}/services/${sid}/status.json`, { method: 'PUT', body: JSON.stringify(updated) }).then(() => pollData());
+            fetch(`${FIREBASE_ENDPOINT}/services/${sid}/status.json`, { method: 'PUT', body: JSON.stringify(updated) }).then(() => {
+                logToDiscord("Prise de service / Statut", `Changement de statut du service **${sid}**.\nNouveau statut : **${updated}**`, updated === "Prise de poste validée" ? 1098033 : 4473924);
+                pollData();
+            });
         }
 
         document.getElementById('form-driver-report').onsubmit = (e) => {
             e.preventDefault();
+            const busNum = document.getElementById('rep-bus').value;
+            const reportContent = document.getElementById('rep-text').value;
+            const stampTime = new Date().toLocaleString();
+
             fetch(`${FIREBASE_ENDPOINT}/rapports_incidents.json`, {
                 method: 'POST',
-                body: JSON.stringify({ agent: uid, vehicle: document.getElementById('rep-bus').value, text: document.getElementById('rep-text').value, stamp: new Date().toLocaleString() })
-            }).then(() => { alert("Rapport transmis."); document.getElementById('form-driver-report').reset(); });
+                body: JSON.stringify({ agent: uid, vehicle: busNum, text: reportContent, stamp: stampTime })
+            }).then(() => { 
+                logToDiscord("🚨 Incident Signalé", `**Matériel / Rame :** ${busNum}\n**Description :** ${reportContent}\n**Horodatage :** ${stampTime}`, 15671108);
+                showNotification("Rapport transmis avec succès."); 
+                document.getElementById('form-driver-report').reset(); 
+                pollData(); 
+            });
         };
 
-        // Mutation / Ajout d'un Agent (Gestion dynamique des nœuds Firebase en fonction du rôle)
+        // Soumission demande de congés
+        if(document.getElementById('form-leave-request')) {
+            document.getElementById('form-leave-request').onsubmit = (e) => {
+                e.preventDefault();
+                const start = document.getElementById('leave-start').value;
+                const end = document.getElementById('leave-end').value;
+                const reason = document.getElementById('leave-reason').value.trim();
+                fetch(`${FIREBASE_ENDPOINT}/conges.json`, {
+                    method: 'POST',
+                    body: JSON.stringify({ agent: uid, name: name, start: start, end: end, reason: reason, status: "En attente" })
+                }).then(() => { 
+                    logToDiscord("📅 Nouvelle Demande de Congé", `**Période :** Du ${start} au ${end}\n**Motif :** ${reason}\n**Statut :** En attente`, 16111371);
+                    document.getElementById('form-leave-request').reset(); 
+                    pollData(); 
+                });
+            };
+        }
+
+        // Envois Messages Tchat (Conducteur & Admin)
+        function sendChatMessage(textInputId) {
+            const field = document.getElementById(textInputId);
+            const txt = field.value.trim();
+            if(!txt) return;
+            fetch(`${FIREBASE_ENDPOINT}/messages.json`, {
+                method: 'POST',
+                body: JSON.stringify({ uid: uid, name: name, role: userRole, text: txt, stamp: new Date().toLocaleTimeString().slice(0, 5) })
+            }).then(() => { field.value = ''; pollData(); });
+        }
+
+        if(document.getElementById('form-send-chat-driver')) {
+            document.getElementById('form-send-chat-driver').onsubmit = (e) => { e.preventDefault(); sendChatMessage('chat-msg-field-driver'); };
+        }
+        if(document.getElementById('form-send-chat-admin')) {
+            document.getElementById('form-send-chat-admin').onsubmit = (e) => { e.preventDefault(); sendChatMessage('chat-msg-field-admin'); };
+        }
+
+        // Actions Admin (Inscription avec routage Firebase dynamique et possibilité d'édition)
         document.getElementById('form-add-driver').onsubmit = (e) => {
             e.preventDefault();
             const m = document.getElementById('add-mat').value.trim();
             const n = document.getElementById('add-name').value.trim();
             const p = document.getElementById('add-pass').value.trim();
             const r = document.getElementById('add-role').value;
-            const isEdit = document.getElementById('edit-mode-flag').value === "true";
+            
+            // Écriture principale dans la table /conducteurs/
+            fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p, role: r }) })
+            .then(() => {
+                // Routage Firebase par sous-catégorie dynamique basée sur les rôles (admins, regulateurs, conducteurs standard)
+                let categoryNode = "conducteurs_actifs";
+                if(r === "Administrateur") categoryNode = "admins";
+                if(r === "Régulateur") categoryNode = "regulateurs";
 
-            let primaryPath = "conducteurs";
-            if (r === "Administrateur") primaryPath = "admins";
-            else if (r !== "Conducteur") primaryPath = r.toLowerCase().replace(/[^a-z0-9]/g, "");
-
-            const payload = { name: n, password: p, role: r };
-
-            // Si modification, on nettoie potentiellement l'ancien emplacement Firebase de l'agent
-            const saveAction = () => {
-                fetch(`${FIREBASE_ENDPOINT}/${primaryPath}/${m}.json`, { method: 'PUT', body: JSON.stringify(payload) })
-                .then(() => {
-                    document.getElementById('form-add-driver').reset();
-                    document.getElementById('edit-mode-flag').value = "false";
-                    document.getElementById('add-mat').disabled = false;
-                    document.getElementById('btn-submit-agent').textContent = "INSCRIRE L'AGENT";
-                    document.getElementById('btn-submit-agent').style.background = "var(--live-ok)";
-                    pollData();
-                });
-            };
-
-            if (isEdit) {
-                // Supprime des localisations courantes pour éviter les doublons inter-catégories
-                fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'DELETE' })
-                .then(() => fetch(`${FIREBASE_ENDPOINT}/admins/${m}.json`, { method: 'DELETE' }))
-                .then(() => fetch(`${FIREBASE_ENDPOINT}/${r.toLowerCase().replace(/[^a-z0-9]/g, "")}/${m}.json`, { method: 'DELETE' }))
-                .then(() => saveAction());
-            } else {
-                saveAction();
-            }
+                return fetch(`${FIREBASE_ENDPOINT}/${categoryNode}/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p, role: r }) });
+            })
+            .then(() => { 
+                logToDiscord("👤 Agent Inscrit / Modifié", `**Matricule :** ${m}\n**Nom :** ${n}\n**Rôle sélectionné :** ${r}\n**Code d'accès :** \`${p}\``, 1118933);
+                showNotification(`Agent inscrit avec succès [Rôle: ${r}]`); 
+                document.getElementById('form-add-driver').reset(); 
+                pollData(); 
+            });
         };
 
-        // Modification de l'agent (Pré-remplissage du formulaire)
-        function editAgent(matricule, name, password, role) {
-            document.getElementById('add-mat').value = matricule;
-            document.getElementById('add-mat').disabled = true; // Empêche de modifier la clé primaire unique
-            document.getElementById('add-name').value = name;
-            document.getElementById('add-pass').value = password;
-            document.getElementById('add-role').value = role;
-            document.getElementById('edit-mode-flag').value = "true";
-            
-            const btn = document.getElementById('btn-submit-agent');
-            btn.textContent = "MODIFIER L'AGENT";
-            btn.style.background = "var(--live-warn)";
-        }
-
-        // Suppression d'un agent sur toutes ses branches possibles
-        function deleteAgent(matricule, currentRole) {
-            if(confirm(`Confirmer le retrait définitif de l'agent ${matricule} ?`)) {
-                let cat = "conducteurs";
-                if (currentRole === "Administrateur") cat = "admins";
-                else if (currentRole !== "Conducteur") cat = currentRole.toLowerCase().replace(/[^a-z0-9]/g, "");
-
-                fetch(`${FIREBASE_ENDPOINT}/${cat}/${matricule}.json`, { method: 'DELETE' }).then(() => pollData());
-            }
-        }
-
-        // Création dynamique de rôle
-        document.getElementById('form-add-role').onsubmit = (e) => {
-            e.preventDefault();
-            const rName = document.getElementById('role-name-input').value.trim();
-            const roleKey = rName.toLowerCase().replace(/[^a-z0-9]/g, "");
-            
-            if(roleKey === "conducteur" || roleKey === "administrateur" || roleKey === "admins") {
-                alert("Ce rôle système est protégé."); return;
-            }
-
-            fetch(`${FIREBASE_ENDPOINT}/roles/${roleKey}.json`, { method: 'PUT', body: JSON.stringify({ label: rName }) })
-            .then(() => { document.getElementById('form-add-role').reset(); pollData(); });
-        };
-
-        // Suppression d'un rôle
-        function dropRole(rKey) {
-            if(confirm("Supprimer ce rôle ? Les agents possédant ce rôle devront être réassignés.")) {
-                fetch(`${FIREBASE_ENDPOINT}/roles/${rKey}.json`, { method: 'DELETE' }).then(() => pollData());
-            }
-        }
-
-        // Affectation Service
         document.getElementById('form-add-service').onsubmit = (e) => {
             e.preventDefault();
             const payload = {
@@ -341,107 +499,183 @@
                 status: "En attente"
             };
             fetch(`${FIREBASE_ENDPOINT}/services.json`, { method: 'POST', body: JSON.stringify(payload) })
-            .then(() => { document.getElementById('form-add-service').reset(); pollData(); });
+            .then(() => { 
+                logToDiscord("📅 Affectation d'un horaire", `**Ligne :** Ligne ${payload.line}\n**Amplitude :** ${payload.hours}\n**Matricule Cible :** ${payload.target}\n**Mission :** ${payload.mission}`, 3881427);
+                document.getElementById('form-add-service').reset(); 
+                pollData(); 
+            });
         };
 
-        function dropItem(path, key) {
-            if(confirm("Confirmer le retrait ?")) {
-                fetch(`${FIREBASE_ENDPOINT}/${path}/${key}.json`, { method: 'DELETE' }).then(() => pollData());
-            }
+        function setLeaveStatus(key, state) {
+            fetch(`${FIREBASE_ENDPOINT}/conges/${key}/status.json`, { method: 'PUT', body: JSON.stringify(state) }).then(() => {
+                logToDiscord("⚖️ Arbitrage Congé", `La demande de congé **${key}** a été traitée.\n**Décision finale :** ${state}`, state === "Approuvé" ? 1098033 : 15671108);
+                pollData();
+            });
         }
 
-        // Synchronisation continue globale
+        function dropItem(path, key) {
+            showNotification("Confirmer la suppression définitive de cet élément ?", true, () => {
+                // Avant suppression, nettoyer aussi la catégorie spécifique s'il s'agit d'un agent
+                if (path === "conducteurs") {
+                    fetch(`${FIREBASE_ENDPOINT}/admins/${key}.json`, { method: 'DELETE' });
+                    fetch(`${FIREBASE_ENDPOINT}/regulateurs/${key}.json`, { method: 'DELETE' });
+                    fetch(`${FIREBASE_ENDPOINT}/conducteurs_actifs/${key}.json`, { method: 'DELETE' });
+                }
+                
+                fetch(`${FIREBASE_ENDPOINT}/${path}/${key}.json`, { method: 'DELETE' }).then(() => {
+                    logToDiscord("🗑️ Suppression Élément", `L'élément de clé **${key}** a été retiré de la table \`/${path}/\`.`, 15610390);
+                    showNotification("Élément retiré de la base.");
+                    pollData();
+                });
+            });
+        }
+
+        // Flux Synchro Data direct
+        let trackChatLength = 0;
         function pollData() {
             fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`).then(r => r.json()).then(db => {
                 if(!db) return;
 
-                // 1. Render des Rôles disponibles dans le formulaire
-                const roleSelect = document.getElementById('add-role');
-                const rolesChips = document.getElementById('roles-chips-container');
+                // Flux de messagerie commun 
+                const chatBoxDriver = document.getElementById('chat-stream-output-driver');
+                const chatBoxAdmin = document.getElementById('chat-stream-output-admin');
                 
-                // Rôles natifs par défaut
-                let rolesHTML = `<option value="Conducteur">Conducteur</option><option value="Administrateur">Administrateur</option>`;
-                let chipsHTML = `<span class="status-dot status-wait" style="background:#cbd5e1">Conducteur</span><span class="status-dot status-wait" style="background:#cbd5e1">Administrateur</span>`;
-                
-                if(db.roles) {
-                    Object.entries(db.roles).forEach(([rk, rObj]) => {
-                        rolesHTML += `<option value="${rObj.label}">${rObj.label}</option>`;
-                        chipsHTML += `<span class="status-dot status-wait" style="background:var(--border-line); display:inline-flex; align-items:center; gap:5px;">${rObj.label} <i class="fa-solid fa-xmark" style="cursor:pointer; color:var(--live-crit)" onclick="dropRole('${rk}')"></i></span>`;
-                    });
+                if(db.messages) {
+                    const msgList = Object.values(db.messages);
+                    if(msgList.length !== trackChatLength) {
+                        let htmlContent = '';
+                        msgList.forEach(m => {
+                            htmlContent += `
+                                <div class="chat-bubble">
+                                    <div class="chat-bubble-meta"><span>${m.name} (${m.uid}) — <small>${m.role || 'Conducteur'}</small></span><span>${m.stamp}</span></div>
+                                    <div class="chat-bubble-text">${m.text}</div>
+                                </div>`;
+                        });
+                        
+                        if(chatBoxDriver) { chatBoxDriver.innerHTML = htmlContent; chatBoxDriver.scrollTop = chatBoxDriver.scrollHeight; }
+                        if(chatBoxAdmin) { chatBoxAdmin.innerHTML = htmlContent; chatBoxAdmin.scrollTop = chatBoxAdmin.scrollHeight; }
+                        trackChatLength = msgList.length;
+                    }
                 }
-                roleSelect.innerHTML = rolesHTML;
-                rolesChips.innerHTML = chipsHTML;
 
-                // 2. Traitement des affichages selon les privilèges de session
-                if(document.getElementById('driver-core-view').style.display === 'grid') {
-                    // Vue Conducteur ou rôles alternatifs
-                    const bucket = document.getElementById('driver-services-bucket');
-                    bucket.innerHTML = '';
-                    let count = 0;
+                if(uid !== "ADMIN" && userRole !== "Administrateur") {
+                    // Services actifs et passés
+                    const upcomingBucket = document.getElementById('driver-services-bucket');
+                    const pastBucket = document.getElementById('driver-past-services-bucket');
+                    
+                    upcomingBucket.innerHTML = '';
+                    pastBucket.innerHTML = '';
+                    
+                    let upcomingCount = 0;
+                    let pastCount = 0;
+
                     if(db.services) {
                         Object.entries(db.services).forEach(([sid, s]) => {
                             if(s.target === uid) {
-                                count++;
                                 const col = colors[s.line] || "#64748B";
                                 const active = s.status === "Prise de poste validée";
-                                bucket.innerHTML += `
+                                const isPast = s.hours.toLowerCase().includes('passé');
+
+                                const tileHtml = `
                                     <div class="service-tile" style="border-left-color:${col}">
                                         <div class="tile-top">
                                             <span class="badge-line" style="background:${col}">Ligne ${s.line}</span>
                                             <span class="line-font" style="color:var(--brand-color);"><i class="fa-regular fa-clock"></i> ${s.hours}</span>
                                         </div>
-                                        <p style="font-size:0.92rem; margin-bottom:15px;"><strong>Mission :</strong> ${s.mission}</p>
+                                        <p style="font-size:0.92rem; ${!isPast ? 'margin-bottom:15px;' : ''}"><strong>Mission :</strong> ${s.mission}</p>
+                                        ${!isPast ? `
                                         <button class="btn-action" style="background:${active ? 'transparent' : 'var(--live-ok)'}; border:${active ? '1px solid var(--border-line)' : 'none'}; color:${active ? 'var(--font-dark)' : 'white'}; width:auto; padding:8px 16px; font-size:0.8rem;" onclick="toggleShift('${sid}', '${s.status}')">
                                             <i class="fa-solid ${active ? 'fa-user-check' : 'fa-play'}"></i> ${active ? 'Prise de poste validée' : 'Valider prise de poste'}
-                                        </button>
+                                        </button>` : ''}
                                     </div>`;
+
+                                if(isPast) {
+                                    pastBucket.innerHTML += tileHtml;
+                                    pastCount++;
+                                } else {
+                                    upcomingBucket.innerHTML += tileHtml;
+                                    upcomingCount++;
+                                }
                             }
                         });
                     }
-                    if(count === 0) bucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic;">Aucune affectation aujourd'hui.</p>`;
+                    if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucune affectation programmée.</p>`;
+                    if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucun historique de tournée disponible.</p>`;
+
+                    // Rendu des congés conducteur
+                    const leaveTable = document.getElementById('table-body-driver-leaves');
+                    if(leaveTable) {
+                        leaveTable.innerHTML = '';
+                        if(db.conges) {
+                            Object.values(db.conges).forEach(l => {
+                                if(l.agent === uid) {
+                                    let badgeCls = "status-wait";
+                                    if(l.status === "Approuvé") badgeCls = "status-ok";
+                                    if(l.status === "Refusé") badgeCls = "status-no";
+                                    leaveTable.innerHTML += `<tr><td>Du ${l.start} au ${l.end}</td><td>${l.reason}</td><td><span class="status-dot ${badgeCls}">${l.status}</span></td></tr>`;
+                                }
+                            });
+                        }
+                    }
                 } else {
-                    // Vue Administrateur consolidée
-                    const dTable = document.getElementById('box-table-drivers'); 
-                    dTable.innerHTML = '';
-                    
-                    const appendAgentToTable = (m, o, fallRole) => {
-                        const currentR = o.role || fallRole;
-                        dTable.innerHTML += `<tr>
-                            <td><strong>${m}</strong></td>
-                            <td>${o.name}</td>
-                            <td><span class="status-dot status-wait">${currentR}</span></td>
-                            <td><code>${o.password}</code></td>
-                            <td>
-                                <button class="btn-edit" onclick="editAgent('${m}', '${o.name}', '${o.password}', '${currentR}')"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button class="btn-trash" onclick="deleteAgent('${m}', '${currentR}')"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>`;
-                    };
-
-                    // Lecture de la catégorie "conducteurs"
+                    // RENDU INTERFACE DIRECTION / ADMIN
+                    const dTable = document.getElementById('box-table-drivers'); dTable.innerHTML = '';
                     if(db.conducteurs) {
-                        Object.entries(db.conducteurs).forEach(([m, o]) => appendAgentToTable(m, o, "Conducteur"));
-                    }
-                    // Lecture de la nouvelle catégorie "admins"
-                    if(db.admins) {
-                        Object.entries(db.admins).forEach(([m, o]) => appendAgentToTable(m, o, "Administrateur"));
-                    }
-                    // Lecture dynamique des nœuds des rôles personnalisés
-                    if(db.roles) {
-                        Object.keys(db.roles).forEach(rk => {
-                            if(db[rk]) {
-                                Object.entries(db[rk]).forEach(([m, o]) => appendAgentToTable(m, o, db.roles[rk].label));
-                            }
+                        Object.entries(db.conducteurs).forEach(([m, o]) => {
+                            dTable.innerHTML += `<tr><td><strong>${m}</strong></td><td>${o.name} <small style="color:var(--font-sub);">(${o.role || 'Conducteur'})</small></td><td><code>${o.password}</code></td><td><button class="btn-trash" onclick="dropItem('conducteurs', '${m}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                         });
                     }
 
-                    // Remplissage de la table des ordonnancements de lignes
                     const sTable = document.getElementById('box-table-services'); sTable.innerHTML = '';
                     if(db.services) {
                         Object.entries(db.services).forEach(([sid, s]) => {
+                            const tgtUser = db.conducteurs && db.conducteurs[s.target] ? db.conducteurs[s.target] : null;
+                            const tgtRoleString = tgtUser ? ` (${tgtUser.role || 'Conducteur'})` : '';
                             const cls = s.status === "Prise de poste validée" ? "status-ok" : "status-wait";
-                            sTable.innerHTML += `<tr><td><span class="badge-line" style="background:${colors[s.line] || '#64748B'}">${s.line}</span></td><td>${s.hours}</td><td><strong>${s.target}</strong></td><td>${s.mission}</td><td><span class="status-dot ${cls}">${s.status || 'En attente'}</span></td><td><button class="btn-trash" onclick="dropItem('services', '${sid}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                            
+                            sTable.innerHTML += `<tr><td><span class="badge-line" style="background:${colors[s.line] || '#64748B'}">${s.line}</span></td><td>${s.hours}</td><td><strong>${s.target}</strong><small style="color:var(--font-sub);">${tgtRoleString}</small></td><td>${s.mission}</td><td><span class="status-dot ${cls}">${s.status || 'En attente'}</span></td><td><button class="btn-trash" onclick="dropItem('services', '${sid}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                         });
+                    }
+
+                    // Rendu de l'arbitrage des congés
+                    const admLeaveTable = document.getElementById('box-table-admin-leaves');
+                    if(admLeaveTable) {
+                        admLeaveTable.innerHTML = '';
+                        if(db.conges) {
+                            Object.entries(db.conges).forEach(([lk, l]) => {
+                                admLeaveTable.innerHTML += `
+                                    <tr>
+                                        <td><strong>${l.name} (${l.agent})</strong></td>
+                                        <td>Du ${l.start} au ${l.end}</td>
+                                        <td>${l.reason}</td>
+                                        <td>
+                                            <button class="status-dot status-ok" style="border:none; cursor:pointer;" onclick="setLeaveStatus('${lk}', 'Approuvé')">Approuver</button>
+                                            <button class="status-dot status-no" style="border:none; cursor:pointer; margin-left:5px;" onclick="setLeaveStatus('${lk}', 'Refusé')">Refuser</button>
+                                        </td>
+                                        <td><button class="btn-trash" onclick="dropItem('conges', '${lk}')"><i class="fa-solid fa-trash"></i></button></td>
+                                    </tr>`;
+                            });
+                        }
+                    }
+
+                    // Rendu des incidents signalés (Admin)
+                    const admIncidentTable = document.getElementById('box-table-admin-incidents');
+                    if(admIncidentTable) {
+                        admIncidentTable.innerHTML = '';
+                        if(db.rapports_incidents) {
+                            Object.entries(db.rapports_incidents).forEach(([rk, r]) => {
+                                admIncidentTable.innerHTML += `
+                                    <tr>
+                                        <td><small>${r.stamp}</small></td>
+                                        <td><strong>${r.agent}</strong></td>
+                                        <td><span class="status-dot status-wait">${r.vehicle}</span></td>
+                                        <td>${r.text}</td>
+                                        <td><button class="btn-trash" onclick="dropItem('rapports_incidents', '${rk}')"><i class="fa-solid fa-trash"></i></button></td>
+                                    </tr>`;
+                            });
+                        } else {
+                            admIncidentTable.innerHTML = `<tr><td colspan="5" style="color:var(--font-sub); font-style:italic; text-align:center;">Aucun incident signalé en cours.</td></tr>`;
+                        }
                     }
                 }
             });
