@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espace Connecté — AEDAN.MY</title>
+    <title>Espace Connected — AEDAN.MY</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,11 +36,11 @@
             --border-line: #1E293B;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.25s, border-color 0.25s; }
-        body { background-color: var(--canvas-bg); color: var(--font-dark); padding-bottom: 80px; overflow-x: hidden; position: relative; min-height: 100vh; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.25s, border-color 0.25s, transform 0.2s, box-shadow 0.2s; }
+        body { background-color: var(--canvas-bg); color: var(--font-dark); padding-bottom: 40px; overflow-x: hidden; position: relative; min-height: 100vh; }
         .line-font { font-family: 'Montserrat Arabic', sans-serif; font-weight: 600; }
 
-        /* --- FILIGRANE TRANSPARENT EN BAS À DROITE --- */
+        /* --- FILIGRANE TRANSPARENT --- */
         .bg-watermark-logo {
             position: fixed; bottom: -80px; right: -80px; height: 50vh; opacity: 0.03;
             pointer-events: none; user-select: none; z-index: 1; transform: rotate(12deg);
@@ -49,86 +49,136 @@
         [data-theme="dark"] .bg-watermark-logo { opacity: 0.015; }
 
         @keyframes floatSlow { 0%, 100% { transform: rotate(12deg) translateY(0); } 50% { transform: rotate(15deg) translateY(-15px); } }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(25px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(15px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
-        /* --- HEADER CHIC --- */
+        /* --- HEADER --- */
         header {
             background-color: var(--surface-card); border-bottom: 1px solid var(--border-line);
-            padding: 16px 5%; display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 5%; display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.01);
         }
         .logo-box-main { display: flex; align-items: center; gap: 12px; }
-        .logo-box-main img { height: 38px; }
+        .logo-box-main img { height: 34px; }
 
-        .btn-logout { background: transparent; border: 1px solid var(--border-line); color: var(--live-crit); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .btn-logout { background: transparent; border: 1px solid var(--border-line); color: var(--live-crit); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
         .btn-logout:hover { background: rgba(239, 68, 68, 0.08); border-color: var(--live-crit); transform: translateY(-1px); }
 
         .dark-mode-switch {
-            background: var(--canvas-bg); border: 1px solid var(--border-line); width: 38px; height: 38px;
+            background: var(--canvas-bg); border: 1px solid var(--border-line); width: 34px; height: 34px;
             border-radius: 50%; cursor: pointer; color: var(--font-dark); display: flex; align-items: center; justify-content: center;
         }
+        .dark-mode-switch:hover { transform: scale(1.05); }
 
-        /* --- LAYOUT WORKSPACE --- */
-        .app-container { max-width: 1240px; margin: 35px auto; padding: 0 24px; position: relative; z-index: 5; }
+        /* --- LAYOUT WORKSPACE OPTIMISÉ (PLUS DE TROUS) --- */
+        .app-container { max-width: 1240px; margin: 20px auto; padding: 0 20px; position: relative; z-index: 5; }
         
-        .panel-heading { margin-bottom: 30px; animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .panel-heading h1 { font-size: 1.8rem; letter-spacing: -0.02em; }
+        .panel-heading { margin-bottom: 15px; animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .panel-heading h1 { font-size: 1.6rem; letter-spacing: -0.02em; }
 
-        .grid-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 25px; }
-        .card-panel { background: var(--surface-card); border-radius: var(--smooth-radius); padding: 28px; border: 1px solid var(--border-line); box-shadow: 0 10px 30px rgba(0,0,0,0.01); animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .card-panel h2 { font-size: 1.05rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-line); padding-bottom: 12px; }
+        /* Utilisation de grid-auto-rows: max-content pour éviter les étirements verticaux vides */
+        .grid-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; grid-auto-rows: max-content; }
+        
+        /* --- CARDS STYLISÉES & ANIMÉES --- */
+        .card-panel { 
+            background: var(--surface-card); 
+            border-radius: var(--smooth-radius); 
+            padding: 20px; 
+            border: 1px solid var(--border-line); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+            animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-panel:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-color: rgba(122, 28, 28, 0.15);
+        }
+        
+        /* En-tête des cases avec bouton collapse si nécessaire */
+        .card-panel h2 { 
+            font-size: 1rem; 
+            margin-bottom: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-line); 
+            padding-bottom: 10px; 
+        }
+        .card-header-title { display: flex; align-items: center; gap: 10px; }
+
+        /* Style des boutons de masquage */
+        .btn-toggle-collapse {
+            background: var(--canvas-bg); border: 1px solid var(--border-line);
+            width: 26px; height: 26px; border-radius: 6px; cursor: pointer;
+            color: var(--font-sub); display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-toggle-collapse:hover { color: var(--font-dark); background: var(--border-line); }
+        
+        /* Zone repliable */
+        .collapsible-body {
+            max-height: 2000px; opacity: 1; overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, margin-top 0.4s ease;
+        }
+        .card-panel.collapsed .collapsible-body {
+            max-height: 0 !important; opacity: 0; margin-top: 0 !important; pointer-events: none;
+        }
+        .card-panel.collapsed .btn-toggle-collapse { transform: rotate(-90deg); }
+        .card-panel.collapsed { padding-bottom: 10px; }
 
         /* --- STYLING FORM & BUTTONS --- */
-        .form-row { margin-bottom: 16px; }
-        .form-row label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--font-sub); margin-bottom: 6px; text-transform: uppercase; }
-        .form-item { width: 100%; padding: 12px 14px; border: 1px solid var(--border-line); background: var(--canvas-bg); color: var(--font-dark); border-radius: 8px; outline: none; font-size: 0.9rem; }
-        .form-item:focus { border-color: var(--brand-color); }
+        .form-row { margin-bottom: 12px; }
+        .form-row label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--font-sub); margin-bottom: 4px; text-transform: uppercase; }
+        .form-item { width: 100%; padding: 10px 12px; border: 1px solid var(--border-line); background: var(--canvas-bg); color: var(--font-dark); border-radius: 8px; outline: none; font-size: 0.88rem; }
+        .form-item:focus { border-color: var(--brand-color); box-shadow: 0 0 0 3px rgba(122,28,28,0.08); }
         
-        .btn-action { background: var(--brand-color); color: white; border: none; padding: 13px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .btn-action { background: var(--brand-color); color: white; border: none; padding: 11px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 0.88rem; }
         .btn-action:hover { background: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(122,28,28,0.15); }
 
-        /* --- STYLING SERVICES --- */
-        .service-tile { background: var(--canvas-bg); border-left: 5px solid var(--brand-color); border-radius: 8px; padding: 18px; margin-bottom: 15px; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
-        .service-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.03); }
-        .tile-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .badge-line { padding: 3px 10px; border-radius: 6px; color: white; font-weight: 800; font-size: 0.75rem; }
+        /* --- SERVICES --- */
+        .service-tile { background: var(--canvas-bg); border-left: 5px solid var(--brand-color); border-radius: 8px; padding: 14px; margin-bottom: 10px; position: relative; }
+        .service-tile:hover { transform: translateX(3px); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .tile-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .badge-line { padding: 3px 8px; border-radius: 6px; color: white; font-weight: 800; font-size: 0.7rem; }
 
         /* --- TABLES --- */
-        .table-responsive { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-line); margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
-        th { background: var(--canvas-bg); padding: 12px; color: var(--font-sub); font-weight: 700; }
-        td { padding: 12px; border-bottom: 1px solid var(--border-line); }
+        .table-responsive { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-line); margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem; }
+        th { background: var(--canvas-bg); padding: 10px; color: var(--font-sub); font-weight: 700; }
+        td { padding: 10px; border-bottom: 1px solid var(--border-line); }
+        tr:hover td { background: rgba(0, 0, 0, 0.01); }
+        [data-theme="dark"] tr:hover td { background: rgba(255, 255, 255, 0.01); }
         
-        .status-dot { padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; }
+        .status-dot { padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; display: inline-block; }
         .status-wait { background: #E2E8F0; color: #475569; }
         .status-ok { background: rgba(16, 185, 129, 0.15); color: var(--live-ok); }
         .status-no { background: rgba(239, 68, 68, 0.15); color: var(--live-crit); }
 
-        .btn-trash { background: none; border: none; color: var(--live-crit); cursor: pointer; font-size: 0.95rem; transition: transform 0.2s; }
-        .btn-trash:hover { transform: scale(1.15); }
+        .btn-trash { background: none; border: none; color: var(--live-crit); cursor: pointer; font-size: 0.9rem; }
+        .btn-trash:hover { transform: scale(1.2); }
 
         /* --- MESSAGERIE INTERNE --- */
-        .chat-flow-zone { border: 1px solid var(--border-line); border-radius: 8px; background: var(--canvas-bg); height: 260px; overflow-y: auto; padding: 14px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 12px; }
-        .chat-bubble { background: var(--surface-card); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-line); max-width: 95%; }
-        .chat-bubble-meta { font-size: 0.72rem; color: var(--font-sub); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 20px; }
-        .chat-bubble-text { font-size: 0.88rem; color: var(--font-dark); line-height: 1.4; }
+        .chat-flow-zone { border: 1px solid var(--border-line); border-radius: 8px; background: var(--canvas-bg); height: 240px; overflow-y: auto; padding: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+        .chat-bubble { background: var(--surface-card); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-line); max-width: 95%; animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .chat-bubble-meta { font-size: 0.7rem; color: var(--font-sub); font-weight: 700; margin-bottom: 3px; display: flex; justify-content: space-between; gap: 20px; }
+        .chat-bubble-text { font-size: 0.85rem; color: var(--font-dark); line-height: 1.35; }
 
-        /* --- POPUP NOTIFICATION HAUT DE PAGE (SANS IMPACT VISUEL SUR LE LAYOUT) --- */
+        /* --- POPUP NOTIFICATION --- */
         #aedan-custom-popup {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: var(--surface-card); border: 1px solid var(--border-line);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 10px; padding: 16px 24px;
-            z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 10px; padding: 14px 20px;
+            z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 420px;
             transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        #aedan-custom-popup.active { top: 25px; }
-        .popup-header-msg { font-size: 0.9rem; font-weight: 600; color: var(--font-dark); text-align: center; }
-        .popup-action-row { display: flex; justify-content: center; gap: 12px; margin-top: 5px; }
-        .popup-btn { padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: none; transition: transform 0.1s; }
+        #aedan-custom-popup.active { top: 20px; }
+        .popup-header-msg { font-size: 0.88rem; font-weight: 600; color: var(--font-dark); text-align: center; }
+        .popup-action-row { display: flex; justify-content: center; gap: 10px; margin-top: 4px; }
+        .popup-btn { padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; border: none; }
         .popup-btn:active { transform: scale(0.95); }
         .popup-btn-confirm { background: var(--brand-color); color: white; }
         .popup-btn-cancel { background: var(--canvas-bg); color: var(--font-dark); border: 1px solid var(--border-line); }
-        .popup-progress-container { width: 100%; height: 4px; background: var(--canvas-bg); border-radius: 2px; overflow: hidden; }
+        .popup-progress-container { width: 100%; height: 3px; background: var(--canvas-bg); border-radius: 2px; overflow: hidden; }
         .popup-progress-bar { width: 100%; height: 100%; background: var(--brand-color); transform-origin: left; }
     </style>
 </head>
@@ -148,7 +198,7 @@
         <div class="logo-box-main">
             <img src="https://image.noelshack.com/fichiers/2026/28/2/1783387205-2b6a27e168543ce8099dc90780cd86d6-removebg-preview.png" alt="Logo">
         </div>
-        <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
             <button class="btn-logout" onclick="killSession()"><i class="fa-solid fa-power-off"></i> Déconnexion</button>
             <button class="dark-mode-switch" id="theme-toggle-btn"><i class="fa-solid fa-moon"></i></button>
         </div>
@@ -162,29 +212,37 @@
 
         <div id="driver-core-view" class="grid-dashboard" style="display: none;">
             <div class="card-panel" style="grid-column: span 2;">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-route"></i> Prochains services programmés</h2>
+                <h2>
+                    <span class="card-header-title" style="color: var(--brand-color);"><i class="fa-solid fa-route"></i> Prochains services programmés</span>
+                </h2>
                 <div id="driver-services-bucket"></div>
 
-                <h2 class="line-font" style="color: var(--font-sub); margin-top: 30px; border-top: 1px solid var(--border-line); padding-top: 20px;"><i class="fa-solid fa-clock-rotate-left"></i> Historique des services effectués (Passés)</h2>
+                <h2 style="margin-top: 25px; border-top: 1px solid var(--border-line); padding-top: 15px;">
+                    <span class="card-header-title" style="color: var(--font-sub);"><i class="fa-solid fa-clock-rotate-left"></i> Historique des services effectués (Passés)</span>
+                </h2>
                 <div id="driver-past-services-bucket"></div>
             </div>
 
             <div class="card-panel">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation</h2>
+                <h2>
+                    <span class="card-header-title" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation</span>
+                </h2>
                 <div class="chat-flow-zone" id="chat-stream-output-driver"></div>
-                <form id="form-send-chat-driver" style="display: flex; gap: 10px;">
+                <form id="form-send-chat-driver" style="display: flex; gap: 8px;">
                     <input type="text" id="chat-msg-field-driver" class="form-item" placeholder="Écrire un message..." required autocomplete="off">
-                    <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
+                    <button type="submit" class="btn-action" style="width: auto; padding: 0 14px;"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
             </div>
 
             <div class="card-panel" style="grid-column: span 2;">
-                <h2 class="line-font" style="color: var(--live-warn);"><i class="fa-solid fa-umbrella-beach"></i> Demandes de congés & absences</h2>
-                <form id="form-leave-request" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <h2>
+                    <span class="card-header-title" style="color: var(--live-warn);"><i class="fa-solid fa-umbrella-beach"></i> Demandes de congés & absences</span>
+                </h2>
+                <form id="form-leave-request" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 15px;">
                     <div class="form-row"><label>Date de début</label><input type="date" id="leave-start" class="form-item" required></div>
                     <div class="form-row"><label>Date de fin</label><input type="date" id="leave-end" class="form-item" required></div>
                     <div class="form-row"><label>Motif légitime</label><input type="text" id="leave-reason" class="form-item" placeholder="Congé annuel, RTT..." required></div>
-                    <div class="form-row" style="display: flex; align-items: flex-end;"><button type="submit" class="btn-action" style="background: var(--live-warn);">Soumettre la demande</button></div>
+                    <div class="form-row" style="display: flex; align-items: flex-end;"><button type="submit" class="btn-action" style="background: var(--live-warn); padding: 10px;">Soumettre la demande</button></div>
                 </form>
                 <div class="table-responsive">
                     <table>
@@ -195,7 +253,9 @@
             </div>
 
             <div class="card-panel">
-                <h2 class="line-font" style="color: var(--live-warn);"><i class="fa-solid fa-circle-exclamation"></i> Signaler un événement</h2>
+                <h2>
+                    <span class="card-header-title" style="color: var(--live-warn);"><i class="fa-solid fa-circle-exclamation"></i> Signaler un événement</span>
+                </h2>
                 <form id="form-driver-report">
                     <div class="form-row">
                         <label>Matériel roulant / N° de rame</label>
@@ -203,7 +263,7 @@
                     </div>
                     <div class="form-row">
                         <label>Commentaire de tournée</label>
-                        <textarea id="rep-text" class="form-item" rows="4" style="resize: none;" placeholder="Indiquez toute anomalie ou signalement..." required></textarea>
+                        <textarea id="rep-text" class="form-item" rows="3" style="resize: none;" placeholder="Indiquez toute anomalie ou signalement..." required></textarea>
                     </div>
                     <button type="submit" class="btn-action" style="background: var(--live-warn);">TRANSMETTRE LE RAPPORT</button>
                 </form>
@@ -212,37 +272,44 @@
 
         <div id="admin-core-view" class="grid-dashboard" style="display: none;">
             <div class="card-panel">
-                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel (RH)</h2>
-                <form id="form-add-driver">
-                    <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
-                    <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
-                    <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
-                    <div class="form-row">
-                        <label>Rôle & Habilitation</label>
-                        <select id="add-role" class="form-item">
-                            <option value="Conducteur">Conducteur</option>
-                            <option value="Régulateur">Régulateur</option>
-                            <option value="Superviseur">Superviseur</option>
-                        </select>
-                    </div>
-                    <div class="form-row" style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="add-panel-access" style="width: auto;">
-                        <label style="margin: 0; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);">Accès direct au panel Superviseur (indépendant du rôle)</label>
-                    </div>
-                    <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
-                </form>
+                <h2>
+                    <span class="card-header-title" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel (RH)</span>
+                    <button class="btn-toggle-collapse" onclick="this.closest('.card-panel').classList.toggle('collapsed')"><i class="fa-solid fa-chevron-down"></i></button>
+                </h2>
+                <div class="collapsible-body">
+                    <form id="form-add-driver">
+                        <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
+                        <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
+                        <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
+                        <div class="form-row">
+                            <label>Rôle & Habilitation</label>
+                            <select id="add-role" class="form-item">
+                                <option value="Conducteur">Conducteur</option>
+                                <option value="Régulateur">Régulateur</option>
+                                <option value="Superviseur">Superviseur</option>
+                            </select>
+                        </div>
+                        <div class="form-row" style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" id="add-panel-access" style="width: auto;">
+                            <label style="margin: 0; text-transform: none; font-size: 0.75rem; font-weight: 500; color: var(--font-dark);">Accès direct au panel Superviseur</label>
+                        </div>
+                        <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
+                    </form>
 
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Matricule</th><th>Nom (Rôle)</th><th>Code</th><th></th></tr></thead>
-                        <tbody id="box-table-drivers"></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Matricule</th><th>Nom (Rôle)</th><th>Code</th><th></th></tr></thead>
+                            <tbody id="box-table-drivers"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <div class="card-panel" style="grid-column: span 2;">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-calendar-check"></i> Ordonnancement Horaires</h2>
-                <form id="form-add-service" class="grid-dashboard" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 0; margin-bottom: 15px;">
+                <h2>
+                    <span class="card-header-title" style="color: var(--brand-color);"><i class="fa-solid fa-calendar-check"></i> Ordonnancement Horaires</span>
+                </h2>
+                <form id="form-add-service" class="grid-dashboard" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                     <div class="form-row">
                         <label>Ligne</label>
                         <select id="add-srv-line" class="form-item"><option value="26">Ligne 26</option><option value="BAM">Ligne BAM</option><option value="I">Ligne I</option></select>
@@ -260,7 +327,9 @@
                     </table>
                 </div>
 
-                <h2 class="line-font" style="color: var(--live-warn); margin-top: 35px;"><i class="fa-solid fa-stamp"></i> Arbitrage des demandes de congés</h2>
+                <h2 style="margin-top: 25px;">
+                    <span class="card-header-title" style="color: var(--live-warn);"><i class="fa-solid fa-stamp"></i> Arbitrage des demandes de congés</span>
+                </h2>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th>Agent</th><th>Période</th><th>Motif</th><th>Décision direction</th><th></th></tr></thead>
@@ -270,40 +339,49 @@
             </div>
 
             <div class="card-panel">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation (Admin)</h2>
+                <h2>
+                    <span class="card-header-title" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation (Admin)</span>
+                </h2>
                 <div class="chat-flow-zone" id="chat-stream-output-admin"></div>
-                <form id="form-send-chat-admin" style="display: flex; gap: 10px;">
+                <form id="form-send-chat-admin" style="display: flex; gap: 8px;">
                     <input type="text" id="chat-msg-field-admin" class="form-item" placeholder="Écrire en tant qu'admin..." required autocomplete="off">
-                    <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
+                    <button type="submit" class="btn-action" style="width: auto; padding: 0 14px;"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
             </div>
 
             <div class="card-panel" style="grid-column: span 2;">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-users-gear"></i> Gestion des Rôles & Permissions</h2>
-                <form id="form-add-role" style="margin-bottom: 20px;">
-                    <div class="form-row"><label>Nom du rôle</label><input type="text" id="role-name" class="form-item" placeholder="Ex: Contrôleur, Chef de ligne..." required></div>
-                    <div class="form-row">
-                        <label>Permissions accordées à ce rôle</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px;">
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-sendMessages" checked style="width: auto;"> Envoyer des messages</label>
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-viewMessages" checked style="width: auto;"> Voir les messages précédents</label>
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-requestLeave" checked style="width: auto;"> Poser des congés</label>
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-reportIncident" checked style="width: auto;"> Signaler un incident</label>
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-panelAccess" style="width: auto;"> Accès au panel Superviseur</label>
+                <h2>
+                    <span class="card-header-title" style="color: var(--brand-color);"><i class="fa-solid fa-users-gear"></i> Gestion des Rôles & Permissions</span>
+                    <button class="btn-toggle-collapse" onclick="this.closest('.card-panel').classList.toggle('collapsed')"><i class="fa-solid fa-chevron-down"></i></button>
+                </h2>
+                <div class="collapsible-body">
+                    <form id="form-add-role" style="margin-bottom: 15px;">
+                        <div class="form-row"><label>Nom du rôle</label><input type="text" id="role-name" class="form-item" placeholder="Ex: Contrôleur, Chef de ligne..." required></div>
+                        <div class="form-row">
+                            <label>Permissions accordées à ce rôle</label>
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px;">
+                                <label style="display: flex; align-items: center; gap: 4px; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-sendMessages" checked style="width: auto;"> Envoyer des messages</label>
+                                <label style="display: flex; align-items: center; gap: 4px; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-viewMessages" checked style="width: auto;"> Voir l'historique</label>
+                                <label style="display: flex; align-items: center; gap: 4px; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-requestLeave" checked style="width: auto;"> Poser des congés</label>
+                                <label style="display: flex; align-items: center; gap: 4px; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-reportIncident" checked style="width: auto;"> Signaler un incident</label>
+                                <label style="display: flex; align-items: center; gap: 4px; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-panelAccess" style="width: auto;"> Accès panel</label>
+                            </div>
                         </div>
+                        <button type="submit" class="btn-action" style="background: var(--brand-color);">CRÉER LE RÔLE</button>
+                    </form>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Rôle</th><th>Permissions</th><th></th></tr></thead>
+                            <tbody id="box-table-roles"></tbody>
+                        </table>
                     </div>
-                    <button type="submit" class="btn-action" style="background: var(--brand-color);">CRÉER LE RÔLE</button>
-                </form>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Rôle</th><th>Permissions</th><th></th></tr></thead>
-                        <tbody id="box-table-roles"></tbody>
-                    </table>
                 </div>
             </div>
 
             <div class="card-panel" style="grid-column: span 2;">
-                <h2 class="line-font" style="color: var(--live-crit);"><i class="fa-solid fa-triangle-exclamation"></i> Événements & Incidents signalés</h2>
+                <h2>
+                    <span class="card-header-title" style="color: var(--live-crit);"><i class="fa-solid fa-triangle-exclamation"></i> Événements & Incidents signalés</span>
+                </h2>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th>Horodatage</th><th>Agent</th><th>Matériel / Rame</th><th>Commentaire</th><th></th></tr></thead>
@@ -399,14 +477,12 @@
 
         function killSession() { sessionStorage.clear(); window.location.href = "connexion.html"; }
 
-        // ROUTEUR DYNAMIQUE : Le rôle "Superviseur" (anciennement "Administrateur") donne accès au panel,
-        // tout comme l'accès direct coché lors de la création du compte, ou une permission "panelAccess"
-        // rattachée à un rôle personnalisé créé depuis la Gestion des Rôles.
+        // ROUTEUR DYNAMIQUE
         const BUILTIN_ROLE_PERMS = {
             "Conducteur":     { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: false },
             "Régulateur":     { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: false },
             "Superviseur":    { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: true },
-            "Administrateur": { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: true } // rôle historique conservé pour compatibilité
+            "Administrateur": { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: true }
         };
 
         function getRolePermissions(roleName, db) {
@@ -450,10 +526,10 @@
             }
         }
 
-        // Affichage initial (avant premier chargement des données) basé sur la session
+        // Affichage initial basé sur la session
         applyAccess(currentAccess);
 
-        // Actions Conducteur (Prise de Poste)
+        // Actions Conducteur
         function toggleShift(sid, current) {
             const updated = current === "Prise de poste validée" ? "En attente" : "Prise de poste validée";
             fetch(`${FIREBASE_ENDPOINT}/services/${sid}/status.json`, { method: 'PUT', body: JSON.stringify(updated) }).then(() => pollData());
@@ -481,7 +557,7 @@
             };
         }
 
-        // Envois Messages Tchat (Conducteur & Admin)
+        // Envois Messages Tchat
         function sendChatMessage(textInputId) {
             if(!currentAccess.hasPanel && currentAccess.perms.sendMessages === false) return;
             const field = document.getElementById(textInputId);
@@ -512,7 +588,7 @@
             .then(() => { showNotification(`Agent inscrit avec succès [Rôle: ${r}${panelAccess ? ' + Accès Panel' : ''}]`); document.getElementById('form-add-driver').reset(); pollData(); });
         };
 
-        // Création d'un rôle personnalisé avec permissions cochables
+        // Création d'un rôle personnalisé
         document.getElementById('form-add-role').onsubmit = (e) => {
             e.preventDefault();
             const roleName = document.getElementById('role-name').value.trim();
@@ -528,7 +604,6 @@
             .then(() => { showNotification(`Rôle "${roleName}" créé avec succès`); document.getElementById('form-add-role').reset(); pollData(); });
         };
 
-        // Réactualise la liste déroulante des rôles disponibles (rôles de base + rôles personnalisés)
         function refreshRoleSelect(db) {
             const select = document.getElementById('add-role');
             if(!select) return;
@@ -572,8 +647,6 @@
             fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`).then(r => r.json()).then(db => {
                 if(!db) return;
 
-                // Recalcul de l'accès (rôle + permissions) à chaque cycle : un changement de rôle
-                // ou d'accès panel décidé côté Superviseur s'applique donc sans reconnexion.
                 if(uid !== "ADMIN") {
                     const access = computeAccess(db);
                     if(access.hasPanel !== currentAccess.hasPanel || access.role !== currentAccess.role) {
@@ -631,9 +704,9 @@
                                             <span class="badge-line" style="background:${col}">Ligne ${s.line}</span>
                                             <span class="line-font" style="color:var(--brand-color);"><i class="fa-regular fa-clock"></i> ${s.hours}</span>
                                         </div>
-                                        <p style="font-size:0.92rem; ${!isPast ? 'margin-bottom:15px;' : ''}"><strong>Mission :</strong> ${s.mission}</p>
+                                        <p style="font-size:0.88rem; ${!isPast ? 'margin-bottom:10px;' : ''}"><strong>Mission :</strong> ${s.mission}</p>
                                         ${!isPast ? `
-                                        <button class="btn-action" style="background:${active ? 'transparent' : 'var(--live-ok)'}; border:${active ? '1px solid var(--border-line)' : 'none'}; color:${active ? 'var(--font-dark)' : 'white'}; width:auto; padding:8px 16px; font-size:0.8rem;" onclick="toggleShift('${sid}', '${s.status}')">
+                                        <button class="btn-action" style="background:${active ? 'transparent' : 'var(--live-ok)'}; border:${active ? '1px solid var(--border-line)' : 'none'}; color:${active ? 'var(--font-dark)' : 'white'}; width:auto; padding:6px 12px; font-size:0.78rem;" onclick="toggleShift('${sid}', '${s.status}')">
                                             <i class="fa-solid ${active ? 'fa-user-check' : 'fa-play'}"></i> ${active ? 'Prise de poste validée' : 'Valider prise de poste'}
                                         </button>` : ''}
                                     </div>`;
@@ -648,8 +721,8 @@
                             }
                         });
                     }
-                    if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucune affectation programmée.</p>`;
-                    if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucun historique de tournée disponible.</p>`;
+                    if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.82rem;">Aucune affectation programmée.</p>`;
+                    if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.82rem;">Aucun historique de tournée disponible.</p>`;
 
                     // Rendu des congés conducteur
                     const leaveTable = document.getElementById('table-body-driver-leaves');
@@ -708,7 +781,7 @@
                         }
                     }
 
-                    // Rendu des rôles personnalisés (Admin)
+                    // Rendu des rôles personnalisés
                     const rolesTable = document.getElementById('box-table-roles');
                     if(rolesTable) {
                         rolesTable.innerHTML = '';
@@ -717,7 +790,7 @@
                             Object.entries(db.roles).forEach(([rn, rdata]) => {
                                 const perms = rdata.permissions || {};
                                 const activeList = Object.keys(permLabels).filter(k => perms[k]).map(k => permLabels[k]).join(', ') || 'Aucune';
-                                rolesTable.innerHTML += `<tr><td><strong>${rn}</strong></td><td style="font-size:0.8rem; color:var(--font-sub);">${activeList}</td><td><button class="btn-trash" onclick="dropItem('roles', '${rn}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                                rolesTable.innerHTML += `<tr><td><strong>${rn}</strong></td><td style="font-size:0.75rem; color:var(--font-sub);">${activeList}</td><td><button class="btn-trash" onclick="dropItem('roles', '${rn}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                             });
                         }
                         if(!db.roles || Object.keys(db.roles).length === 0) {
@@ -725,7 +798,7 @@
                         }
                     }
 
-                    // Rendu des incidents signalés (Admin)
+                    // Rendu des incidents signalés
                     const admIncidentTable = document.getElementById('box-table-admin-incidents');
                     if(admIncidentTable) {
                         admIncidentTable.innerHTML = '';
