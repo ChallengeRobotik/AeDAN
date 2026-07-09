@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espace Connected — AEDAN.MY</title>
+    <title>Espace Connecté — AEDAN.MY</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -113,7 +113,7 @@
         .chat-bubble-meta { font-size: 0.72rem; color: var(--font-sub); font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 20px; }
         .chat-bubble-text { font-size: 0.88rem; color: var(--font-dark); line-height: 1.4; }
 
-        /* --- POPUP NOTIFICATION HAUT DE PAGE --- */
+        /* --- POPUP NOTIFICATION HAUT DE PAGE (SANS IMPACT VISUEL SUR LE LAYOUT) --- */
         #aedan-custom-popup {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: var(--surface-card); border: 1px solid var(--border-line);
@@ -225,6 +225,10 @@
                             <option value="Superviseur">Superviseur</option>
                         </select>
                     </div>
+                    <div class="form-row" style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="add-panel-access" style="width: auto;">
+                        <label style="margin: 0; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);">Accès direct au panel Superviseur (indépendant du rôle)</label>
+                    </div>
                     <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
                 </form>
 
@@ -275,6 +279,30 @@
             </div>
 
             <div class="card-panel" style="grid-column: span 2;">
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-users-gear"></i> Gestion des Rôles & Permissions</h2>
+                <form id="form-add-role" style="margin-bottom: 20px;">
+                    <div class="form-row"><label>Nom du rôle</label><input type="text" id="role-name" class="form-item" placeholder="Ex: Contrôleur, Chef de ligne..." required></div>
+                    <div class="form-row">
+                        <label>Permissions accordées à ce rôle</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px;">
+                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-sendMessages" checked style="width: auto;"> Envoyer des messages</label>
+                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-viewMessages" checked style="width: auto;"> Voir les messages précédents</label>
+                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-requestLeave" checked style="width: auto;"> Poser des congés</label>
+                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-reportIncident" checked style="width: auto;"> Signaler un incident</label>
+                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-panelAccess" style="width: auto;"> Accès au panel Superviseur</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-action" style="background: var(--brand-color);">CRÉER LE RÔLE</button>
+                </form>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Rôle</th><th>Permissions</th><th></th></tr></thead>
+                        <tbody id="box-table-roles"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-panel" style="grid-column: span 2;">
                 <h2 class="line-font" style="color: var(--live-crit);"><i class="fa-solid fa-triangle-exclamation"></i> Événements & Incidents signalés</h2>
                 <div class="table-responsive">
                     <table>
@@ -288,6 +316,7 @@
     </main>
 
     <script>
+        // SECURE : Blocage complet de l'inspection de page
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.key === 'F12' || 
@@ -302,15 +331,13 @@
 
         const uid = sessionStorage.getItem('agent_uid');
         const name = sessionStorage.getItem('agent_name');
-        
-        // Prise en charge des deux anciens ou nouveaux formats pour éviter de briser la compatibilité
-        let userRole = sessionStorage.getItem('agent_role') || "Conducteur";
-        if (userRole === "Administrateur") { userRole = "Superviseur"; }
+        const userRole = sessionStorage.getItem('agent_role') || "Conducteur";
 
         if(!uid) { window.location.href = "connexion.html"; }
 
         document.getElementById('lbl-agent-name').textContent = `${name} [${uid}] (${userRole})`;
 
+        // Gestion du popup personnalisé haut de page avec réponse par défaut automatique
         let popupTimer = null;
         let progressInterval = null;
 
@@ -327,7 +354,7 @@
             actionsBox.innerHTML = '';
             progressBar.style.transform = 'scaleX(1)';
 
-            const duration = 5000;
+            const duration = 5000; // 5 secondes
             let timeLeft = duration;
 
             if (isConfirm) {
@@ -356,11 +383,13 @@
                 if (timeLeft <= 0) {
                     clearInterval(progressInterval);
                     popup.classList.remove('active');
+                    // Réponse par défaut automatique si confirmée
                     if (isConfirm && onConfirmCallback) onConfirmCallback();
                 }
             }, 50);
         }
 
+        // Thème System Switcher
         const themeTrigger = document.getElementById('theme-toggle-btn');
         if (localStorage.getItem('user-ui-theme') === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>'; }
         themeTrigger.onclick = () => {
@@ -370,17 +399,63 @@
 
         function killSession() { sessionStorage.clear(); window.location.href = "connexion.html"; }
 
-        // ROUTAGE PRIORITAIRE CORRIGÉ : Accès au panel Admin si UID ADMIN ou si rôle Superviseur
-        if(uid === "ADMIN" || userRole === "Superviseur") { 
-            document.getElementById('admin-core-view').style.display = 'grid'; 
-            document.getElementById('driver-core-view').style.display = 'none';
-        } else { 
-            document.getElementById('driver-core-view').style.display = 'grid'; 
-            document.getElementById('admin-core-view').style.display = 'none';
+        // ROUTEUR DYNAMIQUE : Le rôle "Superviseur" (anciennement "Administrateur") donne accès au panel,
+        // tout comme l'accès direct coché lors de la création du compte, ou une permission "panelAccess"
+        // rattachée à un rôle personnalisé créé depuis la Gestion des Rôles.
+        const BUILTIN_ROLE_PERMS = {
+            "Conducteur":     { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: false },
+            "Régulateur":     { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: false },
+            "Superviseur":    { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: true },
+            "Administrateur": { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: true } // rôle historique conservé pour compatibilité
+        };
+
+        function getRolePermissions(roleName, db) {
+            if(BUILTIN_ROLE_PERMS[roleName]) return BUILTIN_ROLE_PERMS[roleName];
+            if(db && db.roles && db.roles[roleName] && db.roles[roleName].permissions) return db.roles[roleName].permissions;
+            return { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: false };
         }
 
+        let currentAccess = { role: userRole, perms: getRolePermissions(userRole, null), hasPanel: (uid === "ADMIN" || userRole === "Superviseur" || userRole === "Administrateur") };
+
+        function computeAccess(db) {
+            const myRecord = (db.conducteurs && db.conducteurs[uid]) ? db.conducteurs[uid] : null;
+            const myRole = myRecord && myRecord.role ? myRecord.role : userRole;
+            const perms = getRolePermissions(myRole, db);
+            const explicitPanel = myRecord && myRecord.panelAccess === true;
+            const hasPanel = uid === "ADMIN" || explicitPanel || perms.panelAccess === true;
+            return { role: myRole, perms: perms, hasPanel: hasPanel };
+        }
+
+        function applyDriverPermissions(perms) {
+            const chatForm = document.getElementById('form-send-chat-driver');
+            if(chatForm) chatForm.style.display = perms.sendMessages === false ? 'none' : 'flex';
+            const chatZone = document.getElementById('chat-stream-output-driver');
+            if(chatZone) chatZone.style.display = perms.viewMessages === false ? 'none' : 'flex';
+            const leaveForm = document.getElementById('form-leave-request');
+            if(leaveForm) leaveForm.style.display = perms.requestLeave === false ? 'none' : 'grid';
+            const reportForm = document.getElementById('form-driver-report');
+            if(reportForm) reportForm.style.display = perms.reportIncident === false ? 'none' : 'block';
+        }
+
+        function applyAccess(access) {
+            currentAccess = access;
+            document.getElementById('lbl-agent-name').textContent = `${name} [${uid}] (${access.role})`;
+            if(access.hasPanel) {
+                document.getElementById('admin-core-view').style.display = 'grid';
+                document.getElementById('driver-core-view').style.display = 'none';
+            } else {
+                document.getElementById('admin-core-view').style.display = 'none';
+                document.getElementById('driver-core-view').style.display = 'grid';
+                applyDriverPermissions(access.perms);
+            }
+        }
+
+        // Affichage initial (avant premier chargement des données) basé sur la session
+        applyAccess(currentAccess);
+
+        // Actions Conducteur (Prise de Poste)
         function toggleShift(sid, current) {
-            const updated = current === "Prise de poste validee" ? "En attente" : "Prise de poste validee";
+            const updated = current === "Prise de poste validée" ? "En attente" : "Prise de poste validée";
             fetch(`${FIREBASE_ENDPOINT}/services/${sid}/status.json`, { method: 'PUT', body: JSON.stringify(updated) }).then(() => pollData());
         }
 
@@ -389,9 +464,10 @@
             fetch(`${FIREBASE_ENDPOINT}/rapports_incidents.json`, {
                 method: 'POST',
                 body: JSON.stringify({ agent: uid, vehicle: document.getElementById('rep-bus').value, text: document.getElementById('rep-text').value, stamp: new Date().toLocaleString() })
-            }).then(() => { showNotification("Rapport transmis avec succes."); document.getElementById('form-driver-report').reset(); pollData(); });
+            }).then(() => { showNotification("Rapport transmis avec succès."); document.getElementById('form-driver-report').reset(); pollData(); });
         };
 
+        // Soumission demande de congés
         if(document.getElementById('form-leave-request')) {
             document.getElementById('form-leave-request').onsubmit = (e) => {
                 e.preventDefault();
@@ -405,13 +481,15 @@
             };
         }
 
+        // Envois Messages Tchat (Conducteur & Admin)
         function sendChatMessage(textInputId) {
+            if(!currentAccess.hasPanel && currentAccess.perms.sendMessages === false) return;
             const field = document.getElementById(textInputId);
             const txt = field.value.trim();
             if(!txt) return;
             fetch(`${FIREBASE_ENDPOINT}/messages.json`, {
                 method: 'POST',
-                body: JSON.stringify({ uid: uid, name: name, role: userRole, text: txt, stamp: new Date().toLocaleTimeString().slice(0, 5) })
+                body: JSON.stringify({ uid: uid, name: name, role: currentAccess.role, text: txt, stamp: new Date().toLocaleTimeString().slice(0, 5) })
             }).then(() => { field.value = ''; pollData(); });
         }
 
@@ -422,16 +500,45 @@
             document.getElementById('form-send-chat-admin').onsubmit = (e) => { e.preventDefault(); sendChatMessage('chat-msg-field-admin'); };
         }
 
-        // Action de création d'un Agent
+        // Actions Admin
         document.getElementById('form-add-driver').onsubmit = (e) => {
             e.preventDefault();
             const m = document.getElementById('add-mat').value.trim();
             const n = document.getElementById('add-name').value.trim();
             const p = document.getElementById('add-pass').value.trim();
             const r = document.getElementById('add-role').value;
-            fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p, role: r }) })
-            .then(() => { showNotification(`Agent inscrit avec succes [Role: ${r}]`); document.getElementById('form-add-driver').reset(); pollData(); });
+            const panelAccess = document.getElementById('add-panel-access').checked;
+            fetch(`${FIREBASE_ENDPOINT}/conducteurs/${m}.json`, { method: 'PUT', body: JSON.stringify({ name: n, password: p, role: r, panelAccess: panelAccess }) })
+            .then(() => { showNotification(`Agent inscrit avec succès [Rôle: ${r}${panelAccess ? ' + Accès Panel' : ''}]`); document.getElementById('form-add-driver').reset(); pollData(); });
         };
+
+        // Création d'un rôle personnalisé avec permissions cochables
+        document.getElementById('form-add-role').onsubmit = (e) => {
+            e.preventDefault();
+            const roleName = document.getElementById('role-name').value.trim();
+            if(!roleName) return;
+            const permissions = {
+                sendMessages: document.getElementById('perm-sendMessages').checked,
+                viewMessages: document.getElementById('perm-viewMessages').checked,
+                requestLeave: document.getElementById('perm-requestLeave').checked,
+                reportIncident: document.getElementById('perm-reportIncident').checked,
+                panelAccess: document.getElementById('perm-panelAccess').checked
+            };
+            fetch(`${FIREBASE_ENDPOINT}/roles/${roleName}.json`, { method: 'PUT', body: JSON.stringify({ permissions: permissions }) })
+            .then(() => { showNotification(`Rôle "${roleName}" créé avec succès`); document.getElementById('form-add-role').reset(); pollData(); });
+        };
+
+        // Réactualise la liste déroulante des rôles disponibles (rôles de base + rôles personnalisés)
+        function refreshRoleSelect(db) {
+            const select = document.getElementById('add-role');
+            if(!select) return;
+            const current = select.value;
+            const baseRoles = ["Conducteur", "Régulateur", "Superviseur"];
+            const customRoles = db && db.roles ? Object.keys(db.roles) : [];
+            const allRoles = baseRoles.concat(customRoles.filter(r => !baseRoles.includes(r)));
+            select.innerHTML = allRoles.map(r => `<option value="${r}">${r}</option>`).join('');
+            if(allRoles.includes(current)) select.value = current;
+        }
 
         document.getElementById('form-add-service').onsubmit = (e) => {
             e.preventDefault();
@@ -451,19 +558,34 @@
         }
 
         function dropItem(path, key) {
-            showNotification("Confirmer la suppression definitive de cet element ?", true, () => {
+            showNotification("Confirmer la suppression définitive de cet élément ?", true, () => {
                 fetch(`${FIREBASE_ENDPOINT}/${path}/${key}.json`, { method: 'DELETE' }).then(() => {
-                    showNotification("Element retire de la base.");
+                    showNotification("Élément retiré de la base.");
                     pollData();
                 });
             });
         }
 
+        // Flux Synchro Data direct
         let trackChatLength = 0;
         function pollData() {
             fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`).then(r => r.json()).then(db => {
                 if(!db) return;
 
+                // Recalcul de l'accès (rôle + permissions) à chaque cycle : un changement de rôle
+                // ou d'accès panel décidé côté Superviseur s'applique donc sans reconnexion.
+                if(uid !== "ADMIN") {
+                    const access = computeAccess(db);
+                    if(access.hasPanel !== currentAccess.hasPanel || access.role !== currentAccess.role) {
+                        applyAccess(access);
+                    } else {
+                        currentAccess = access;
+                        if(!access.hasPanel) applyDriverPermissions(access.perms);
+                    }
+                }
+                refreshRoleSelect(db);
+
+                // Flux de messagerie commun 
                 const chatBoxDriver = document.getElementById('chat-stream-output-driver');
                 const chatBoxAdmin = document.getElementById('chat-stream-output-admin');
                 
@@ -472,11 +594,9 @@
                     if(msgList.length !== trackChatLength) {
                         let htmlContent = '';
                         msgList.forEach(m => {
-                            let rDisp = m.role || 'Conducteur';
-                            if(rDisp === 'Administrateur') rDisp = 'Superviseur';
                             htmlContent += `
                                 <div class="chat-bubble">
-                                    <div class="chat-bubble-meta"><span>${m.name} (${m.uid}) — <small>${rDisp}</small></span><span>${m.stamp}</span></div>
+                                    <div class="chat-bubble-meta"><span>${m.name} (${m.uid}) — <small>${m.role || 'Conducteur'}</small></span><span>${m.stamp}</span></div>
                                     <div class="chat-bubble-text">${m.text}</div>
                                 </div>`;
                         });
@@ -487,8 +607,8 @@
                     }
                 }
 
-                // CORRECTION DYNAMIQUE DU FILTRE DANS LE FLUX DE DOCKING (Vérifie aussi le rôle Superviseur)
-                if(uid !== "ADMIN" && userRole !== "Superviseur") {
+                if(!currentAccess.hasPanel) {
+                    // Services actifs et passés
                     const upcomingBucket = document.getElementById('driver-services-bucket');
                     const pastBucket = document.getElementById('driver-past-services-bucket');
                     
@@ -502,8 +622,8 @@
                         Object.entries(db.services).forEach(([sid, s]) => {
                             if(s.target === uid) {
                                 const col = colors[s.line] || "#64748B";
-                                const active = s.status === "Prise de poste validee";
-                                const isPast = s.hours.toLowerCase().includes('passe');
+                                const active = s.status === "Prise de poste validée";
+                                const isPast = s.hours.toLowerCase().includes('passé');
 
                                 const tileHtml = `
                                     <div class="service-tile" style="border-left-color:${col}">
@@ -514,7 +634,7 @@
                                         <p style="font-size:0.92rem; ${!isPast ? 'margin-bottom:15px;' : ''}"><strong>Mission :</strong> ${s.mission}</p>
                                         ${!isPast ? `
                                         <button class="btn-action" style="background:${active ? 'transparent' : 'var(--live-ok)'}; border:${active ? '1px solid var(--border-line)' : 'none'}; color:${active ? 'var(--font-dark)' : 'white'}; width:auto; padding:8px 16px; font-size:0.8rem;" onclick="toggleShift('${sid}', '${s.status}')">
-                                            <i class="fa-solid ${active ? 'fa-user-check' : 'fa-play'}"></i> ${active ? 'Prise de poste validee' : 'Valider prise de poste'}
+                                            <i class="fa-solid ${active ? 'fa-user-check' : 'fa-play'}"></i> ${active ? 'Prise de poste validée' : 'Valider prise de poste'}
                                         </button>` : ''}
                                     </div>`;
 
@@ -528,9 +648,10 @@
                             }
                         });
                     }
-                    if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucune affectation programmee.</p>`;
-                    if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucun historique de tournee disponible.</p>`;
+                    if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucune affectation programmée.</p>`;
+                    if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucun historique de tournée disponible.</p>`;
 
+                    // Rendu des congés conducteur
                     const leaveTable = document.getElementById('table-body-driver-leaves');
                     if(leaveTable) {
                         leaveTable.innerHTML = '';
@@ -538,21 +659,20 @@
                             Object.values(db.conges).forEach(l => {
                                 if(l.agent === uid) {
                                     let badgeCls = "status-wait";
-                                    if(l.status === "Approuve") badgeCls = "status-ok";
-                                    if(l.status === "Refuse") badgeCls = "status-no";
+                                    if(l.status === "Approuvé") badgeCls = "status-ok";
+                                    if(l.status === "Refusé") badgeCls = "status-no";
                                     leaveTable.innerHTML += `<tr><td>Du ${l.start} au ${l.end}</td><td>${l.reason}</td><td><span class="status-dot ${badgeCls}">${l.status}</span></td></tr>`;
                                 }
                             });
                         }
                     }
                 } else {
-                    // RENDU INTERFACE DIRECTION / SUPERVISEUR
+                    // RENDU INTERFACE DIRECTION / ADMIN
                     const dTable = document.getElementById('box-table-drivers'); dTable.innerHTML = '';
                     if(db.conducteurs) {
                         Object.entries(db.conducteurs).forEach(([m, o]) => {
-                            let rDisp = o.role || 'Conducteur';
-                            if(rDisp === 'Administrateur') rDisp = 'Superviseur';
-                            dTable.innerHTML += `<tr><td><strong>${m}</strong></td><td>${o.name} <small style="color:var(--font-sub);">(${rDisp})</small></td><td><code>${o.password}</code></td><td><button class="btn-trash" onclick="dropItem('conducteurs', '${m}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                            const panelBadge = o.panelAccess === true ? ' <span class="status-dot status-ok" style="padding:2px 6px;">Panel</span>' : '';
+                            dTable.innerHTML += `<tr><td><strong>${m}</strong></td><td>${o.name} <small style="color:var(--font-sub);">(${o.role || 'Conducteur'})</small>${panelBadge}</td><td><code>${o.password}</code></td><td><button class="btn-trash" onclick="dropItem('conducteurs', '${m}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                         });
                     }
 
@@ -560,15 +680,14 @@
                     if(db.services) {
                         Object.entries(db.services).forEach(([sid, s]) => {
                             const tgtUser = db.conducteurs && db.conducteurs[s.target] ? db.conducteurs[s.target] : null;
-                            let rDisp = tgtUser ? (tgtUser.role || 'Conducteur') : 'Conducteur';
-                            if(rDisp === 'Administrateur') rDisp = 'Superviseur';
-                            const tgtRoleString = tgtUser ? ` (${rDisp})` : '';
-                            const cls = s.status === "Prise de poste validee" ? "status-ok" : "status-wait";
+                            const tgtRoleString = tgtUser ? ` (${tgtUser.role || 'Conducteur'})` : '';
+                            const cls = s.status === "Prise de poste validée" ? "status-ok" : "status-wait";
                             
                             sTable.innerHTML += `<tr><td><span class="badge-line" style="background:${colors[s.line] || '#64748B'}">${s.line}</span></td><td>${s.hours}</td><td><strong>${s.target}</strong><small style="color:var(--font-sub);">${tgtRoleString}</small></td><td>${s.mission}</td><td><span class="status-dot ${cls}">${s.status || 'En attente'}</span></td><td><button class="btn-trash" onclick="dropItem('services', '${sid}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                         });
                     }
 
+                    // Rendu de l'arbitrage des congés
                     const admLeaveTable = document.getElementById('box-table-admin-leaves');
                     if(admLeaveTable) {
                         admLeaveTable.innerHTML = '';
@@ -580,8 +699,8 @@
                                         <td>Du ${l.start} au ${l.end}</td>
                                         <td>${l.reason}</td>
                                         <td>
-                                            <button class="status-dot status-ok" style="border:none; cursor:pointer;" onclick="setLeaveStatus('${lk}', 'Approuve')">Approuver</button>
-                                            <button class="status-dot status-no" style="border:none; cursor:pointer; margin-left:5px;" onclick="setLeaveStatus('${lk}', 'Refuse')">Refuser</button>
+                                            <button class="status-dot status-ok" style="border:none; cursor:pointer;" onclick="setLeaveStatus('${lk}', 'Approuvé')">Approuver</button>
+                                            <button class="status-dot status-no" style="border:none; cursor:pointer; margin-left:5px;" onclick="setLeaveStatus('${lk}', 'Refusé')">Refuser</button>
                                         </td>
                                         <td><button class="btn-trash" onclick="dropItem('conges', '${lk}')"><i class="fa-solid fa-trash"></i></button></td>
                                     </tr>`;
@@ -589,6 +708,24 @@
                         }
                     }
 
+                    // Rendu des rôles personnalisés (Admin)
+                    const rolesTable = document.getElementById('box-table-roles');
+                    if(rolesTable) {
+                        rolesTable.innerHTML = '';
+                        if(db.roles) {
+                            const permLabels = { sendMessages: 'Messages', viewMessages: 'Historique msg.', requestLeave: 'Congés', reportIncident: 'Incidents', panelAccess: 'Panel Superviseur' };
+                            Object.entries(db.roles).forEach(([rn, rdata]) => {
+                                const perms = rdata.permissions || {};
+                                const activeList = Object.keys(permLabels).filter(k => perms[k]).map(k => permLabels[k]).join(', ') || 'Aucune';
+                                rolesTable.innerHTML += `<tr><td><strong>${rn}</strong></td><td style="font-size:0.8rem; color:var(--font-sub);">${activeList}</td><td><button class="btn-trash" onclick="dropItem('roles', '${rn}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                            });
+                        }
+                        if(!db.roles || Object.keys(db.roles).length === 0) {
+                            rolesTable.innerHTML = `<tr><td colspan="3" style="color:var(--font-sub); font-style:italic; text-align:center;">Aucun rôle personnalisé créé.</td></tr>`;
+                        }
+                    }
+
+                    // Rendu des incidents signalés (Admin)
                     const admIncidentTable = document.getElementById('box-table-admin-incidents');
                     if(admIncidentTable) {
                         admIncidentTable.innerHTML = '';
@@ -604,7 +741,7 @@
                                     </tr>`;
                             });
                         } else {
-                            admIncidentTable.innerHTML = `<tr><td colspan="5" style="color:var(--font-sub); font-style:italic; text-align:center;">Aucun incident signale en cours.</td></tr>`;
+                            admIncidentTable.innerHTML = `<tr><td colspan="5" style="color:var(--font-sub); font-style:italic; text-align:center;">Aucun incident signalé en cours.</td></tr>`;
                         }
                     }
                 }
