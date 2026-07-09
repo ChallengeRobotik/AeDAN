@@ -342,35 +342,7 @@
         </div>
 
         <div id="admin-core-view" class="grid-dashboard" style="display: none;">
-            <div class="card-panel">
-                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel (RH)</h2>
-                <form id="form-add-driver">
-                    <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
-                    <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
-                    <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
-                    <div class="form-row">
-                        <label>Rôle & Habilitation</label>
-                        <select id="add-role" class="form-item">
-                            <option value="Conducteur">Conducteur</option>
-                            <option value="Régulateur">Régulateur</option>
-                            <option value="Superviseur">Superviseur</option>
-                        </select>
-                    </div>
-                    <div class="form-row" style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="add-panel-access" style="width: auto;">
-                        <label style="margin: 0; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);">Accès direct au panel Superviseur (indépendant du rôle)</label>
-                    </div>
-                    <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
-                </form>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Matricule</th><th>Nom (Rôle)</th><th>Code</th><th></th></tr></thead>
-                        <tbody id="box-table-drivers"></tbody>
-                    </table>
-                </div>
-            </div>
-
+            
             <div class="card-panel" style="grid-column: span 2;">
                 <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-calendar-check"></i> Ordonnancement Horaires</h2>
                 <form id="form-add-service" class="grid-dashboard" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 0; margin-bottom: 15px;">
@@ -398,10 +370,8 @@
                         <tbody id="box-table-admin-leaves"></tbody>
                     </table>
                 </div>
-            </div>
 
-            <div class="card-panel" style="grid-column: span 2;">
-                <h2 class="line-font" style="color: var(--live-crit);"><i class="fa-solid fa-triangle-exclamation"></i> Événements & Incidents signalés</h2>
+                <h2 class="line-font" style="color: var(--live-crit); margin-top: 35px;"><i class="fa-solid fa-triangle-exclamation"></i> Événements & Incidents signalés</h2>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th>Horodatage</th><th>Agent</th><th>Matériel / Rame</th><th>Commentaire</th><th></th></tr></thead>
@@ -410,22 +380,42 @@
                 </div>
             </div>
 
-            <div class="card-panel">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation (Admin)</h2>
-                <div class="chat-flow-zone" id="chat-stream-output-admin"></div>
-                <form id="form-send-chat-admin" style="display: flex; gap: 10px;">
-                    <input type="text" id="chat-msg-field-admin" class="form-item" placeholder="Écrire en tant qu'admin..." required autocomplete="off">
-                    <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
+            <div class="card-panel" style="grid-column: span 1;">
+                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel (RH)</h2>
+                <form id="form-add-driver">
+                    <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
+                    <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
+                    <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
+                    <div class="form-row">
+                        <label>Rôle & Habilitation</label>
+                        <select id="add-role" class="form-item">
+                            <option value="Conducteur">Conducteur</option>
+                            <option value="Régulateur">Régulateur</option>
+                            <option value="Superviseur">Superviseur</option>
+                        </select>
+                    </div>
+                    <div class="form-row" style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="add-panel-access" style="width: auto;">
+                        <label style="margin: 0; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);">Accès direct au panel Superviseur</label>
+                    </div>
+                    <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
                 </form>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>Matricule</th><th>Nom (Rôle)</th><th>Code</th><th></th></tr></thead>
+                        <tbody id="box-table-drivers"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="card-panel" style="grid-column: span 2;">
+            <div class="card-panel" style="grid-column: span 1;">
                 <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-users-gear"></i> Gestion des Rôles & Permissions</h2>
                 <form id="form-add-role" style="margin-bottom: 20px;">
                     <div class="form-row"><label>Nom du rôle</label><input type="text" id="role-name" class="form-item" placeholder="Ex: Contrôleur, Chef de ligne..." required></div>
                     <div class="form-row">
-                        <label>Permissions accordées à ce rôle</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px;">
+                        <label>Permissions accordées</label>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
                             <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-sendMessages" checked style="width: auto;"> Envoyer des messages</label>
                             <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-viewMessages" checked style="width: auto;"> Voir les messages précédents</label>
                             <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-requestLeave" checked style="width: auto;"> Poser des congés</label>
@@ -442,6 +432,16 @@
                     </table>
                 </div>
             </div>
+
+            <div class="card-panel" style="grid-column: span 3;">
+                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation (Admin)</h2>
+                <div class="chat-flow-zone" id="chat-stream-output-admin"></div>
+                <form id="form-send-chat-admin" style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-msg-field-admin" class="form-item" placeholder="Écrire en tant qu'admin..." required autocomplete="off">
+                    <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+            
         </div>
 
     </main>
@@ -468,7 +468,6 @@
 
         document.getElementById('lbl-agent-name').textContent = `${name} [${uid}] (${userRole})`;
 
-        // Gestion du popup personnalisé haut de page avec réponse par défaut automatique
         let popupTimer = null;
         let progressInterval = null;
 
@@ -485,7 +484,7 @@
             actionsBox.innerHTML = '';
             progressBar.style.transform = 'scaleX(1)';
 
-            const duration = 5000; // 5 secondes
+            const duration = 5000;
             let timeLeft = duration;
 
             if (isConfirm) {
@@ -514,13 +513,11 @@
                 if (timeLeft <= 0) {
                     clearInterval(progressInterval);
                     popup.classList.remove('active');
-                    // Réponse par défaut automatique si confirmée
                     if (isConfirm && onConfirmCallback) onConfirmCallback();
                 }
             }, 50);
         }
 
-        // Thème System Switcher
         const themeTrigger = document.getElementById('theme-toggle-btn');
         if (localStorage.getItem('user-ui-theme') === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); themeTrigger.innerHTML = '<i class="fa-solid fa-sun"></i>'; }
         themeTrigger.onclick = () => {
@@ -530,14 +527,11 @@
 
         function killSession() { sessionStorage.clear(); window.location.href = "connexion.html"; }
 
-        // ROUTEUR DYNAMIQUE : Le rôle "Superviseur" (anciennement "Administrateur") donne accès au panel,
-        // tout comme l'accès direct coché lors de la création du compte, ou une permission "panelAccess"
-        // rattachée à un rôle personnalisé créé depuis la Gestion des Rôles.
         const BUILTIN_ROLE_PERMS = {
             "Conducteur":     { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: false },
             "Régulateur":     { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: false },
             "Superviseur":    { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: true },
-            "Administrateur": { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: true } // rôle historique conservé pour compatibilité
+            "Administrateur": { sendMessages: true, viewMessages: true, requestLeave: true, reportIncident: true, panelAccess: true }
         };
 
         function getRolePermissions(roleName, db) {
@@ -581,10 +575,8 @@
             }
         }
 
-        // Affichage initial (avant premier chargement des données) basé sur la session
         applyAccess(currentAccess);
 
-        // Actions Conducteur (Prise de Poste)
         function toggleShift(sid, current) {
             const updated = current === "Prise de poste validée" ? "En attente" : "Prise de poste validée";
             fetch(`${FIREBASE_ENDPOINT}/services/${sid}/status.json`, { method: 'PUT', body: JSON.stringify(updated) }).then(() => pollData());
@@ -598,7 +590,6 @@
             }).then(() => { showNotification("Rapport transmis avec succès."); document.getElementById('form-driver-report').reset(); pollData(); });
         };
 
-        // Soumission demande de congés
         if(document.getElementById('form-leave-request')) {
             document.getElementById('form-leave-request').onsubmit = (e) => {
                 e.preventDefault();
@@ -612,7 +603,6 @@
             };
         }
 
-        // Envois Messages Tchat (Conducteur & Admin)
         function sendChatMessage(textInputId) {
             if(!currentAccess.hasPanel && currentAccess.perms.sendMessages === false) return;
             const field = document.getElementById(textInputId);
@@ -631,7 +621,6 @@
             document.getElementById('form-send-chat-admin').onsubmit = (e) => { e.preventDefault(); sendChatMessage('chat-msg-field-admin'); };
         }
 
-        // Actions Admin
         document.getElementById('form-add-driver').onsubmit = (e) => {
             e.preventDefault();
             const m = document.getElementById('add-mat').value.trim();
@@ -643,7 +632,6 @@
             .then(() => { showNotification(`Agent inscrit avec succès [Rôle: ${r}${panelAccess ? ' + Accès Panel' : ''}]`); document.getElementById('form-add-driver').reset(); pollData(); });
         };
 
-        // Création d'un rôle personnalisé avec permissions cochables
         document.getElementById('form-add-role').onsubmit = (e) => {
             e.preventDefault();
             const roleName = document.getElementById('role-name').value.trim();
@@ -659,7 +647,6 @@
             .then(() => { showNotification(`Rôle "${roleName}" créé avec succès`); document.getElementById('form-add-role').reset(); pollData(); });
         };
 
-        // Réactualise la liste déroulante des rôles disponibles (rôles de base + rôles personnalisés)
         function refreshRoleSelect(db) {
             const select = document.getElementById('add-role');
             if(!select) return;
@@ -697,14 +684,11 @@
             });
         }
 
-        // Flux Synchro Data direct
         let trackChatLength = 0;
         function pollData() {
             fetch(`${FIREBASE_ENDPOINT}/.json?nocache=${Date.now()}`).then(r => r.json()).then(db => {
                 if(!db) return;
 
-                // Recalcul de l'accès (rôle + permissions) à chaque cycle : un changement de rôle
-                // ou d'accès panel décidé côté Superviseur s'applique donc sans reconnexion.
                 if(uid !== "ADMIN") {
                     const access = computeAccess(db);
                     if(access.hasPanel !== currentAccess.hasPanel || access.role !== currentAccess.role) {
@@ -716,7 +700,6 @@
                 }
                 refreshRoleSelect(db);
 
-                // Flux de messagerie commun 
                 const chatBoxDriver = document.getElementById('chat-stream-output-driver');
                 const chatBoxAdmin = document.getElementById('chat-stream-output-admin');
                 
@@ -739,7 +722,6 @@
                 }
 
                 if(!currentAccess.hasPanel) {
-                    // Services actifs et passés
                     const upcomingBucket = document.getElementById('driver-services-bucket');
                     const pastBucket = document.getElementById('driver-past-services-bucket');
                     
@@ -782,7 +764,6 @@
                     if(upcomingCount === 0) upcomingBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucune affectation programmée.</p>`;
                     if(pastCount === 0) pastBucket.innerHTML = `<p style="color:var(--font-sub); font-style:italic; font-size:0.85rem;">Aucun historique de tournée disponible.</p>`;
 
-                    // Rendu des congés conducteur
                     const leaveTable = document.getElementById('table-body-driver-leaves');
                     if(leaveTable) {
                         leaveTable.innerHTML = '';
@@ -798,7 +779,6 @@
                         }
                     }
                 } else {
-                    // RENDU INTERFACE DIRECTION / ADMIN
                     const dTable = document.getElementById('box-table-drivers'); dTable.innerHTML = '';
                     if(db.conducteurs) {
                         Object.entries(db.conducteurs).forEach(([m, o]) => {
@@ -818,7 +798,6 @@
                         });
                     }
 
-                    // Rendu de l'arbitrage des congés
                     const admLeaveTable = document.getElementById('box-table-admin-leaves');
                     if(admLeaveTable) {
                         admLeaveTable.innerHTML = '';
@@ -839,7 +818,6 @@
                         }
                     }
 
-                    // Rendu des rôles personnalisés (Admin)
                     const rolesTable = document.getElementById('box-table-roles');
                     if(rolesTable) {
                         rolesTable.innerHTML = '';
@@ -856,7 +834,6 @@
                         }
                     }
 
-                    // Rendu des incidents signalés (Admin)
                     const admIncidentTable = document.getElementById('box-table-admin-incidents');
                     if(admIncidentTable) {
                         admIncidentTable.innerHTML = '';
