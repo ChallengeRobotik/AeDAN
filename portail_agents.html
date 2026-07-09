@@ -344,26 +344,112 @@
         <div id="admin-core-view" class="grid-dashboard" style="display: none;">
             
             <div class="card-panel" style="grid-column: span 2;">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-calendar-check"></i> Ordonnancement Horaires</h2>
-                <form id="form-add-service" class="grid-dashboard" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 0; margin-bottom: 15px;">
-                    <div class="form-row">
-                        <label>Ligne</label>
-                        <select id="add-srv-line" class="form-item"><option value="26">Ligne 26</option><option value="BAM">Ligne BAM</option><option value="I">Ligne I</option></select>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                    <div>
+                        <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel (RH)</h2>
+                        <form id="form-add-driver">
+                            <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
+                            <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
+                            <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
+                            <div class="form-row">
+                                <label>Rôle & Habilitation</label>
+                                <select id="add-role" class="form-item">
+                                    <option value="Conducteur">Conducteur</option>
+                                    <option value="Régulateur">Régulateur</option>
+                                    <option value="Superviseur">Superviseur</option>
+                                </select>
+                            </div>
+                            <div class="form-row" style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="add-panel-access" style="width: auto;">
+                                <label style="margin: 0; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);">Accès direct au panel Superviseur (indépendant du rôle)</label>
+                            </div>
+                            <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
+                        </form>
                     </div>
-                    <div class="form-row"><label>Horaires de Service</label><input type="text" id="add-srv-hours" class="form-item" placeholder="06:00 - 14:00 (ou 'Passé')" required></div>
-                    <div class="form-row"><label>Matricule Cible</label><input type="text" id="add-srv-target" class="form-item" required></div>
-                    <div class="form-row"><label>Mission / Consigne</label><input type="text" id="add-srv-mission" class="form-item" required></div>
-                    <button type="submit" class="btn-action" style="grid-column: span 2;">AFFECTER LE SERVICE</button>
-                </form>
+                    <div>
+                        <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-users-gear"></i> Gestion des Rôles & Permissions</h2>
+                        <form id="form-add-role" style="margin-bottom: 20px;">
+                            <div class="form-row"><label>Nom du rôle</label><input type="text" id="role-name" class="form-item" placeholder="Ex: Contrôleur..." required></div>
+                            <div class="form-row">
+                                <label>Permissions accordées à ce rôle</label>
+                                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-sendMessages" checked style="width: auto;"> Envoyer des messages</label>
+                                    <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-viewMessages" checked style="width: auto;"> Voir les messages précédents</label>
+                                    <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-requestLeave" checked style="width: auto;"> Poser des congés</label>
+                                    <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-reportIncident" checked style="width: auto;"> Signaler un incident</label>
+                                    <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-panelAccess" style="width: auto;"> Accès au panel Superviseur</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-action" style="background: var(--brand-color);">CRÉER LE RÔLE</button>
+                        </form>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 15px;">
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Matricule</th><th>Nom (Rôle)</th><th>Code</th><th></th></tr></thead>
+                            <tbody id="box-table-drivers"></tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Rôle</th><th>Permissions</th><th></th></tr></thead>
+                            <tbody id="box-table-roles"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-                <div class="table-responsive">
+            <div class="card-panel" style="grid-column: span 2;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                    <div>
+                        <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-calendar-check"></i> Ordonnancement Horaires</h2>
+                        <form id="form-add-service" class="grid-dashboard" style="grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 0; margin-bottom: 15px;">
+                            <div class="form-row" style="grid-column: span 2;">
+                                <label>Ligne</label>
+                                <select id="add-srv-line" class="form-item">
+                                    <option value="26">Ligne 26</option>
+                                    <option value="BAM">Ligne BAM</option>
+                                    <option value="I">Ligne I</option>
+                                </select>
+                            </div>
+                            <div class="form-row" style="grid-column: span 2;"><label>Horaires de Service</label><input type="text" id="add-srv-hours" class="form-item" placeholder="06:00 - 14:00 (ou 'Passé')" required></div>
+                            <div class="form-row"><label>Matricule Cible</label><input type="text" id="add-srv-target" class="form-item" required></div>
+                            <div class="form-row"><label>Mission / Consigne</label><input type="text" id="add-srv-mission" class="form-item" required></div>
+                            <button type="submit" class="btn-action" style="grid-column: span 2;">AFFECTER LE SERVICE</button>
+                        </form>
+                    </div>
+                    <div>
+                        <h2 class="line-font" style="color: var(--color-l26);"><i class="fa-solid fa-folder-plus"></i> Configuration des Lignes</h2>
+                        <form id="form-add-line-config" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="form-row"><label>Code / N°</label><input type="text" id="line-cfg-code" class="form-item" placeholder="Ex: 26, BAM, A..." required></div>
+                            <div class="form-row"><label>Couleur Hex</label><input type="color" id="line-cfg-color" class="form-item" style="padding:4px; height:45px;" value="#7A1C1C" required></div>
+                            <div class="form-row" style="grid-column: span 2;"><label>Terminus de la ligne</label><input type="text" id="line-cfg-terminus" class="form-item" placeholder="Ex: Gare Centrale / Technopôle" required></div>
+                            <div class="form-row" style="grid-column: span 2;"><label>Arrêts du parcours (séparés par une virgule)</label><input type="text" id="line-cfg-stops" class="form-item" placeholder="Arrêt A, Arrêt B, Arrêt C..." required></div>
+                            <div class="form-row" style="grid-column: span 2; display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                                <input type="checkbox" id="line-cfg-pmr" style="width: auto;">
+                                <label style="margin: 0; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);">Accessibilité PMR intégrale</label>
+                            </div>
+                            <button type="submit" class="btn-action" style="grid-column: span 2; background: var(--color-lbam);">AJOUTER LA LIGNE</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="table-responsive" style="margin-top: 15px;">
                     <table>
                         <thead><tr><th>Ligne</th><th>Amplitude</th><th>Matricule (Agent)</th><th>Mission</th><th>Statut</th><th></th></tr></thead>
                         <tbody id="box-table-services"></tbody>
                     </table>
                 </div>
+                <div class="table-responsive" style="margin-top: 15px;">
+                    <table>
+                        <thead><tr><th>Code</th><th>Couleur</th><th>Terminus</th><th>Parcours / Arrêts</th><th>PMR</th><th></th></tr></thead>
+                        <tbody id="box-table-lines-config"></tbody>
+                    </table>
+                </div>
+            </div>
 
-                <h2 class="line-font" style="color: var(--live-warn); margin-top: 35px;"><i class="fa-solid fa-stamp"></i> Arbitrage des demandes de congés</h2>
+            <div class="card-panel" style="grid-column: span 2;">
+                <h2 class="line-font" style="color: var(--live-warn);"><i class="fa-solid fa-stamp"></i> Arbitrage des demandes de congés</h2>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th>Agent</th><th>Période</th><th>Motif</th><th>Décision direction</th><th></th></tr></thead>
@@ -380,60 +466,7 @@
                 </div>
             </div>
 
-            <div class="card-panel" style="grid-column: span 1;">
-                <h2 class="line-font" style="color: var(--live-ok);"><i class="fa-solid fa-user-gear"></i> Fichier Personnel (RH)</h2>
-                <form id="form-add-driver">
-                    <div class="form-row"><label>Matricule</label><input type="text" id="add-mat" class="form-item" required></div>
-                    <div class="form-row"><label>Nom / Pseudo</label><input type="text" id="add-name" class="form-item" required></div>
-                    <div class="form-row"><label>Mot de passe</label><input type="text" id="add-pass" class="form-item" required></div>
-                    <div class="form-row">
-                        <label>Rôle & Habilitation</label>
-                        <select id="add-role" class="form-item">
-                            <option value="Conducteur">Conducteur</option>
-                            <option value="Régulateur">Régulateur</option>
-                            <option value="Superviseur">Superviseur</option>
-                        </select>
-                    </div>
-                    <div class="form-row" style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="add-panel-access" style="width: auto;">
-                        <label style="margin: 0; text-transform: none; font-size: 0.8rem; font-weight: 500; color: var(--font-dark);">Accès direct au panel Superviseur</label>
-                    </div>
-                    <button type="submit" class="btn-action" style="background: var(--live-ok);">INSCRIRE L'AGENT</button>
-                </form>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Matricule</th><th>Nom (Rôle)</th><th>Code</th><th></th></tr></thead>
-                        <tbody id="box-table-drivers"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card-panel" style="grid-column: span 1;">
-                <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-users-gear"></i> Gestion des Rôles & Permissions</h2>
-                <form id="form-add-role" style="margin-bottom: 20px;">
-                    <div class="form-row"><label>Nom du rôle</label><input type="text" id="role-name" class="form-item" placeholder="Ex: Contrôleur, Chef de ligne..." required></div>
-                    <div class="form-row">
-                        <label>Permissions accordées</label>
-                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-sendMessages" checked style="width: auto;"> Envoyer des messages</label>
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-viewMessages" checked style="width: auto;"> Voir les messages précédents</label>
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-requestLeave" checked style="width: auto;"> Poser des congés</label>
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-reportIncident" checked style="width: auto;"> Signaler un incident</label>
-                            <label style="display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 0.85rem; font-weight: 500; color: var(--font-dark);"><input type="checkbox" id="perm-panelAccess" style="width: auto;"> Accès au panel Superviseur</label>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-action" style="background: var(--brand-color);">CRÉER LE RÔLE</button>
-                </form>
-                <div class="table-responsive">
-                    <table>
-                        <thead><tr><th>Rôle</th><th>Permissions</th><th></th></tr></thead>
-                        <tbody id="box-table-roles"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card-panel" style="grid-column: span 3;">
+            <div class="card-panel" style="grid-column: span 2;">
                 <h2 class="line-font" style="color: var(--brand-color);"><i class="fa-solid fa-comments"></i> Messagerie d'exploitation (Admin)</h2>
                 <div class="chat-flow-zone" id="chat-stream-output-admin"></div>
                 <form id="form-send-chat-admin" style="display: flex; gap: 10px;">
@@ -441,7 +474,7 @@
                     <button type="submit" class="btn-action" style="width: auto; padding: 0 18px;"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
             </div>
-            
+
         </div>
 
     </main>
@@ -458,7 +491,7 @@
         });
 
         const FIREBASE_ENDPOINT = "https://aedan-mobilites-default-rtdb.europe-west1.firebasedatabase.app";
-        const colors = { "26": "#e182b4", "BAM": "#1b35b0", "I": "#6dc16d" };
+        let colors = { "26": "#e182b4", "BAM": "#1b35b0", "I": "#6dc16d" };
 
         const uid = sessionStorage.getItem('agent_uid');
         const name = sessionStorage.getItem('agent_name');
@@ -658,6 +691,61 @@
             if(allRoles.includes(current)) select.value = current;
         }
 
+        // NOVELLE FONCTIONNALITÉ : FORMULAIRE CONFIGURATION DES LIGNES SUR FIREBASE
+        document.getElementById('form-add-line-config').onsubmit = (e) => {
+            e.preventDefault();
+            const code = document.getElementById('line-cfg-code').value.trim().toUpperCase();
+            const color = document.getElementById('line-cfg-color').value;
+            const terminus = document.getElementById('line-cfg-terminus').value.trim();
+            const stopsRaw = document.getElementById('line-cfg-stops').value;
+            const pmr = document.getElementById('line-cfg-pmr').checked;
+
+            // Traitement et nettoyage de la liste des arrêts
+            const stopsArray = stopsRaw.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+            const payload = {
+                code: code,
+                color: color,
+                terminus: terminus,
+                stops: stopsArray,
+                pmr: pmr
+            };
+
+            fetch(`${FIREBASE_ENDPOINT}/lignes_config/${code}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(payload)
+            }).then(() => {
+                showNotification(`Configuration de la ligne ${code} enregistrée.`);
+                document.getElementById('form-add-line-config').reset();
+                pollData();
+            });
+        };
+
+        // Met à jour la liste déroulante des services en injectant les lignes configurées
+        function refreshServiceLinesSelect(db) {
+            const select = document.getElementById('add-srv-line');
+            if(!select) return;
+            const currentSelected = select.value;
+
+            // Lignes codées en dur par défaut
+            let lineOptions = { "26": "Ligne 26", "BAM": "Ligne BAM", "I": "Ligne I" };
+            
+            // On y fusionne et remplace par les lignes configurées dynamiquement depuis Firebase
+            if (db && db.lignes_config) {
+                Object.keys(db.lignes_config).forEach(code => {
+                    lineOptions[code] = `Ligne ${code}`;
+                });
+            }
+
+            select.innerHTML = Object.entries(lineOptions).map(([val, label]) => {
+                return `<option value="${val}">${label}</option>`;
+            }).join('');
+
+            if (Object.keys(lineOptions).includes(currentSelected)) {
+                select.value = currentSelected;
+            }
+        }
+
         document.getElementById('form-add-service').onsubmit = (e) => {
             e.preventDefault();
             const payload = {
@@ -699,6 +787,15 @@
                     }
                 }
                 refreshRoleSelect(db);
+                refreshServiceLinesSelect(db);
+
+                // Reconstruction dynamique de l'objet global color-mapping à chaque rafraîchissement
+                colors = { "26": "#e182b4", "BAM": "#1b35b0", "I": "#6dc16d" };
+                if (db.lignes_config) {
+                    Object.entries(db.lignes_config).forEach(([code, data]) => {
+                        if (data.color) colors[code] = data.color;
+                    });
+                }
 
                 const chatBoxDriver = document.getElementById('chat-stream-output-driver');
                 const chatBoxAdmin = document.getElementById('chat-stream-output-admin');
@@ -796,6 +893,29 @@
                             
                             sTable.innerHTML += `<tr><td><span class="badge-line" style="background:${colors[s.line] || '#64748B'}">${s.line}</span></td><td>${s.hours}</td><td><strong>${s.target}</strong><small style="color:var(--font-sub);">${tgtRoleString}</small></td><td>${s.mission}</td><td><span class="status-dot ${cls}">${s.status || 'En attente'}</span></td><td><button class="btn-trash" onclick="dropItem('services', '${sid}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                         });
+                    }
+
+                    // RENDU CONFIGURATION DES LIGNES (PANEL ADMIN)
+                    const lCfgTable = document.getElementById('box-table-lines-config');
+                    if (lCfgTable) {
+                        lCfgTable.innerHTML = '';
+                        if (db.lignes_config) {
+                            Object.entries(db.lignes_config).forEach(([code, data]) => {
+                                const stopsList = data.stops ? data.stops.join(' ➔ ') : 'Aucun';
+                                const pmrStatus = data.pmr ? '<span class="status-dot status-ok"><i class="fa-solid fa-wheelchair"></i> Oui</span>' : '<span class="status-dot status-no">Non</span>';
+                                lCfgTable.innerHTML += `
+                                    <tr>
+                                        <td><span class="badge-line" style="background:${data.color || '#64748B'}">${code}</span></td>
+                                        <td><code>${data.color || '#7A1C1C'}</code></td>
+                                        <td><small>${data.terminus || 'Non défini'}</small></td>
+                                        <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><small>${stopsList}</small></td>
+                                        <td>${pmrStatus}</td>
+                                        <td><button class="btn-trash" onclick="dropItem('lignes_config', '${code}')"><i class="fa-solid fa-trash"></i></button></td>
+                                    </tr>`;
+                            });
+                        } else {
+                            lCfgTable.innerHTML = `<tr><td colspan="6" style="color:var(--font-sub); font-style:italic; text-align:center;">Aucune ligne personnalisée enregistrée.</td></tr>`;
+                        }
                     }
 
                     const admLeaveTable = document.getElementById('box-table-admin-leaves');
